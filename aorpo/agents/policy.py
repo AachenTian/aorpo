@@ -6,6 +6,9 @@ from typing import Sequence
 class PolicyNet(nn.Module):
     action_dim:int                              #action dimension
     hidden_dims:Sequence[int] = (256,256)       #hidden dimension
+    min_logvar: float = -5.0
+    max_logvar: float = 2.0
+
 
     @nn.compact
     def __call__(self,obs):
@@ -14,7 +17,7 @@ class PolicyNet(nn.Module):
             x = nn.relu(nn.Dense(dim)(x))
         mu = nn.Dense(self.action_dim)(x)
         log_std = nn.Dense(self.action_dim)(x)
-        log_std = jnp.clip(log_std, -5.0, 2.0)
+        log_std = jnp.clip(log_std, self.min_logvar, self.max_logvar)
         return mu, log_std
 
 def sample_action(params, apply_fn, rng, obs):
