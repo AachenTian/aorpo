@@ -1,3 +1,4 @@
+# aorpo/agents/update_policy.py
 from __future__ import annotations
 from dataclasses import dataclass
 from typing import Dict, Any
@@ -8,13 +9,7 @@ import optax
 from flax.training.train_state import TrainState
 
 from aorpo.agents.policy import PolicyNet
-from aorpo.agents.q_function import QNet
-
-#Config
-@dataclass
-class PolicyConfig:
-    lr: float = 3e-4
-    alpha: float = 0.2
+from omegaconf import DictConfig
 
 
 #Update step
@@ -23,7 +18,7 @@ def update_policy(
         policy_state: TrainState,
         q_state: TrainState,
         batch: Dict[str, jnp.ndarray],
-        cfg: PolicyConfig,
+        cfg: DictConfig,
         rng: jax.random.KeyArray,
 ):
     """

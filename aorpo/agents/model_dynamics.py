@@ -8,6 +8,7 @@ import jax.numpy as jnp
 import optax
 from flax import linen as nn
 from flax.training.train_state import TrainState
+from omegaconf import DictConfig
 
 
 # -------------------------------
@@ -16,13 +17,14 @@ from flax.training.train_state import TrainState
 @dataclass
 class Standardizer:
     """Hold mean/std for obs, act, delta (next - obs)."""
-    obs_mean: jnp.ndarray
-    obs_std: jnp.ndarray
-    act_mean: jnp.ndarray
-    act_std: jnp.ndarray
-    delta_mean: jnp.ndarray
-    delta_std: jnp.ndarray
-    eps: float = 1e-6
+    def __init__(self, obs_mean, obs_std, act_mean, act_std, delta_mean, delta_std, eps=1e-6):
+        self.obs_mean = obs_mean
+        self.obs_std = obs_std
+        self.act_mean = act_mean
+        self.act_std = act_std
+        self.delta_mean = delta_mean
+        self.delta_std = delta_std
+        self.eps = eps
 
     @classmethod
     def fit(cls, obs: jnp.ndarray, act: jnp.ndarray, next_obs: jnp.ndarray) -> "Standardizer":
@@ -36,7 +38,6 @@ class Standardizer:
 
     def norm_obs(self, x):  return (x - self.obs_mean) / (self.obs_std + self.eps)
     def denorm_obs(self, x): return x * (self.obs_std + self.eps) + self.obs_mean
-
     def norm_act(self, x):  return (x - self.act_mean) / (self.act_std + self.eps)
     def norm_delta(self, x): return (x - self.delta_mean) / (self.delta_std + self.eps)
     def denorm_delta(self, x): return x * (self.delta_std + self.eps) + self.delta_mean
@@ -57,19 +58,9 @@ class SingleDynamics(nn.Module):
             x = nn.relu(nn.Dense(d)(x))
         mu = nn.Dense(self.out_dim)(x)
         logvar = nn.Dense(self.out_dim)(x)
-        # constrain log-variance for numerical stability
         logvar = jnp.clip(logvar, self.min_logvar, self.max_logvar)
         return mu, logvar
 
-
-def make_ensemble_module(num_members: int, hidden_dims: Sequence[int], out_dim: int):
-    """Wrap SingleDynamics into an ensemble via nn.vmap."""
-    return nn.vmap(
-        SingleDynamics,
-        variable_axes={'params': 0},   # E copies of params
-        split_rngs={'params': True},   # different init per member
-        in_axes=None, out_axes=0       # same input goes to all members → outputs stacked on axis 0
-    )(hidden_dims=hidden_dims, out_dim=out_dim)
 
 
 class EnsembleDynamics(nn.Module):
@@ -89,11 +80,6 @@ class EnsembleDynamics(nn.Module):
           min_logvar=self.min_logvar, max_logvar=self.max_logvar)
 
     def __call__(self, x):
-        """
-        x: (B, in_dim); returns:
-          mu:     (E, B, out_dim)
-          logvar: (E, B, out_dim)
-        """
         mu, logvar = self.member(x)
         return mu, logvar
 
@@ -101,41 +87,29 @@ class EnsembleDynamics(nn.Module):
 # -------------------------------
 # Train utilities
 # -------------------------------
-@dataclass
-class ModelConfig:
-    obs_dim: int
-    act_dim: int
-    hidden_dims: Sequence[int] = (256, 256)
-    num_members: int = 5
-    lr: float = 1e-3
-    min_logvar: float = -10.0
-    max_logvar: float = 0.5
 
-
-def init_model(rng: jax.random.KeyArray, cfg: ModelConfig):
+def init_model(rng: jax.random.KeyArray, obs_dim:int, act_dim: int, cfg: DictConfig):
     model = EnsembleDynamics(
         num_members=cfg.num_members,
-        hidden_dims=cfg.hidden_dims,
-        out_dim=cfg.obs_dim,
+        hidden_dims=tuple(cfg.hidden_dims),
+        out_dim=obs_dim,
         min_logvar=cfg.min_logvar,
         max_logvar=cfg.max_logvar,
     )
-    # dummy input to infer shapes: input = [norm_obs, norm_act]
+
     dummy_in = jnp.zeros((1, cfg.obs_dim + cfg.act_dim), dtype=jnp.float32)
     params = model.init(rng, dummy_in)['params']
     tx = optax.adam(cfg.lr)
     state = TrainState(step=0, apply_fn=model.apply, params=params, tx=tx, opt_state=tx.init(params))
     return model, state
 
-
+# Loss & Train
 def _nll(mu, logvar, target):
     """Gaussian NLL per (E,B,D), reduce over D then mean over E,B."""
     inv_var = jnp.exp(-logvar)
     inv_var = jnp.clip(inv_var, 0, 1e3)
     mse = (mu - target) ** 2
-    # 0.5 * [ (x-mu)^2 / var + logvar ] (ignore constant)
     nll = 0.5 * (mse * inv_var + logvar)
-    # reduce over feature dim
     nll = jnp.mean(jnp.sum(nll, axis=-1))
     return nll
 
@@ -170,6 +144,7 @@ def train_step(state: TrainState,
     return new_state, metrics
 
 
+# Prediction & Evaluation
 @jax.jit
 def predict_next(state: TrainState,
                  std: Standardizer,

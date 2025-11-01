@@ -55,11 +55,11 @@ class MPEEnv:
 
     def step(self, actions: list[np.ndarray]):
         """
-        Take a step in the multi-agent environment.
-        `actions`: list of np.ndarray actions for each agent (aligned with self.agents order)
+        Take a step in the multi-agents environment.
+        `actions`: list of np.ndarray actions for each agents (aligned with self.agents order)
         Returns:
-            obs_list: list of observations per agent
-            rew_list: list of rewards per agent
+            obs_list: list of observations per agents
+            rew_list: list of rewards per agents
             terminated: bool
             truncated: bool
             info: dict
