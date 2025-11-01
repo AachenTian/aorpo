@@ -1,5 +1,6 @@
 # configs/agent/policy.yaml
 policy:
+  lr: 3e-4
   hidden_dims: [256, 256]
   min_logvar: -5.0
   max_logvar: 2.0

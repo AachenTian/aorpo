@@ -1,0 +1,3 @@
+# configs/agent/q_function.yaml
+lr: 1e-3
+hidden_dims: [256, 256]
