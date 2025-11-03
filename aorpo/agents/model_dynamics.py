@@ -1,7 +1,7 @@
 # aorpo/agents/model_dynamics.py
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import Sequence, Optional
+from typing import Sequence, Optional, Any
 
 import jax
 import jax.numpy as jnp
@@ -25,6 +25,9 @@ class Standardizer:
         self.delta_mean = delta_mean
         self.delta_std = delta_std
         self.eps = eps
+
+    def __hash__(self):
+        return id(self)
 
     @classmethod
     def fit(cls, obs: jnp.ndarray, act: jnp.ndarray, next_obs: jnp.ndarray) -> "Standardizer":
@@ -75,12 +78,14 @@ class EnsembleDynamics(nn.Module):
             SingleDynamics,
             variable_axes={'params': 0},
             split_rngs={'params': True},
-            in_axes=None, out_axes=0
+            in_axes=None,
+            out_axes=0,
+            axis_size=self.num_members,
         )(hidden_dims=self.hidden_dims, out_dim=self.out_dim,
           min_logvar=self.min_logvar, max_logvar=self.max_logvar)
 
     def __call__(self, x):
-        mu, logvar = self.member(x)
+        mu, logvar = self.member(x, axis_name='ensemble')
         return mu, logvar
 
 
@@ -88,7 +93,7 @@ class EnsembleDynamics(nn.Module):
 # Train utilities
 # -------------------------------
 
-def init_model(rng: jax.random.KeyArray, obs_dim:int, act_dim: int, cfg: DictConfig):
+def init_model(rng: Any, obs_dim:int, act_dim: int, cfg: DictConfig):
     model = EnsembleDynamics(
         num_members=cfg.num_members,
         hidden_dims=tuple(cfg.hidden_dims),
@@ -97,7 +102,7 @@ def init_model(rng: jax.random.KeyArray, obs_dim:int, act_dim: int, cfg: DictCon
         max_logvar=cfg.max_logvar,
     )
 
-    dummy_in = jnp.zeros((1, cfg.obs_dim + cfg.act_dim), dtype=jnp.float32)
+    dummy_in = jnp.zeros((1, obs_dim + act_dim), dtype=jnp.float32)
     params = model.init(rng, dummy_in)['params']
     tx = optax.adam(cfg.lr)
     state = TrainState(step=0, apply_fn=model.apply, params=params, tx=tx, opt_state=tx.init(params))
@@ -114,7 +119,7 @@ def _nll(mu, logvar, target):
     return nll
 
 
-@jax.jit
+
 def train_step(state: TrainState,
                batch: dict,
                std: Standardizer):
@@ -143,6 +148,9 @@ def train_step(state: TrainState,
     new_state = state.replace(step=state.step + 1, params=new_params, opt_state=new_opt_state)
     return new_state, metrics
 
+train_step = jax.jit(train_step, static_argnums=(2,))
+
+
 
 # Prediction & Evaluation
 @jax.jit
@@ -150,7 +158,7 @@ def predict_next(state: TrainState,
                  std: Standardizer,
                  obs: jnp.ndarray,   # (B, obs_dim)
                  act: jnp.ndarray,   # (B, act_dim)
-                 rng: Optional[jax.random.KeyArray] = None,
+                 rng: Optional[Any] = None,
                  deterministic: bool = True,
                  member_idx: Optional[int] = None):
     """
@@ -186,7 +194,7 @@ def predict_next(state: TrainState,
 def eval_error(state: TrainState,
                std: Standardizer,
                batch: dict,
-               rng: Optional[jax.random.KeyArray] = None,
+               rng: Optional[Any] = None,
                deterministic: bool = True,
                member_idx: Optional[int] = None):
     """

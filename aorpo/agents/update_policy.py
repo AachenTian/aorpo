@@ -1,6 +1,5 @@
 # aorpo/agents/update_policy.py
 from __future__ import annotations
-from dataclasses import dataclass
 from typing import Dict, Any
 
 import jax
@@ -13,13 +12,12 @@ from omegaconf import DictConfig
 
 
 #Update step
-@jax.jit
 def update_policy(
         policy_state: TrainState,
         q_state: TrainState,
         batch: Dict[str, jnp.ndarray],
         cfg: DictConfig,
-        rng: jax.random.KeyArray,
+        rng: Any,
 ):
     """
     update policy parameters using the objective:
@@ -31,6 +29,7 @@ def update_policy(
         )
 
         q_values = q_state.apply_fn({"params": q_state.params}, batch["obs"], actions)
+        q_values = jnp.mean(q_values, axis=0)  # 平均 ensemble 维度 (E)
 
         policy_loss = jnp.mean(cfg.alpha * log_probs - q_values)
         return policy_loss, {"policy_loss": policy_loss}
@@ -41,3 +40,4 @@ def update_policy(
     new_state = policy_state.replace(step=policy_state.step + 1,
                                      params=new_params, opt_state=opt_state)
     return new_state, metrics
+update_policy = jax.jit(update_policy, static_argnums=(3,))

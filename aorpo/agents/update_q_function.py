@@ -8,6 +8,7 @@ import jax
 import jax.numpy as jnp
 import optax
 from flax.training.train_state import TrainState
+from omegaconf import DictConfig
 
 from aorpo.agents.q_function import QNet
 from aorpo.agents.policy import PolicyNet
@@ -26,13 +27,13 @@ class QFunctionConfig:
 # --------------------------------
 # Training Step
 # --------------------------------
-@jax.jit
+
 def update_q_function(
     q_state: TrainState,
     target_q_state: TrainState,
     policy_state: TrainState,
     batch: Dict[str, jnp.ndarray],
-    cfg: QFunctionConfig,
+    cfg: DictConfig,
 ):
     """
     Update Q-function parameters.
@@ -45,12 +46,13 @@ def update_q_function(
 
         # Next action & log prob from policy
         rng = jax.random.PRNGKey(0)
-        next_action, _ = PolicyNet.sample_action(policy_state.params, policy_state.apply_fn, rng, batch["next_obs"])
+        next_action, _ = policy_state.apply_fn(policy_state.params, batch["next_obs"])
         log_prob = jnp.sum(-0.5 * next_action ** 2, axis=-1)  # 简化估计，可替换成真实 log π
 
         # Target Q
         q_target_next = target_q_state.apply_fn({'params': target_q_state.params},
                                                 batch["next_obs"], next_action)
+        print(type(cfg.gamma))
         target = batch["rew"] + cfg.gamma * (1.0 - batch["done"]) * (q_target_next - cfg.alpha * log_prob)
 
         # MSE loss
@@ -62,3 +64,4 @@ def update_q_function(
     new_params = optax.apply_updates(q_state.params, updates)
     new_state = q_state.replace(step=q_state.step + 1, params=new_params, opt_state=opt_state)
     return new_state, metrics
+update_q_function = jax.jit(update_q_function, static_argnums=(4,))

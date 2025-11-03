@@ -1,4 +1,8 @@
 defaults:
-  - agent/q_function:
-  - agent/policy:
-  - agent.model_dynamics:
+  - agents@agents.q_function: q_function
+  - agents@agents.policy: policy
+  - agents@agents.model_dynamics: model_dynamics
+
+env:
+  obs_dim: 4     # 观测空间维度
+  act_dim: 2     # 动作空间维度
