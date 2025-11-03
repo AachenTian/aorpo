@@ -29,7 +29,7 @@ def update_policy(
         )
 
         q_values = q_state.apply_fn({"params": q_state.params}, batch["obs"], actions)
-        q_values = jnp.mean(q_values, axis=0)  # 平均 ensemble 维度 (E)
+        q_values = jnp.mean(q_values, axis=0)  # average in ensemble dimension E
 
         policy_loss = jnp.mean(cfg.alpha * log_probs - q_values)
         return policy_loss, {"policy_loss": policy_loss}

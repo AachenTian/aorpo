@@ -137,7 +137,6 @@ def train_step(state: TrainState,
         x = jnp.concatenate([obs_n, act_n], axis=-1)   # (B, obs+act)
 
         mu, logvar = state.apply_fn({'params': params}, x)  # (E,B,D)
-        # Broadcast target to (E,B,D) for ensemble loss
         target = jnp.broadcast_to(delta_n, mu.shape)
         loss = _nll(mu, logvar, target)
         return loss, {'nll': loss}
@@ -153,7 +152,7 @@ train_step = jax.jit(train_step, static_argnums=(2,))
 
 
 # Prediction & Evaluation
-@jax.jit
+#@jax.jit
 def predict_next(state: TrainState,
                  std: Standardizer,
                  obs: jnp.ndarray,   # (B, obs_dim)

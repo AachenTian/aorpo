@@ -6,15 +6,15 @@ from omegaconf import DictConfig, OmegaConf
 
 from aorpo.agents.policy import init_policy_model
 from aorpo.agents.q_function import init_q_function
-from aorpo.agents.model_dynamics import init_model, train_step, Standardizer
+from aorpo.agents.model_dynamics import init_model, train_step, Standardizer, eval_error
 from aorpo.agents.update_policy import update_policy
-from aorpo.agents.update_q_function import update_q_function  # 你之后可以加上这个
+from aorpo.agents.update_q_function import update_q_function
 
 @hydra.main(config_path="../aorpo/aorpo/configs", config_name="train.yaml", version_base=None)
 def main(cfg: DictConfig):
-    print("✅ Loaded Hydra config:")
+    print("Loaded Hydra config:")
     print(OmegaConf.to_yaml(cfg))
-    print("✅ Starting fake-data training test...")
+    print("Starting fake-data training test...")
 
     # --- RNG initialization ---
     rng = jax.random.PRNGKey(0)
@@ -30,7 +30,7 @@ def main(cfg: DictConfig):
     # --- prepare fake data ---
     fake_obs = jax.random.normal(obs_key, (128, obs_dim))
     fake_act = jax.random.normal(act_key, (128, act_dim))
-    fake_next_obs = fake_obs + 0.1 * jax.random.normal(rng, fake_obs.shape) # 假设下一状态略有变化
+    fake_next_obs = fake_obs + 0.1 * jax.random.normal(rng, fake_obs.shape)
     std = Standardizer.fit(fake_obs, fake_act, fake_next_obs)
 
     # --- batch ---
@@ -43,20 +43,22 @@ def main(cfg: DictConfig):
     }
 
     # --- simulation training loop ---
-    for step in range(1, 6):  # 只跑5步看看能否收敛
-        # 1️ 更新模型（model dynamics）
+    for step in range(1, 6):  # only 5 steps
+        # 1️ update model dynamics
         model_state, model_metrics = train_step(model_state, batch, std)
+        mse = eval_error(model_state, std, batch, rng)
 
-        # 2️ 更新 Q-function（这里暂时先跳过 / 之后加）
+
+        # 2️ update Q-function
         q_state, q_metrics = update_q_function(
             q_state=q_state,
-            target_q_state=q_state,  # 如果你没有单独的 target Q，可临时传自己
-            policy_state=policy_state,  # 传入 policy 的 TrainState
+            target_q_state=q_state,
+            policy_state=policy_state,
             batch=batch,
-            cfg=cfg.agents.q_function,  # 这里传 DictConfig
+            cfg=cfg.agents.q_function,
         )
 
-        # 3️ 更新策略（policy）
+        # 3️ update policy
         policy_state, policy_metrics = update_policy(
             policy_state=policy_state,
             q_state=q_state,
@@ -67,9 +69,10 @@ def main(cfg: DictConfig):
 
         print(f"Step {step}: "
               f"Model NLL={model_metrics['nll']:.4f}, "
+              f"Eval_error={mse:.4f}，"
               f"Policy Loss={policy_metrics['policy_loss']:.4f}")
 
-    print("✅ Fake-data training completed successfully!")
+    print("Fake-data training completed successfully!")
 
 
 if __name__ == "__main__":
