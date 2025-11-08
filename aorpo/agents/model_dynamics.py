@@ -17,31 +17,35 @@ from omegaconf import DictConfig
 @dataclass
 class Standardizer:
     """Hold mean/std for obs, act, delta (next - obs)."""
-    def __init__(self, obs_mean, obs_std, act_mean, act_std, delta_mean, delta_std, eps=1e-6):
-        self.obs_mean = obs_mean
-        self.obs_std = obs_std
-        self.act_mean = act_mean
-        self.act_std = act_std
-        self.delta_mean = delta_mean
-        self.delta_std = delta_std
-        self.eps = eps
+    obs_mean: jnp.ndarray
+    obs_std: jnp.ndarray
+    a_ego_mean: jnp.ndarray
+    a_ego_std: jnp.ndarray
+    a_opp_mean: jnp.ndarray
+    a_opp_std: jnp.ndarray
+    delta_mean: jnp.ndarray
+    delta_std: jnp.ndarray
+    eps: float = 1e-6
 
-    def __hash__(self):
+    def __hash__(self)-> int:
         return id(self)
 
     @classmethod
-    def fit(cls, obs: jnp.ndarray, act: jnp.ndarray, next_obs: jnp.ndarray) -> "Standardizer":
+    def fit(cls, obs: jnp.ndarray, a_ego: jnp.ndarray, a_opp:jnp.ndarray, next_obs: jnp.ndarray) -> "Standardizer":
         delta = next_obs - obs
         def _ms(x):
             return jnp.mean(x, axis=0), jnp.std(x, axis=0) + 1e-6
+
         om, os = _ms(obs)
-        am, as_ = _ms(act)
+        aem, aes = _ms(a_ego)
+        aom, aos = _ms(a_opp)
         dm, ds = _ms(delta)
-        return cls(om, os, am, as_, dm, ds)
+        return cls(om, os, aem, aes, aom, aos, dm, ds)
 
     def norm_obs(self, x):  return (x - self.obs_mean) / (self.obs_std + self.eps)
     def denorm_obs(self, x): return x * (self.obs_std + self.eps) + self.obs_mean
-    def norm_act(self, x):  return (x - self.act_mean) / (self.act_std + self.eps)
+    def norm_a_ego(self, x):  return (x - self.a_ego_mean) / (self.a_ego_std + self.eps)
+    def norm_a_opp(self, x):  return (x - self.a_opp_mean) / (self.a_opp_std + self.eps)
     def norm_delta(self, x): return (x - self.delta_mean) / (self.delta_std + self.eps)
     def denorm_delta(self, x): return x * (self.delta_std + self.eps) + self.delta_mean
 
@@ -56,20 +60,21 @@ class SingleDynamics(nn.Module):
     max_logvar: float = 0.5
 
     @nn.compact
-    def __call__(self, x):
+    def __call__(self, x: jnp.ndarray):
+        h = x
         for d in self.hidden_dims:
-            x = nn.relu(nn.Dense(d)(x))
-        mu = nn.Dense(self.out_dim)(x)
-        logvar = nn.Dense(self.out_dim)(x)
+            h = nn.relu(nn.Dense(d)(h))
+        mu = nn.Dense(self.out_dim)(h)
+        logvar = nn.Dense(self.out_dim)(h)
         logvar = jnp.clip(logvar, self.min_logvar, self.max_logvar)
         return mu, logvar
 
 
 
 class EnsembleDynamics(nn.Module):
-    num_members: int = 5
-    hidden_dims: Sequence[int] = (256, 256)
-    out_dim: int = 0  # must be set to obs_dim
+    num_members: int
+    hidden_dims: Sequence[int]
+    out_dim: int # must be set to obs_dim
     min_logvar: float = -10.0
     max_logvar: float = 0.5
 
@@ -84,7 +89,7 @@ class EnsembleDynamics(nn.Module):
         )(hidden_dims=self.hidden_dims, out_dim=self.out_dim,
           min_logvar=self.min_logvar, max_logvar=self.max_logvar)
 
-    def __call__(self, x):
+    def __call__(self, x: jnp.ndarray):
         mu, logvar = self.member(x, axis_name='ensemble')
         return mu, logvar
 
@@ -93,7 +98,7 @@ class EnsembleDynamics(nn.Module):
 # Train utilities
 # -------------------------------
 
-def init_model(rng: Any, obs_dim:int, act_dim: int, cfg: DictConfig):
+def init_model(rng: Any, obs_dim:int, act_dim: int, opp_dim: int, cfg: DictConfig):
     model = EnsembleDynamics(
         num_members=cfg.num_members,
         hidden_dims=tuple(cfg.hidden_dims),
@@ -101,11 +106,11 @@ def init_model(rng: Any, obs_dim:int, act_dim: int, cfg: DictConfig):
         min_logvar=cfg.min_logvar,
         max_logvar=cfg.max_logvar,
     )
-
-    dummy_in = jnp.zeros((1, obs_dim + act_dim), dtype=jnp.float32)
-    params = model.init(rng, dummy_in)['params']
+    rng, init_rng = jax.random.split(rng)
+    dummy_in = jnp.zeros((1, obs_dim + act_dim + opp_dim), dtype=jnp.float32)
+    params = model.init(init_rng, dummy_in)['params']
     tx = optax.adam(cfg.lr)
-    state = TrainState(step=0, apply_fn=model.apply, params=params, tx=tx, opt_state=tx.init(params))
+    state = TrainState.create(apply_fn=model.apply, params=params, tx=tx)
     return model, state
 
 # Loss & Train
@@ -114,9 +119,10 @@ def _nll(mu, logvar, target):
     inv_var = jnp.exp(-logvar)
     inv_var = jnp.clip(inv_var, 0, 1e3)
     mse = (mu - target) ** 2
-    nll = 0.5 * (mse * inv_var + logvar)
-    nll = jnp.mean(jnp.sum(nll, axis=-1))
-    return nll
+    nll_dim = 0.5 * (mse * inv_var + logvar + jnp.log(2.0 * jnp.pi))
+    nll_b = jnp.sum(nll_dim, axis=-1)
+    nll = jnp.mean(nll_b, axis=-1)
+    return jnp.mean(nll)
 
 
 
@@ -124,17 +130,20 @@ def train_step(state: TrainState,
                batch: dict,
                std: Standardizer):
     """
-    batch: dict with keys {obs, act, next_obs}, shapes (B, *)
-    returns: new_state, metrics
+    :param state: dynamics TrainState
+    :param batch: dict with keys {obs, act, next_obs}
+    :param std:   Standardizer (静态)
+    :return: new_state, metrics
     """
     def loss_fn(params):
         # standardize inputs/targets
         obs_n = std.norm_obs(batch['obs'])
-        act_n = std.norm_act(batch['act'])
+        a_ego_n = std.norm_a_ego(batch['a_ego'])
+        a_opp_n = std.norm_a_opp(batch['a_opp'])
         delta = batch['next_obs'] - batch['obs']
         delta_n = std.norm_delta(delta)
 
-        x = jnp.concatenate([obs_n, act_n], axis=-1)   # (B, obs+act)
+        x = jnp.concatenate([obs_n, a_ego_n, a_opp_n], axis=-1)   # (B, obs+act)
 
         mu, logvar = state.apply_fn({'params': params}, x)  # (E,B,D)
         target = jnp.broadcast_to(delta_n, mu.shape)
@@ -152,22 +161,26 @@ train_step = jax.jit(train_step, static_argnums=(2,))
 
 
 # Prediction & Evaluation
-#@jax.jit
 def predict_next(state: TrainState,
                  std: Standardizer,
                  obs: jnp.ndarray,   # (B, obs_dim)
-                 act: jnp.ndarray,   # (B, act_dim)
+                 a_ego: jnp.ndarray,   # (B, act_dim)
+                 a_opp: jnp.ndarray,
                  rng: Optional[Any] = None,
                  deterministic: bool = True,
-                 member_idx: Optional[int] = None):
+                 member_idx: Optional[int] = None)-> jnp.ndarray:
     """
     Return predicted next state s' (denormalized).
     - If member_idx is None: 随机选一个 ensemble 成员（需要 rng）
     - deterministic=True: 使用均值；False: 从 N(mu, var) 采样
     """
+    a_ego = jnp.asarray(a_ego)
+    a_opp = jnp.asarray(a_opp)
+    obs = jnp.asarray(obs)
     obs_n = std.norm_obs(obs)
-    act_n = std.norm_act(act)
-    x = jnp.concatenate([obs_n, act_n], axis=-1)  # (B, in_dim)
+    a_ego_n = std.norm_a_ego(a_ego)
+    a_opp_n = std.norm_a_opp(a_opp)
+    x = jnp.concatenate([obs_n, a_ego_n, a_opp_n], axis=-1)  # (B, in_dim)
 
     mu, logvar = state.apply_fn({'params': state.params}, x)  # (E,B,D)
 
@@ -190,28 +203,29 @@ def predict_next(state: TrainState,
     next_obs = obs + delta
     return next_obs
 
-def eval_error(state: TrainState,
+def eval_error(real_state:TrainState,###############
+               opp_state: TrainState,###################
                std: Standardizer,
                batch: dict,
                rng: Optional[Any] = None,
                deterministic: bool = True,
-               member_idx: Optional[int] = None):
+               member_idx: Optional[int] = None)-> jnp.ndarray:
     """
     Evaluate model prediction error (MSE) on a given batch of real transitions.
     Used to measure model accuracy or adaptive rollout length in AORPO.
     """
-    # 模型预测下一状态
-    pred_next = predict_next(
-        state=state,
-        std=std,
-        obs=batch['obs'],
-        act=batch['act'],
-        rng=rng,
-        deterministic=deterministic,
-        member_idx=member_idx
-    )
 
-    # 计算真实误差
-    mse = jnp.mean((pred_next - batch['next_obs']) ** 2)
+    def kl_normal(mu_p, sigma_p, mu_q, sigma_q, eps=1e-6):
+        sigma_p = jnp.clip(sigma_p, eps, 1e6)
+        sigma_q = jnp.clip(sigma_q, eps, 1e6)
+        return jnp.log(sigma_q / sigma_p) + ((sigma_p ** 2 + (mu_p - mu_q) ** 2) / (2.0 * sigma_q ** 2)) - 0.5
 
-    return mse
+    mu_real, std_real = real_state.apply_fn({"params": real_state.params}, batch["obs"])
+    mu_opp, std_opp = opp_state.apply_fn({"params":opp_state.params}, batch["obs"])
+    std_real = jnp.exp(jnp.clip(std_real, -10.0, 2.0))  # [exp(-10), exp(2)] ≈ [4.5e-5, 7.4]
+    std_opp = jnp.exp(jnp.clip(std_opp, -10.0, 2.0))
+    kl = kl_normal(mu_real, std_real, mu_opp, std_opp)
+    kl = jnp.maximum(jnp.sum(kl, axis=-1), 0.0)
+    tv = jnp.sqrt(0.5 * kl)
+    tv = jnp.mean(tv)
+    return tv # shape:[batch_size]

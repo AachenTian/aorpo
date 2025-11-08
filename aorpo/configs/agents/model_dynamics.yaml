@@ -4,3 +4,4 @@ hidden_dims: [256, 256]
 num_members: 5
 min_logvar: -10.0
 max_logvar: 0.5
+

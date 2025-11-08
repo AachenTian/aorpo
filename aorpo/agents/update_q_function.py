@@ -29,39 +29,66 @@ class QFunctionConfig:
 # --------------------------------
 
 def update_q_function(
-    q_state: TrainState,
-    target_q_state: TrainState,
-    policy_state: TrainState,
-    batch: Dict[str, jnp.ndarray],
-    cfg: DictConfig,
+        q1_state: TrainState,
+        q2_state: TrainState,
+        target_q1_state: TrainState,
+        target_q2_state: TrainState,
+        policy_state: TrainState,
+        batch: Dict[str, jnp.ndarray],
+        cfg: DictConfig,
+        rng: Any,
 ):
     """
-    Update Q-function parameters.
+    Update 2 Q-function parameters.
+    AORPO Eq.(5):  J(Q) = E[(Q(s,a) - (r + γ(Q' - α log π)))^2]
     batch: dict with keys {obs, act, rew, next_obs, done}
     """
 
-    def loss_fn(params):
-        # Current Q(s,a)
-        q_pred = q_state.apply_fn({'params': params}, batch["obs"], batch["act"])
+    def loss_fn(params1, params2):
+        ego_act_dim = cfg.act_dim  # 比如2
+        ego_act = batch["a_ego"]
+        q1_pred = q1_state.apply_fn({"params":params1}, batch['obs'], ego_act)
+        q2_pred = q2_state.apply_fn({"params":params2}, batch['obs'], ego_act)
 
-        # Next action & log prob from policy
-        rng = jax.random.PRNGKey(0)
-        next_action, _ = policy_state.apply_fn(policy_state.params, batch["next_obs"])
-        log_prob = jnp.sum(-0.5 * next_action ** 2, axis=-1)  # 简化估计，可替换成真实 log π
+        next_action, log_prob, key = PolicyNet.sample_action(
+            policy_state.params, policy_state.apply_fn, rng, batch["next_obs"]
+        )
+        log_prob = jnp.sum(-0.5 * next_action**2, axis=-1)
+        q1_target_next = target_q1_state.apply_fn(
+            {"params":target_q1_state.params}, batch["next_obs"], next_action
+        )
+        q2_target_next = target_q2_state.apply_fn(
+            {"params": target_q2_state.params}, batch["next_obs"], next_action
+        )
+        q_target_next = jnp.minimum(q1_target_next, q2_target_next)
 
-        # Target Q
-        q_target_next = target_q_state.apply_fn({'params': target_q_state.params},
-                                                batch["next_obs"], next_action)
-        print(type(cfg.gamma))
-        target = batch["rew"] + cfg.gamma * (1.0 - batch["done"]) * (q_target_next - cfg.alpha * log_prob)
+        target_q = batch["rew"].squeeze(-1) + cfg.gamma * (
+            1.0 - batch["done"].squeeze(-1)
+        ) * (q_target_next - cfg.alpha * log_prob)
 
-        # MSE loss
-        loss = jnp.mean((q_pred - target) ** 2)
-        return loss, {'q_loss': loss}
+        #Q1, Q2 MSE
+        loss_q1 = jnp.mean((q1_pred - target_q) **2)
+        loss_q2 = jnp.mean((q2_pred - target_q) **2)
+        total_loss = 0.5 * (loss_q1 + loss_q2)
 
-    grads, metrics = jax.grad(loss_fn, has_aux=True)(q_state.params)
-    updates, opt_state = q_state.tx.update(grads, q_state.opt_state)
-    new_params = optax.apply_updates(q_state.params, updates)
-    new_state = q_state.replace(step=q_state.step + 1, params=new_params, opt_state=opt_state)
-    return new_state, metrics
-update_q_function = jax.jit(update_q_function, static_argnums=(4,))
+        return total_loss, {"q1_loss": loss_q1, "q2_loss": loss_q2}
+
+    grad_fn = jax.value_and_grad(loss_fn, argnums=(0,1), has_aux=True)
+    (loss, metrics), (grads1, grads2) = grad_fn(q1_state.params, q2_state.params)
+
+    updates1, opt_state1 = q1_state.tx.update(grads1, q1_state.opt_state, q1_state.params)
+    updates2, opt_state2 = q2_state.tx.update(grads2, q2_state.opt_state, q2_state.params)
+
+    new_params1 = optax.apply_updates(q1_state.params, updates1)
+    new_params2 = optax.apply_updates(q2_state.params, updates2)
+
+    new_q1_state = q1_state.replace(
+        step=q1_state.step + 1, params=new_params1, opt_state=opt_state1
+    )
+    new_q2_state = q2_state.replace(
+        step=q2_state.step + 1, params=new_params2, opt_state=opt_state2
+    )
+
+    return new_q1_state, new_q2_state, metrics, rng
+
+update_q_function = jax.jit(update_q_function, static_argnums=(6,))

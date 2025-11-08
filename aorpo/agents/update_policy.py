@@ -6,43 +6,51 @@ import jax
 import jax.numpy as jnp
 import optax
 from flax.training.train_state import TrainState
-
-from aorpo.agents.policy import PolicyNet
 from omegaconf import DictConfig
 
+from aorpo.agents.policy import PolicyNet
 
-#Update step
+
 def update_policy(
-        policy_state: TrainState,
-        q_state: TrainState,
-        batch: Dict[str, jnp.ndarray],
-        cfg: DictConfig,
-        rng: Any,
+    policy_state: TrainState,
+    q_state: TrainState,
+    batch: Dict[str, jnp.ndarray],
+    cfg: DictConfig,
+    rng: Any,
 ):
     """
-    update policy parameters using the objective:
-    L_pi = E_s [ alpha * log_pi(a|s) - Q(s,a) ]
+    Update policy parameters using SAC/AORPO objective:
+        J(π) = E_s[ α * log π(a|s) - Q(s,a) ]
     """
+
     def loss_fn(params):
-        actions, log_probs = policy_state.apply_fn(
-            params,
-            batch["obs"],
+        # --- 采样动作 & 对应 log π(a|s)
+        action, log_prob, _ = PolicyNet.sample_action(
+            params, policy_state.apply_fn, rng, batch["obs"]
         )
 
-        q_values = q_state.apply_fn({"params": q_state.params}, batch["obs"], actions)
-        q_values = jnp.mean(q_values, axis=0)  # average in ensemble dimension E
+        # --- 计算 Q(s,a)
+        q_value = q_state.apply_fn({"params": q_state.params}, batch["obs"], action)
+        q_value = jax.lax.stop_gradient(q_value)  # ❗ policy 不能更新 Q 参数
 
-        print("Log_probs mean:", jnp.mean(log_probs))
-        print("Q_values mean:", jnp.mean(q_values))
+        # --- 策略损失 Eq.(4)
+        policy_loss = jnp.mean(cfg.alpha * log_prob - q_value)
 
-        policy_loss = jnp.mean(cfg.alpha * log_probs - q_values)
         return policy_loss, {"policy_loss": policy_loss}
 
     grads, metrics = jax.grad(loss_fn, has_aux=True)(policy_state.params)
-    print("Policy grad norm:", jax.tree_util.tree_map(lambda x: jnp.linalg.norm(x), grads))
-    updates, opt_state = policy_state.tx.update(grads, policy_state.opt_state)
+
+    # --- 更新参数
+    updates, opt_state = policy_state.tx.update(grads, policy_state.opt_state, policy_state.params)
     new_params = optax.apply_updates(policy_state.params, updates)
-    new_state = policy_state.replace(step=policy_state.step + 1,
-                                     params=new_params, opt_state=opt_state)
+
+    new_state = policy_state.replace(
+        step=policy_state.step + 1,
+        params=new_params,
+        opt_state=opt_state,
+    )
+
     return new_state, metrics
+
+
 update_policy = jax.jit(update_policy, static_argnums=(3,))

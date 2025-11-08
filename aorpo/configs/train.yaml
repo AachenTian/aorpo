@@ -1,8 +1,44 @@
-defaults:
-  - agents@agents.q_function: q_function
-  - agents@agents.policy: policy
-  - agents@agents.model_dynamics: model_dynamics
+seed: 0
 
 env:
-  obs_dim: 4     # 观测空间维度
-  act_dim: 2     # 动作空间维度
+  obs_dim: 8
+  act_dim: 2
+
+replay:
+  capacity: 50000
+
+collect:
+  steps_per_epoch: 512  # 每个 epoch 真实环境的步数
+
+train:
+  epochs: 50
+  batch_size: 256
+  model_updates: 50       # 每个 epoch 训练 dynamics 的次数
+  gradient_updates: 100   # 每个 epoch 用 D_model 的更新次数
+  num_opponents: 2        # 先来一个对手，易调通
+
+rollout:
+  batch_size: 256
+  k: 10                   # 公式里的 k（最长 rollout 步数）
+
+model_dynamics:
+  lr: 3e-4
+  num_members: 5
+  hidden_dims: [256, 256]
+  min_logvar: -10.0
+  max_logvar: 0.5
+
+q_function:
+  lr: 3e-4
+  gamma: 0.99
+  alpha: 0.2
+  tau: 0.005
+  hidden_dims: [256, 256]
+  act_dim: 2
+
+policy:
+  lr: 3e-4
+  hidden_dims: [256, 256]
+  min_logvar: -5.0
+  max_logvar: 2.0
+  alpha: 0.2

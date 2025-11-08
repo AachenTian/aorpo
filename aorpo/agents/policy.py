@@ -27,12 +27,16 @@ class PolicyNet(nn.Module):
     @staticmethod
     def sample_action(params, apply_fn, rng, obs):
         """Sample an action from the policy (Gaussian & tanh)."""
-        mu, log_std = apply_fn(params, obs)
+        mu, log_std = apply_fn({"params": params}, obs)
         std = jnp.exp(log_std)
-        key, subkey = jax.random.split(rng)
+        rng, subkey = jax.random.split(rng)
         normal_sample = mu + std * jax.random.normal(subkey, mu.shape)
         action = jnp.tanh(normal_sample)
-        return action, key
+        log_prob = -0.5 * (((normal_sample -mu) / (std + 1e-6)) ** 2 + 2 * log_std + jnp.log(2 * jnp.pi))
+        log_prob = jnp.sum(log_prob, axis=-1)
+        log_prob -=jnp.sum(jnp.log(1-jnp.square(action) + 1e-6), axis=-1)
+
+        return action, log_prob, rng
 
 def init_policy_model(rng: Any,
                       obs_dim: int,
@@ -46,8 +50,9 @@ def init_policy_model(rng: Any,
         max_logvar=cfg.max_logvar
     )
 
+    rng, init_rng = jax.random.split(rng)
     dummy_obs = jnp.zeros((1, obs_dim))
-    params = model.init(rng, dummy_obs)
+    params = model.init(init_rng, dummy_obs)["params"]
     tx = optax.adam(cfg.lr)
 
     state = TrainState.create(
