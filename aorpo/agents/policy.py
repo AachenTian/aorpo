@@ -3,9 +3,13 @@ import jax
 import jax.numpy as jnp
 from typing import Sequence, Any
 from flax.training.train_state import TrainState
+from flax import struct
 import optax
 from omegaconf import DictConfig
 
+
+class TrainStateid(TrainState):
+    agent_id: str = struct.field(pytree_node=False)  #
 
 class PolicyNet(nn.Module):
     action_dim:int                              #action dimension
@@ -32,16 +36,17 @@ class PolicyNet(nn.Module):
         rng, subkey = jax.random.split(rng)
         normal_sample = mu + std * jax.random.normal(subkey, mu.shape)
         action = jnp.tanh(normal_sample)
-        log_prob = -0.5 * (((normal_sample -mu) / (std + 1e-6)) ** 2 + 2 * log_std + jnp.log(2 * jnp.pi))
+        log_prob = -0.5 * (((normal_sample -mu) ** 2 / (std + 1e-6) ** 2) + 2 * log_std + jnp.log(2 * jnp.pi))
         log_prob = jnp.sum(log_prob, axis=-1)
-        log_prob -=jnp.sum(jnp.log(1-jnp.square(action) + 1e-6), axis=-1)
+        log_prob -=jnp.sum(jnp.log(1- action ** 2 + 1e-6), axis=-1)
 
         return action, log_prob, rng
 
 def init_policy_model(rng: Any,
                       obs_dim: int,
                       act_dim: int,
-                      cfg: DictConfig
+                      cfg: DictConfig,
+                      agent_id: str
                       ):
     model = PolicyNet(
         action_dim=act_dim,
@@ -55,9 +60,10 @@ def init_policy_model(rng: Any,
     params = model.init(init_rng, dummy_obs)["params"]
     tx = optax.adam(cfg.lr)
 
-    state = TrainState.create(
+    state = TrainStateid.create(
         apply_fn = model.apply,
         params = params,
-        tx = tx
+        tx = tx,
+        agent_id = agent_id
     )
     return model, state

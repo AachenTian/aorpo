@@ -1,0 +1,1 @@
+{"episode rewards":-26.70406150817871,"_wandb":{"runtime":458},"_step":7549,"dynamics_error":-92.58837890625,"q1_loss":118.25653839111328,"q1_pred":-17.008331298828125,"sac_step":99,"_runtime":458,"_timestamp":1.7632908211415956e+09,"q2_pred":-17.06364631652832,"dynamics_logvar":-7.433568954467773,"q2_loss":118.2387924194336,"dynamics_mse":0.459256649017334,"model_step":49}

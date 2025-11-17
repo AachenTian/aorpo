@@ -1,0 +1,1 @@
+{"dynamics_logvar":-7.433568954467773,"q2_loss":14.878009796142578,"_timestamp":1.76328678224676e+09,"dynamics_error":-92.58837890625,"_wandb":{"runtime":449},"dynamics_mse":0.459256649017334,"episode rewards":-26.70406150817871,"q1_pred":-5.667300224304199,"model_step":49,"q1_loss":15.388997077941895,"sac_step":99,"_step":7549,"q2_pred":-5.734548568725586,"_runtime":449}

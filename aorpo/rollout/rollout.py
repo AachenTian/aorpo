@@ -4,9 +4,24 @@ from typing import Dict, Any, List
 import jax
 import jax.numpy as jnp
 from flax.nnx import TrainState
+from omegaconf import DictConfig, OmegaConf
+import wandb, random
 
 from aorpo.agents.model_dynamics import predict_next, eval_error
 from aorpo.agents.policy import PolicyNet
+from aorpo.utils.replay import ReplayBuffer
+
+# -----------------------------------------------------
+# communication function
+# -----------------------------------------------------
+def Comm(policy_state, obs_j, rng):
+    action, _, rng = PolicyNet.sample_action(
+        policy_state.params,
+        policy_state.apply_fn,
+        rng,
+        obs_j
+    )
+    return action, rng
 
 
 # -----------------------------------------------------
@@ -32,6 +47,8 @@ def compute_rollout_lengths(errors: List[float], k: int) -> List[int]:
         n_js.append(max(1, int(ratio)))
     return n_js
 
+def add_batch_to_replay(replay: ReplayBuffer, batch: dict, cfg:DictConfig) -> ReplayBuffer:
+    return replay.add_batch(batch, cfg)
 
 # -----------------------------------------------------
 # Rollout using learned dynamics + opponent models
@@ -62,18 +79,20 @@ def rollout_model(
 
     # 1️ 从真实经验池采样初始状态
     key, subkey = jax.random.split(rng)
-    batch_env = replay_env.sample(subkey, cfg.rollout.batch_size)
+    batch_env = replay_env.sample(subkey, cfg.rollout.batch_size, cfg.train.num_opponents)
     obs = batch_env["obs"]
+    state = batch_env["state"]
 
     # 2️ 计算每个 opponent 模型误差 ε̂_j
     errors = []
-    for opp in opponent_policies:
+    for j, opp in enumerate(opponent_policies):
         eps_j = eval_error(
-            real_state=policy_state,    #####################################
+            real_state=policy_state,
             opp_state=opp["state"],
             std=std,
             batch=batch_env,
             deterministic=True,
+            member_idx=j,
         )
         errors.append(float(eps_j))
 
@@ -84,6 +103,7 @@ def rollout_model(
     print(f"Opponent model errors: {errors}")
     print(f"Adaptive rollout steps (n^j): {n_js}")
 
+    reward_roll = 0
     # 4️ 模型rollout 循环
     for step in range(max_n):
         rng, subkey = jax.random.split(rng)
@@ -93,7 +113,7 @@ def rollout_model(
             policy_state.params,
             policy_state.apply_fn,
             subkey,
-            obs,
+            obs["agent_0"],
         )
 
         # 每个对手动作 a_j
@@ -105,40 +125,45 @@ def rollout_model(
                     opp["state"].params,
                     opp["state"].apply_fn,
                     subkey,
-                    obs,
+                    obs[f"agent_{j+1}"],
                 )
             else:
-                # 超出 n_j 时可模拟通信 (Comm)，此处简单保持上一步动作
-                a_j = a_js[-1] if len(a_js) > 0 else jnp.zeros_like(a_i)
+                # 超出 n_j 时Communicate
+                a_j, subkey = Comm(policy_state, obs[f"agent_{j+1}"], subkey)
             a_js.append(a_j)
 
         # 联合动作
         joint_act = jnp.concatenate([a_i] + a_js, axis=-1)
         a_js = jnp.concatenate(a_js, axis=-1)  # 形状：(batch_size, opp_num * act_dim)
         # 预测下一状态（模型）
-        next_obs = predict_next(
+        next_state, next_obs, reward_dict, dones_dict= predict_next(
             state=model_state,
             std=std,
-            obs=obs,
+            state_agent=state,
             a_ego=a_i,
             a_opp=a_js,
             rng=subkey,
             deterministic=False,
         )
 
-        # 奖励可选，这里使用简单负距离奖励占位符
-        reward = -jnp.linalg.norm(joint_act, axis=-1)
-
-        # 存储到模型经验池
-        replay_model.add_batch(dict(
+        reward_mean = jnp.mean(reward_dict["agent_0"])
+        reward_roll += reward_mean
+        batch_model = dict(
+            state=state,
             obs=obs,
             a_ego=a_i,
             a_opp=a_js,
-            rew=reward,
+            next_state=next_state,
             next_obs=next_obs,
-            done=jnp.zeros_like(reward)
-        ))
+            rew=reward_dict,
+            dones=dones_dict,
+        )
 
+        # 存储到模型经验池
+        replay_model = add_batch_to_replay(replay_model, batch_model, cfg)
         obs = next_obs
+    wandb.log({
+        "episode rewards": reward_roll
+    })
 
     return replay_model

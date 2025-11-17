@@ -1,0 +1,1 @@
+{"_timestamp":1.7632879340888731e+09,"_wandb":{"runtime":18},"_runtime":18,"_step":50,"dynamics_mse":0.49946093559265137,"dynamics_logvar":-2.9289541244506836,"episode rewards":-23.54392433166504,"dynamics_error":-2.1715011596679688,"model_step":49}

@@ -1,0 +1,48 @@
+seed: 0
+env:
+  state_dim: 34
+  obs_dim: 18
+  act_dim: 5
+  ENV_NAME: MPE_simple_spread_v3
+replay:
+  capacity: 50000
+collect:
+  steps_per_epoch: 300
+train:
+  epochs: 50
+  batch_size: 256
+  model_updates: 50
+  gradient_updates: 100
+  num_opponents: 2
+rollout:
+  batch_size: 256
+  k: 10
+model_dynamics:
+  lr: 0.0001
+  num_members: 10
+  hidden_dims:
+  - 256
+  - 256
+  - 256
+  - 256
+  min_logvar: -10.0
+  max_logvar: 0.5
+q_function:
+  lr: 0.01
+  gamma: 0.95
+  alpha: 0.2
+  tau: 0.005
+  hidden_dims:
+  - 256
+  - 256
+  act_dim: 2
+  agent_num: 3
+policy:
+  lr: 0.01
+  hidden_dims:
+  - 64
+  - 64
+  - 64
+  min_logvar: -5.0
+  max_logvar: 2.0
+  alpha: 0.2

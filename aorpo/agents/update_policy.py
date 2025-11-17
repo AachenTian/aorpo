@@ -1,6 +1,6 @@
 # aorpo/agents/update_policy.py
 from __future__ import annotations
-from typing import Dict, Any
+from typing import Dict, Any,  List
 
 import jax
 import jax.numpy as jnp
@@ -8,37 +8,59 @@ import optax
 from flax.training.train_state import TrainState
 from omegaconf import DictConfig
 
-from aorpo.agents.policy import PolicyNet
+from aorpo.agents.policy import PolicyNet, TrainStateid
 
 
 def update_policy(
-    policy_state: TrainState,
+    policy_state: TrainStateid,
     q_state: TrainState,
     batch: Dict[str, jnp.ndarray],
     cfg: DictConfig,
     rng: Any,
+    opponent_policies: List[Dict[str, Any]],
 ):
     """
     Update policy parameters using SAC/AORPO objective:
         J(π) = E_s[ α * log π(a|s) - Q(s,a) ]
     """
 
-    def loss_fn(params):
+    def loss_fn(params, rng):
         # --- 采样动作 & 对应 log π(a|s)
-        action, log_prob, _ = PolicyNet.sample_action(
-            params, policy_state.apply_fn, rng, batch["obs"]
+        agent_id = policy_state.agent_id
+        obs = batch["obs"][agent_id]
+        state = batch["state"]
+        a_i, log_prob, _ = PolicyNet.sample_action(
+            params, policy_state.apply_fn, rng, obs
         )
+        a_js = []
+        for j, opp in enumerate(opponent_policies):
+            # 使用 learned opponent policy
+            rng, subkey = jax.random.split(rng)
+            a_j, _, _ = PolicyNet.sample_action(
+                opp["state"].params,
+                opp["state"].apply_fn,
+                subkey,
+                batch["obs"][f"agent_{j + 1}"],
+            )
+            a_js.append(a_j)
 
+        action = jnp.concatenate([a_i] + a_js, axis=-1)
+        # jax.debug.print("log_prob:{}", log_prob)
         # --- 计算 Q(s,a)
-        q_value = q_state.apply_fn({"params": q_state.params}, batch["obs"], action)
-        q_value = jax.lax.stop_gradient(q_value)  # ❗ policy 不能更新 Q 参数
+        # q_value = q_state.apply_fn({"params": q_state.params}, state, action)
+        # q_value = jax.lax.stop_gradient(q_value)  # ❗ policy 不能更新 Q 参数
+        q_value = q_state.apply_fn(
+            {"params": jax.lax.stop_gradient(q_state.params)},
+            state,
+            action
+        )
 
         # --- 策略损失 Eq.(4)
         policy_loss = jnp.mean(cfg.alpha * log_prob - q_value)
 
         return policy_loss, {"policy_loss": policy_loss}
 
-    grads, metrics = jax.grad(loss_fn, has_aux=True)(policy_state.params)
+    grads, metrics = jax.grad(loss_fn, has_aux=True)(policy_state.params, rng)
 
     # --- 更新参数
     updates, opt_state = policy_state.tx.update(grads, policy_state.opt_state, policy_state.params)

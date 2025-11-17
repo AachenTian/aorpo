@@ -1,0 +1,1 @@
+{"sac_step":99,"dynamics_mse":0.4145940840244293,"dynamics_logvar":-7.439418315887451,"_runtime":426,"_timestamp":1.7632194115601301e+09,"q1_loss":6.641217231750488,"q2_loss":6.524605751037598,"model_step":49,"policy_loss":3.976121425628662,"episode rewards":-27.32095718383789,"_wandb":{"runtime":426},"_step":7549,"dynamics_error":-27.022022247314453}

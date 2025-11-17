@@ -1,0 +1,1 @@
+{"q1_loss":0.007728512864559889,"policy_loss":-1.9535601139068604,"_runtime":441,"_step":7499,"dynamics_error":-83.7515869140625,"_timestamp":1.7630278199363225e+09,"sac_step":99,"q2_loss":0.007728512864559889,"model_step":49,"_wandb":{"runtime":441}}
