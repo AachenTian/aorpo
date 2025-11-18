@@ -12,7 +12,7 @@ import copy
 
 # ===== 你项目里的模块 =====
 from aorpo.utils.replay import ReplayBuffer
-from aorpo.rollout.collect import collect_real_data, episode_reward
+from aorpo.rollout.collect import collect_real_data, episode_reward, rollout_compare
 from aorpo.rollout.rollout import rollout_model, compute_rollout_lengths
 
 from aorpo.agents.policy import init_policy_model, PolicyNet
@@ -83,7 +83,6 @@ def make_opp_fn(opponent_states):
         return jnp.concatenate(acts, -1), sub
     return opp_fn
 
-
 # -------------------------------------------------
 # 主训练流程（Hydra）
 # -------------------------------------------------
@@ -109,8 +108,6 @@ def main(cfg: DictConfig):
     # --- Replay Buffers
     replay_env = ReplayBuffer.create(cfg.replay.capacity, obs_dim, act_dim, opp_num, state_dim)
     replay_model = ReplayBuffer.create(cfg.replay.capacity, obs_dim, act_dim, opp_num, state_dim)
-    dummy_state = replay_env.state[0]
-    _, unravel_fn = ravel_pytree(dummy_state)
 
 
     # --- 初始化网络
@@ -191,7 +188,18 @@ def main(cfg: DictConfig):
             })
         print(f"Model NLL: {float(metrics_m['nll']):.4f}")
         print(f"[Epoch {epoch}] Model NLL: {float(metrics_m['nll']):.4f}")
-
+    rng, compare_key = jax.random.split(rng, 2)
+    state_env, state_dyna = rollout_compare(
+        policy_fn=policy_fn,
+        opp_fn=real_opp_fn,
+        model_state=model_state,
+        std=std,
+        key=compare_key,
+        horizon=15,
+        cfg=cfg
+    )
+    print("state_env:", state_env)
+    print("state_dyna:", state_dyna)
 
 if __name__ == "__main__":
     os.environ.setdefault("HYDRA_FULL_ERROR", "1")
