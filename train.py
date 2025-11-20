@@ -11,8 +11,8 @@ import wandb, random
 import copy
 
 # ===== 你项目里的模块 =====
-from aorpo.utils.replay import ReplayBuffer
-from aorpo.rollout.collect import collect_real_data, episode_reward
+from aorpo.utils.replay import ReplayBuffer, manual_flatten_dict
+from aorpo.rollout.collect import collect_real_data, episode_reward, rollout_compare
 from aorpo.rollout.rollout import rollout_model, compute_rollout_lengths
 
 from aorpo.agents.policy import init_policy_model, PolicyNet
@@ -58,7 +58,7 @@ def soft_update(target_state, source_state, tau: float):
 # -------------------------------------------------
 # 辅助：把一批 dict(jnp arrays) 加入 replay
 # -------------------------------------------------
-def add_batch_to_replay(replay: ReplayBuffer, batch: dict, cfg:DictConfig) -> ReplayBuffer:
+def add_batch_env_to_replay(replay: ReplayBuffer, batch: dict, cfg:DictConfig) -> ReplayBuffer:
     return replay.add_batch(batch, cfg)
 
 
@@ -183,14 +183,24 @@ def main(cfg: DictConfig):
             key=kc,
             cfg=cfg
         )
-
-        replay_env = add_batch_to_replay(replay_env, batch_env, cfg)
+        # def state_to_dict(s):
+        #     return {
+        #         "p_pos": s.p_pos,
+        #         "p_vel": s.p_vel,
+        #         "c": s.c,
+        #         "done": s.done,
+        #         "step": s.step,
+        #     }
+        # batch_env["state"] = state_to_dict(batch_env["state"])
+        # batch_env["next_state"] = state_to_dict(batch_env["next_state"])
+        print("batch_env.shape:", batch_env["state"].p_pos.shape)
+        replay_env = add_batch_env_to_replay(replay_env, batch_env, cfg)
         # -------------------------------------------------
         # 2) 基于 D_env 拟合 Standardizer，并训练 dynamics
         # -------------------------------------------------
         # 用一批 env 数据估计均值方差
         rng, ks = jax.random.split(rng)
-        boot = replay_env.sample(ks, batch_size=min(cfg.train.batch_size, len(replay_env)), opp_num=opp_num)
+        boot = replay_env.sample(ks, batch_size=min(epoch*cfg.train.batch_size, len(replay_env)), opp_num=opp_num)
         std = Standardizer.fit(boot["state"], boot["a_ego"], boot["a_opp"], boot["next_state"])
 
         # 训练 dynamics
@@ -299,7 +309,39 @@ def main(cfg: DictConfig):
         q2l = float(q_metrics.get("q2_loss", 0.0))
         # pil = float(pi_metrics.get("policy_loss", 0.0))
         print(f"[Epoch {epoch}] Q1 {q1l:.4f} | Q2 {q2l:.4f} | Policy") # {pil:.4f}
+    rng, compare_key = jax.random.split(rng, 2)
+    state_env, state_dyna = rollout_compare(
+        policy_fn=policy_fn,
+        opp_fn=real_opp_fn,
+        model_state=model_state,
+        std=std,
+        key=compare_key,
+        horizon=15,
+        cfg=cfg
+    )
+    T = state_dyna.shape[0]
+    mse_list = []
+    l2_list = []
+    for t in range(T):
+        env_state_t = {
+            "p_pos": state_env.p_pos[t],
+            "p_vel": state_env.p_vel[t],
+            "c": state_env.c[t],
+            "done": state_env.done[t],
+            "step": state_env.step[t]
+        }
+        flat_env = manual_flatten_dict(env_state_t)
+        flat_dyna = state_dyna[t]
+        diff = flat_env - flat_dyna
+        mse = jnp.mean(diff ** 2)
+        l2 = jnp.linalg.norm(diff)
 
+        mse_list.append(mse)
+        l2_list.append(l2)
+        wandb.log({
+            "mse": mse,
+            "l2": l2,
+        })
     wandb.finish()
     print("\n🎉 Training finished.")
 

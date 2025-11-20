@@ -6,17 +6,18 @@ import jax.numpy as jnp
 import hydra
 from omegaconf import DictConfig, OmegaConf
 from tqdm import tqdm
-from jax.flatten_util import ravel_pytree
 import wandb, random
 import copy
 
 # ===== 你项目里的模块 =====
-from aorpo.utils.replay import ReplayBuffer
+from aorpo.utils.replay import ReplayBuffer, manual_flatten_dict
 from aorpo.rollout.collect import collect_real_data, episode_reward, rollout_compare
 from aorpo.rollout.rollout import rollout_model, compute_rollout_lengths
 
+
 from aorpo.agents.policy import init_policy_model, PolicyNet
-from aorpo.agents.q_function import init_q_function   # 你在 q_function.py 里提供的初始化函数
+from aorpo.agents.q_function import init_q_function
+
 from aorpo.agents.update_q_function import update_q_function
 from aorpo.agents.update_policy import update_policy
 
@@ -172,7 +173,7 @@ def main(cfg: DictConfig):
         # -------------------------------------------------
         # 用一批 env 数据估计均值方差
         rng, ks = jax.random.split(rng)
-        boot = replay_env.sample(ks, batch_size=min(cfg.train.batch_size, len(replay_env)), opp_num=opp_num)
+        boot = replay_env.sample(ks, batch_size=min(epoch * cfg.train.batch_size, len(replay_env)), opp_num=opp_num)
         std = Standardizer.fit(boot["state"], boot["a_ego"], boot["a_opp"], boot["next_state"])
 
         # 训练 dynamics
@@ -198,8 +199,34 @@ def main(cfg: DictConfig):
         horizon=15,
         cfg=cfg
     )
+    T = state_dyna.shape[0]
+    mse_list = []
+    l2_list = []
+    for t in range(T):
+        env_state_t = {
+            "p_pos": state_env.p_pos[t],
+            "p_vel": state_env.p_vel[t],
+            "c": state_env.c[t],
+            "done": state_env.done[t],
+            "step": state_env.step[t]
+        }
+        flat_env= manual_flatten_dict(env_state_t)
+        flat_dyna = state_dyna[t]
+        diff = flat_env - flat_dyna
+        mse = jnp.mean(diff**2)
+        l2 = jnp.linalg.norm(diff)
+
+        mse_list.append(mse)
+        l2_list.append(l2)
+        wandb.log({
+            "mse" : mse,
+            "l2" : l2,
+        })
     print("state_env:", state_env)
     print("state_dyna:", state_dyna)
+    # print("state_env[0]:",state_env[0])
+    wandb.finish()
+    print("\n🎉 Training finished.")
 
 if __name__ == "__main__":
     os.environ.setdefault("HYDRA_FULL_ERROR", "1")

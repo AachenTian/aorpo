@@ -5,6 +5,7 @@ from typing import Sequence, Any
 from flax.training.train_state import TrainState
 from flax import struct
 import optax
+# from jaxmarl.tutorials.smax_introduction import init_policy
 from omegaconf import DictConfig
 
 

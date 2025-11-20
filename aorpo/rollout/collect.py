@@ -3,7 +3,8 @@ import jax
 import jax.numpy as jnp
 from aorpo.agents.policy import PolicyNet
 from aorpo.envs.jaxmarl_simple_spread_v3_env_wrapper import make_mpe_env, env_step, env_reset
-from aorpo.agents.model_dynamics import get_obs, predict_next
+from aorpo.agents.model_dynamics import predict_next
+from jax.flatten_util import ravel_pytree
 from omegaconf import DictConfig
 
 def collect_real_data(policy_fn, opp_fn, obs_dim, act_dim, opp_num, opp_dim, key, cfg: DictConfig):
@@ -49,13 +50,14 @@ def episode_reward(policy_fn, opp_fn, num_agents, key, cfg):
 
     return float(total_reward)
 
+
 def rollout_env(policy_fn, opp_fn, init_state, init_obs, key, horizon, cfg: DictConfig):
     def rollout_scan(carry, _):
         state, obs, key_env = carry
-        key_env, k1, k2, k3 = jax.random.split(key_env, 3)
+        key_env, k1, k2, k3 = jax.random.split(key_env, 4)
 
-        a_ego = policy_fn(obs, k1)
-        a_opp = opp_fn(obs, k2)
+        a_ego, k1 = policy_fn(obs, k1)
+        a_opp, k2 = opp_fn(obs, k2)
 
         next_state, next_obs, _, _, k3 = env_step(env, state, a_ego, a_opp, k3)
         return (next_state, next_obs, key_env), next_state
@@ -66,11 +68,12 @@ def rollout_env(policy_fn, opp_fn, init_state, init_obs, key, horizon, cfg: Dict
 def rollout_dynamics(policy_fn, opp_fn, model_state, std, init_state, init_obs, key, horizon):
     def rollout_scan_dyna(carry,_):
         state, obs, key_dyna = carry
-        key_dyna, k1, k2, k3 = jax.random.split(key)
+        key_dyna, k1, k2, k3 = jax.random.split(key, 4)
 
-        a_ego = policy_fn(obs, k1)
-        a_opp = opp_fn(obs, k2)
-
+        a_ego, k1 = policy_fn(obs, k1)
+        a_opp, k2 = opp_fn(obs, k2)
+        a_ego = jnp.expand_dims(a_ego, axis=0)
+        a_opp = jnp.expand_dims(a_opp, axis=0)
         next_state, next_obs, reward_dict, dones_dict = predict_next(
             state=model_state,
             std=std,
@@ -80,6 +83,7 @@ def rollout_dynamics(policy_fn, opp_fn, model_state, std, init_state, init_obs, 
             rng=k3,
             deterministic=False,
         )
+        next_obs = jax.tree_util.tree_map(lambda x: x.squeeze(0), next_obs)
         return (next_state, next_obs, key_dyna), next_state
     (final_state, final_obs, _), state = jax.lax.scan(rollout_scan_dyna, (init_state, init_obs, key), None, length=horizon)
     return state
@@ -89,7 +93,13 @@ def rollout_compare(policy_fn, opp_fn, model_state, std, key, horizon, cfg: Dict
     env = make_mpe_env(cfg)
     init_state, init_obs, key = env_reset(env, k1)
     state_env = rollout_env(policy_fn, opp_fn, init_state, init_obs, k2, horizon, cfg)
-    state_dyna = rollout_dynamics(policy_fn, opp_fn, model_state, std, init_state, init_obs, k2, horizon)
+    state_t = jax.tree.map(
+        lambda x: x.astype(jnp.float32) if x.dtype == jnp.bool_ else x,
+        init_state
+    )
+    flat_init_state, _ = ravel_pytree(state_t)
+    flat_init_state = jnp.expand_dims(flat_init_state, axis=0)
+    state_dyna = rollout_dynamics(policy_fn, opp_fn, model_state, std, flat_init_state, init_obs, k2, horizon)
     return state_env, state_dyna
 
 

@@ -67,25 +67,25 @@ def manual_unflatten_state(flat_state: jnp.ndarray, num_agents: int = 3, num_lan
     num_object = num_agents +num_land
     # --- p_pos ---
     p_pos_dim = num_object * 2
-    p_pos = flat_state[:, idx:idx + p_pos_dim].reshape(B, num_object, 2)
+    p_pos = flat_state[..., idx:idx + p_pos_dim].reshape(B, num_object, 2)
     idx += p_pos_dim
 
     # ---p_vel---
     p_vel_dim = num_object * 2
-    p_vel = flat_state[:, idx: idx + p_vel_dim].reshape(B, num_object, 2)
+    p_vel = flat_state[..., idx: idx + p_vel_dim].reshape(B, num_object, 2)
     idx += p_vel_dim
 
     # --- c ---
     c_dim = num_agents * 2
-    c = flat_state[:, idx : idx+c_dim].reshape(B, num_agents, 2)
+    c = flat_state[..., idx : idx+c_dim].reshape(B, num_agents, 2)
     idx += c_dim
 
     # --- done ---
-    dones = flat_state[:, idx : idx + num_agents].reshape(B, num_agents)
+    dones = flat_state[..., idx : idx + num_agents].reshape(B, num_agents)
     idx += num_agents
 
     # --- step ---
-    step = flat_state[:, idx:]
+    step = flat_state[..., idx:]
 
     restored_state = State(
         p_pos=p_pos,
@@ -96,36 +96,50 @@ def manual_unflatten_state(flat_state: jnp.ndarray, num_agents: int = 3, num_lan
     )
     return restored_state
 
+def unflatten_batch(flat_batch):
+    states = []
+    for i in range(flat_batch.shape[0]):
+        s = manual_unflatten_state(flat_batch[i])   # 输入 shape (1,12) 或 (12,)
+        states.append(s)
+    # 把 256 个 State 各字段 stack 成 batched state
+    return State(
+        p_pos=jnp.squeeze(jnp.stack([s.p_pos for s in states]), axis=1),
+        p_vel=jnp.squeeze(jnp.stack([s.p_vel for s in states]),axis=1),
+        c=jnp.squeeze(jnp.stack([s.c for s in states]), axis=1),
+        dones = jnp.squeeze(jnp.array([s.dones for s in states]), axis=1),
+        step=jnp.squeeze(jnp.stack([s.step for s in states]),axis=1),
+    )
+
 def get_obs(state) -> Dict[str, jnp.ndarray]:
     """计算 batched 状态下每个智能体的观测"""
     num_agents = state.c.shape[1]                     # 第二维是 agent
     num_landmarks = state.p_pos.shape[1] - num_agents
 
     # === 拆分数据 ===
-    agent_pos = state.p_pos[:, :num_agents, :]        # (B, num_agents, 2)
-    agent_vel = state.p_vel[:, :num_agents, :]        # (B, num_agents, 2)
-    landmark_pos = state.p_pos[:, num_agents:, :]     # (B, num_landmarks, 2)
-    comm = state.c[:, :num_agents, :]                 # (B, num_agents, comm_dim)
+    agent_pos = state.p_pos[..., :num_agents, :]        # (B, num_agents, 2)
+    agent_vel = state.p_vel[..., :num_agents, :]        # (B, num_agents, 2)
+    landmark_pos = state.p_pos[..., num_agents:, :]     # (B, num_landmarks, 2)
+    comm = state.c[..., :num_agents, :]                 # (B, num_agents, comm_dim)
 
     obs = {}
 
     # === 为每个智能体计算观测 ===
     for i in range(num_agents):
-        self_pos = agent_pos[:, i, :]                 # (B, 2)
-        self_vel = agent_vel[:, i, :]                 # (B, 2)
+        self_pos = agent_pos[..., i, :]                 # (B, 2)
+        self_vel = agent_vel[..., i, :]                 # (B, 2)
 
         # 相对 landmark 位置
-        rel_landmark = landmark_pos - self_pos[:, None, :]  # (B, num_landmarks, 2)
+        rel_landmark = landmark_pos - self_pos[..., None, :]  # (B, num_landmarks, 2)
 
         # 相对其他 agent 位置
         other_pos = jnp.concatenate(
-            [agent_pos[:, :i, :], agent_pos[:, i + 1:, :]], axis=1
+            [agent_pos[..., :i, :], agent_pos[..., i + 1:, :]], axis=1
         )                                             # (B, num_agents - 1, 2)
-        rel_others = other_pos - self_pos[:, None, :]  # (B, num_agents - 1, 2)
+        rel_others = other_pos - self_pos[..., None, :]  # (B, num_agents - 1, 2)
 
         # 其他 agent 的 communication
         other_comm = jnp.concatenate(
-            [comm[:, :i, :], comm[:, i + 1:, :]], axis=1
+            [comm[..., :i, :], comm[..., i + 1:, :]], axis=1
         )                                             # (B, num_agents - 1, comm_dim)
 
         # 拼接观测
@@ -306,9 +320,9 @@ def predict_next(state: TrainState,
         delta_and_rew = mu_m + stddev * jax.random.normal(sub, mu_m.shape)
 
     state_dim =state_agent.shape[-1]
-    delta_n = delta_and_rew[:, :state_dim]
-    reward_pred = delta_and_rew[:, state_dim:]
-    reward_dict = {f"agent_{i}": reward_pred[:, i:i+1] for i in range(reward_pred.shape[-1])}
+    delta_n = delta_and_rew[..., :state_dim]
+    reward_pred = delta_and_rew[..., state_dim:]
+    reward_dict = {f"agent_{i}": reward_pred[..., i:i+1] for i in range(reward_pred.shape[-1])}
 
     delta = std.denorm_delta(delta_n)      # (B,D)
     next_state_agent = state_agent + delta
@@ -316,9 +330,9 @@ def predict_next(state: TrainState,
     # from state get obs and dones
     restored_state = manual_unflatten_state(next_state_agent)
     next_obs = get_obs(restored_state)
-    dones_pred = next_state_agent[:, -4:-1]
+    dones_pred = next_state_agent[..., -4:-1]
     dones_bool = dones_pred > 0.0
-    dones_dict = {f"agent_{i}": dones_bool[:, i:i+1] for i in range(dones_pred.shape[-1])}
+    dones_dict = {f"agent_{i}": dones_bool[..., i:i+1] for i in range(dones_pred.shape[-1])}
     return next_state_agent, next_obs, reward_dict, dones_dict
 
 def eval_error(real_state:TrainState,###############

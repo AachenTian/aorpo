@@ -1,0 +1,40 @@
+{
+  "os": "Linux-6.14.0-35-generic-x86_64-with-glibc2.39",
+  "python": "CPython 3.10.19",
+  "startedAt": "2025-11-19T13:57:03.384386Z",
+  "program": "/home/yachen/RL_projects/aorpo/train_dynamics.py",
+  "codePath": "train_dynamics.py",
+  "codePathLocal": "train_dynamics.py",
+  "git": {
+    "remote": "git@github.com:AachenTian/aorpo.git",
+    "commit": "1ac7d01c6a14b74e7af69c66d81ab386b9529a0b"
+  },
+  "email": "yachen.tian@rwth-aachen.de",
+  "root": "/home/yachen/RL_projects/aorpo",
+  "host": "yachen-B550-VH-B",
+  "executable": "/home/yachen/anaconda3/envs/aorpo_jax/bin/python",
+  "cpu_count": 8,
+  "cpu_count_logical": 16,
+  "gpu": "NVIDIA GeForce RTX 4060",
+  "gpu_count": 1,
+  "disk": {
+    "/": {
+      "total": "48891670528",
+      "used": "14791303168"
+    }
+  },
+  "memory": {
+    "total": "33588318208"
+  },
+  "gpu_nvidia": [
+    {
+      "name": "NVIDIA GeForce RTX 4060",
+      "memoryTotal": "8585740288",
+      "cudaCores": 3072,
+      "architecture": "Ada",
+      "uuid": "GPU-711a23df-4281-3e27-db6b-a2b9bfef543a"
+    }
+  ],
+  "cudaVersion": "12.8",
+  "writerId": "6gfrcrriio92tucgn5hc9p7s9yl1s597"
+}

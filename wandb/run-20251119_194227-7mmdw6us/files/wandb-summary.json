@@ -1,0 +1,1 @@
+{"mse":0.6897469758987427,"_runtime":1146,"_wandb":{"runtime":1146},"dynamics_mse":1.4109203815460205,"dynamics_logvar":-5.0857133865356445,"_timestamp":1.763578895268329e+09,"dynamics_error":-42.34019470214844,"model_step":49,"l2":4.8426642417907715,"_step":10014}

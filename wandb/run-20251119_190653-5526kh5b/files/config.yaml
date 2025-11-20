@@ -1,0 +1,61 @@
+_wandb:
+    value:
+        cli_version: 0.23.0
+        e:
+            eualcu6kbcr2e6sq2vcuuddk3isv3i6a:
+                codePath: train_dynamics.py
+                codePathLocal: train_dynamics.py
+                cpu_count: 8
+                cpu_count_logical: 16
+                cudaVersion: "12.8"
+                disk:
+                    /:
+                        total: "48891670528"
+                        used: "14792613888"
+                email: yachen.tian@rwth-aachen.de
+                executable: /home/yachen/anaconda3/envs/aorpo_jax/bin/python
+                git:
+                    commit: 1ac7d01c6a14b74e7af69c66d81ab386b9529a0b
+                    remote: git@github.com:AachenTian/aorpo.git
+                gpu: NVIDIA GeForce RTX 4060
+                gpu_count: 1
+                gpu_nvidia:
+                    - architecture: Ada
+                      cudaCores: 3072
+                      memoryTotal: "8585740288"
+                      name: NVIDIA GeForce RTX 4060
+                      uuid: GPU-711a23df-4281-3e27-db6b-a2b9bfef543a
+                host: yachen-B550-VH-B
+                memory:
+                    total: "33588318208"
+                os: Linux-6.14.0-35-generic-x86_64-with-glibc2.39
+                program: /home/yachen/RL_projects/aorpo/train_dynamics.py
+                python: CPython 3.10.19
+                root: /home/yachen/RL_projects/aorpo
+                startedAt: "2025-11-19T18:06:53.934680Z"
+                writerId: eualcu6kbcr2e6sq2vcuuddk3isv3i6a
+        m: []
+        python_version: 3.10.19
+        t:
+            "1":
+                - 12
+                - 45
+                - 50
+            "2":
+                - 12
+                - 45
+                - 50
+            "3":
+                - 16
+            "4": 3.10.19
+            "5": 0.23.0
+            "12": 0.23.0
+            "13": linux-x86_64
+Environment:
+    value: mpe_spread_v3
+architecture:
+    value: AORPO
+epochs:
+    value: 10
+learning_rate:
+    value: 0.0003

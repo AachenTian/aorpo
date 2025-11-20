@@ -6,6 +6,43 @@ from omegaconf import DictConfig
 from typing import Callable, Any
 from jax.flatten_util import ravel_pytree
 
+
+def manual_flatten_state(state):
+    # 展开所有字段
+    p_pos_flat = state.p_pos.reshape(-1)       # (num_obj*2,)
+    p_vel_flat = state.p_vel.reshape(-1)       # (num_obj*2,)
+    c_flat     = state.c.reshape(-1)           # (num_agents*2,)
+    done_flat  = state.done.astype(jnp.float32).reshape(-1)  # (num_agents,)
+    step_flat  = jnp.array([state.step], dtype=jnp.float32)  # scalar
+    # 拼到一起 → 固定顺序
+    flat = jnp.concatenate([
+        p_pos_flat,
+        p_vel_flat,
+        c_flat,
+        done_flat,
+        step_flat
+    ], axis=0)
+    return flat
+
+def manual_flatten_dict(state):
+    # 展开所有字段
+    p_pos_flat = state["p_pos"].reshape(-1)  # (num_obj*2,)
+    p_vel_flat = state["p_vel"].reshape(-1)  # (num_obj*2,)
+    c_flat = state["c"].reshape(-1)  # (num_agents*2,)
+    done_flat = state["done"].astype(jnp.float32).reshape(-1)  # (num_agents,)
+    step_flat = jnp.array([state["step"]], dtype=jnp.float32)  # scalar
+    # 拼到一起 → 固定顺序
+    flat = jnp.concatenate([
+        p_pos_flat,
+        p_vel_flat,
+        c_flat,
+        done_flat,
+        step_flat
+    ], axis=0)
+    return flat
+
+
+
 @dataclass
 class ReplayBuffer:
     state: jnp.ndarray
@@ -58,9 +95,50 @@ class ReplayBuffer:
         """Add a batch (dict of jnp arrays) to replay buffer."""
         B = batch["obs"]["agent_0"].shape[0]
         idx = (jnp.arange(B) + self.ptr) % self.max_size
-        flatten_fn = jax.vmap(self.flatten_one)
+        flatten_fn = jax.vmap(manual_flatten_state)
         flat_state = flatten_fn(batch["state"]) # type: ignore
         flat_next_state = flatten_fn(batch["next_state"]) # type: ignore
+        flat_obs = ReplayBuffer.flatten_agents_dict(batch["obs"])
+        flat_a_opp = batch["a_opp"]
+        flat_next_obs = ReplayBuffer.flatten_agents_dict(batch["next_obs"])
+
+        new_state = self.state.at[idx].set(flat_state)
+        new_next_state = self.next_state.at[idx].set(flat_next_state)
+        new_obs = self.obs.at[idx].set(flat_obs)
+        new_a_ego = self.a_ego.at[idx].set(batch["a_ego"])
+        new_a_opp = self.a_opp.at[idx].set(flat_a_opp)
+        new_next_obs = self.next_obs.at[idx].set(flat_next_obs)
+
+        # --- 确保 reward 和 done 的形状一致 ---
+        flat_rew = ReplayBuffer.flatten_agents_dict(batch["rew"])
+        if flat_rew.ndim == 1:
+            flat_rew = flat_rew.reshape(-1, 1)
+        new_rew = self.rew.at[idx].set(flat_rew)
+
+        flat_dones = ReplayBuffer.flatten_agents_dict(batch["dones"])
+        # --- 如果没有 done，就创建一个 zeros ---
+        if "dones" in batch:
+            dones = flat_dones
+            if dones.ndim == 1:
+                dones = dones.reshape(-1, 1)
+        else:
+            dones = jnp.zeros_like(flat_rew)
+        new_dones = self.dones.at[idx].set(dones)
+
+        # --- 更新指针 ---
+        new_ptr = int((self.ptr + B) % self.max_size)
+        new_size = int(jnp.minimum(self.size + B, self.max_size))
+
+        return ReplayBuffer(
+            new_state, new_obs, new_a_ego, new_a_opp, new_next_state, new_next_obs, new_rew, new_dones,
+            self.max_size, new_size, new_ptr
+        )
+    def add_batch_model(self, batch, cfg:DictConfig):
+        """Add a batch (dict of jnp arrays) to replay buffer."""
+        B = batch["obs"]["agent_0"].shape[0]
+        idx = (jnp.arange(B) + self.ptr) % self.max_size
+        flat_state = batch["state"] # type: ignore
+        flat_next_state = batch["next_state"] # type: ignore
         flat_obs = ReplayBuffer.flatten_agents_dict(batch["obs"])
         flat_a_opp = batch["a_opp"]
         flat_next_obs = ReplayBuffer.flatten_agents_dict(batch["next_obs"])

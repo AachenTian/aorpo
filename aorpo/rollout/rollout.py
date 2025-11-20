@@ -6,11 +6,28 @@ import jax.numpy as jnp
 from flax.nnx import TrainState
 from omegaconf import DictConfig, OmegaConf
 import wandb, random
+from dataclasses import dataclass
 
-from aorpo.agents.model_dynamics import predict_next, eval_error
+from aorpo.agents.model_dynamics import predict_next, eval_error, unflatten_batch
 from aorpo.agents.policy import PolicyNet
 from aorpo.utils.replay import ReplayBuffer
 
+@dataclass
+class State:
+    p_pos: jnp.ndarray
+    p_vel: jnp.ndarray
+    c: jnp.ndarray
+    done: jnp.ndarray
+    step: jnp.ndarray
+
+def dict_to_state(d):
+    return State(
+        p_pos=d["p_pos"],
+        p_vel=d["p_vel"],
+        c=d["c"],
+        done=d["done"],
+        step=d["step"],
+    )
 # -----------------------------------------------------
 # communication function
 # -----------------------------------------------------
@@ -47,8 +64,8 @@ def compute_rollout_lengths(errors: List[float], k: int) -> List[int]:
         n_js.append(max(1, int(ratio)))
     return n_js
 
-def add_batch_to_replay(replay: ReplayBuffer, batch: dict, cfg:DictConfig) -> ReplayBuffer:
-    return replay.add_batch(batch, cfg)
+def add_batch_model_to_replay(replay: ReplayBuffer, batch: dict, cfg:DictConfig) -> ReplayBuffer:
+    return replay.add_batch_model(batch, cfg)
 
 # -----------------------------------------------------
 # Rollout using learned dynamics + opponent models
@@ -146,6 +163,9 @@ def rollout_model(
             deterministic=False,
         )
 
+        # state = jax.tree_util.tree_map(lambda x: x[None], state)
+        # next_state = jax.tree_util.tree_map(lambda x: x[None], next_state)
+
         reward_mean = jnp.mean(reward_dict["agent_0"])
         reward_roll += reward_mean
         batch_model = dict(
@@ -158,9 +178,22 @@ def rollout_model(
             rew=reward_dict,
             dones=dones_dict,
         )
-
+        # print("batch_model_state.shape:", batch_model["state"].shape)
+        # print("batch_model_obs.shape:", batch_model["obs"].shape)
+        # # batch_model["state"] = dict_to_state(batch_model["state"])
+        # # batch_model["next_state"] = dict_to_state(batch_model["next_state"])
+        # batch_model["state"] = batch_model["state"][:, None, :]
+        # batch_model["next_state"] = batch_model["next_state"][:, None, :]
+        # print("batch_model_state.shape:", batch_model["state"].shape)
+        # batch_model["state"] = unflatten_batch(batch_model["state"])
+        # batch_model["next_state"] = unflatten_batch(batch_model["next_state"])
+        # print("batch_model_state.shape:", batch_model["state"].p_pos.shape)
+        # print("batch_model_state.shape:", batch_model["state"].p_vel.shape)
+        # print("batch_model_state.shape:", batch_model["state"].c.shape)
+        # print("batch_model_state.shape:", batch_model["state"].dones.shape)
+        # print("batch_model_state.shape:", batch_model["state"].step.shape)
         # 存储到模型经验池
-        replay_model = add_batch_to_replay(replay_model, batch_model, cfg)
+        replay_model = add_batch_model_to_replay(replay_model, batch_model, cfg)
         obs = next_obs
     wandb.log({
         "episode rewards": reward_roll

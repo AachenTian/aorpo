@@ -15,6 +15,7 @@ collect:
 train:
   epochs: 200
   batch_size: 256
+  batch_size_std:   300
   model_updates: 50       # 每个 epoch 训练 dynamics 的次数
   gradient_updates: 100   # 每个 epoch 用 D_model 的更新次数
   num_opponents: 2
