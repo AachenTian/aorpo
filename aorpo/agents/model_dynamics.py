@@ -7,8 +7,10 @@ import jax
 import jax.numpy as jnp
 import optax
 from flax import linen as nn
+from flax import struct
 from flax.training.train_state import TrainState
 from omegaconf import DictConfig
+from brax.training.acme import running_statistics
 from aorpo.utils.replay import ReplayBuffer
 
 # -------------------------------
@@ -48,6 +50,81 @@ class Standardizer:
     def norm_a_opp(self, x):  return (x - self.a_opp_mean) / (self.a_opp_std + self.eps)
     def norm_delta(self, x): return (x - self.delta_mean) / (self.delta_std + self.eps)
     def denorm_delta(self, x): return x * (self.delta_std + self.eps) + self.delta_mean
+# -------------------------------
+# Standardization helpers
+# -------------------------------
+@struct.dataclass
+class StandardizerRS:
+    state_stats: running_statistics.RunningStatisticsState
+    a_ego_stats: running_statistics.RunningStatisticsState
+    a_opp_stats: running_statistics.RunningStatisticsState
+    delta_stats: running_statistics.RunningStatisticsState
+
+    @classmethod
+    def create(cls, core_state_dim, act_dim_ego, act_dim_opp):
+        """Initialize running stats for each component."""
+        dummy_state = jnp.zeros((core_state_dim,))
+        dummy_ego = jnp.zeros((act_dim_ego,))
+        dummy_opp = jnp.zeros((act_dim_opp,))
+        dummy_delta = jnp.zeros((core_state_dim,))
+
+        return cls(
+            state_stats=running_statistics.init_state(dummy_state),
+            a_ego_stats=running_statistics.init_state(dummy_ego),
+            a_opp_stats=running_statistics.init_state(dummy_opp),
+            delta_stats=running_statistics.init_state(dummy_delta),
+        )
+    # --------------------------------------------------------------
+    # Update running statistics using a batch from replay_env
+    # --------------------------------------------------------------
+    def update(self, batch):
+        """
+        batch:
+            'state':      (B, state_dim)
+            'a_ego':      (B, act_dim)
+            'a_opp':      (B, opp_dim)
+            'next_state': (B, state_dim)
+        """
+        core_state = extract_core_state(batch["state"])
+        core_next_state = extract_core_state(batch["next_state"])
+        delta = core_next_state - core_state
+
+        new_state_stats = running_statistics.update(self.state_stats, core_state)
+        new_ego_stats = running_statistics.update(self.a_ego_stats, batch["a_ego"])
+        new_opp_stats = running_statistics.update(self.a_opp_stats, batch["a_opp"])
+        new_delta_stats = running_statistics.update(self.delta_stats, delta)
+
+        return StandardizerRS(
+            state_stats=new_state_stats,
+            a_ego_stats=new_ego_stats,
+            a_opp_stats=new_opp_stats,
+            delta_stats=new_delta_stats,
+        )
+    # --------------------------------------------------------------
+    # Normalization
+    # --------------------------------------------------------------
+
+    def norm_state(self, x):
+        return running_statistics.normalize(x, self.state_stats)
+
+    def norm_a_ego(self, x):
+        return running_statistics.normalize(x, self.a_ego_stats)
+
+    def norm_a_opp(self, x):
+        return running_statistics.normalize(x, self.a_opp_stats)
+
+    def norm_delta(self, x):
+        return running_statistics.normalize(x, self.delta_stats)
+
+    # --------------------------------------------------------------
+    # Denormalization
+    # --------------------------------------------------------------
+
+    def denorm_state(self, x):
+        return running_statistics.denormalize(x, self.state_stats)
+
+    def denorm_delta(self, x):
+        return running_statistics.denormalize(x, self.delta_stats)
 
 
 # -------------------------------
@@ -109,6 +186,29 @@ def unflatten_batch(flat_batch):
         dones = jnp.squeeze(jnp.array([s.dones for s in states]), axis=1),
         step=jnp.squeeze(jnp.stack([s.step for s in states]),axis=1),
     )
+def extract_core_state(flat_state):
+    return flat_state[:, :18]
+
+def restore_full_state(prev_flat_state, next_core_state, cfg):
+    B = prev_flat_state.shape[0]
+
+    # 1) 先把前 18 维替换掉，后 16 维先照抄
+    full = jnp.concatenate(
+        [next_core_state, prev_flat_state[:, 18:]],
+        axis=-1
+    )
+    prev_step = prev_flat_state[:, -1]  # (B,)
+    step_next = prev_step + 1.0
+    step_next = jnp.clip(step_next, 0.0, float(cfg.train.max_steps))  # 不超过 max_steps
+    full = full.at[:, -1].set(step_next)
+
+    done_flag = (step_next >= cfg.train.max_steps).astype(full.dtype)  # (B,)
+    done_vec = jnp.tile(done_flag[:, None], (1, cfg.q_function.agent_num))  # (B,3)
+    full = full.at[:, 30: 30 + cfg.q_function.agent_num].set(done_vec)
+
+    return full
+
+
 
 def get_obs(state) -> Dict[str, jnp.ndarray]:
     """计算 batched 状态下每个智能体的观测"""
@@ -177,10 +277,10 @@ class SingleDynamics(nn.Module):
 
 
 
-class EnsembleDynamics(nn.Module):
+class EnsembleTransition(nn.Module):
     num_members: int
     hidden_dims: Sequence[int]
-    out_dim: int # must be set to state_dim
+    out_dim: int  # state_dim
     min_logvar: float = -10.0
     max_logvar: float = 0.5
 
@@ -192,32 +292,62 @@ class EnsembleDynamics(nn.Module):
             in_axes=None,
             out_axes=0,
             axis_size=self.num_members,
-        )(hidden_dims=self.hidden_dims, out_dim=self.out_dim,
-          min_logvar=self.min_logvar, max_logvar=self.max_logvar)
+        )(
+            hidden_dims=self.hidden_dims,
+            out_dim=self.out_dim,
+            min_logvar=self.min_logvar,
+            max_logvar=self.max_logvar,
+        )
 
-    def __call__(self, x: jnp.ndarray):
-        mu, logvar = self.member(x, axis_name='ensemble')
-        return mu, logvar
+    def __call__(self, x):
+        return self.member(x, axis_name="ensemble")
 
+
+class RewardNet(nn.Module):
+    hidden_dims: Sequence[int]
+    num_agents: int
+
+    @nn.compact
+    def __call__(self, x):
+        h = x
+        for d in self.hidden_dims:
+            h = nn.relu(nn.Dense(d)(h))
+        rew = nn.Dense(self.num_agents)(h)
+        return rew
 
 # -------------------------------
 # Train utilities
 # -------------------------------
 
-def init_model(rng: Any, state_dim:int, num_agents:int, act_dim: int, opp_dim: int, cfg: DictConfig):
-    model = EnsembleDynamics(
-        num_members=cfg.num_members,
-        hidden_dims=tuple(cfg.hidden_dims),
-        out_dim=state_dim+num_agents,
-        min_logvar=cfg.min_logvar,
-        max_logvar=cfg.max_logvar,
+def init_model(rng, num_agents, act_dim, opp_dim, cfg):
+    core_state_dim = (num_agents*2 + cfg.train.num_landmark) * 2
+    # transition model
+    transition = EnsembleTransition(
+        num_members=cfg.model_dynamics.num_members,
+        hidden_dims=tuple(cfg.model_dynamics.hidden_dims),
+        out_dim=core_state_dim,
+        min_logvar=cfg.model_dynamics.min_logvar,
+        max_logvar=cfg.model_dynamics.max_logvar,
     )
-    rng, init_rng = jax.random.split(rng)
-    dummy_in = jnp.zeros((1, state_dim + act_dim + opp_dim), dtype=jnp.float32)
-    params = model.init(init_rng, dummy_in)['params']
-    tx = optax.adam(cfg.lr)
-    state = TrainState.create(apply_fn=model.apply, params=params, tx=tx)
-    return model, state
+    rng, key1 = jax.random.split(rng)
+    dummy_in = jnp.zeros((1, core_state_dim + act_dim + opp_dim))
+    trans_params = transition.init(key1, dummy_in)["params"]
+
+    # reward model
+    reward_model = RewardNet(
+        hidden_dims=tuple(cfg.model_dynamics.hidden_dims),
+        num_agents=num_agents,
+    )
+    rng, key2 = jax.random.split(rng)
+    rew_params = reward_model.init(key2, dummy_in)["params"]
+
+    tx = optax.adam(cfg.model_dynamics.lr)
+
+    transition_state = TrainState.create(apply_fn=transition.apply, params=trans_params, tx=tx)
+    reward_state = TrainState.create(apply_fn=reward_model.apply, params=rew_params, tx=tx)
+
+    return transition, reward_model, transition_state, reward_state
+
 
 # Loss & Train
 def _nll(mu, logvar, target):
@@ -231,64 +361,128 @@ def _nll(mu, logvar, target):
 
 
 
-def train_step(state: TrainState,
-               batch: dict,
-               std: Standardizer):
-    """
-    :param state: dynamics TrainState
-    :param batch: dict with keys {obs, act, next_obs}
-    :param std:   Standardizer (静态)
-    :return: new_state, metrics
-    """
 
-    def agents_dict_to_array(agent_dict: dict) -> jnp.ndarray:
-        # 以 agent_0, agent_1, ... 的顺序稳定堆叠
-        keys = sorted(agent_dict.keys(), key=lambda s: int(s.split('_')[-1]))
-        arrs = [jnp.asarray(agent_dict[k]).reshape(-1) for k in keys]  # 每个是 (B,)
-        return jnp.stack(arrs, axis=-1)  # -> (B, num_agents)
-
+def train_transition_step(state, batch, std):
     def loss_fn(params):
-        # === standardize inputs/targets ===
-        state_n = std.norm_state(batch['state'])
-        a_ego_n = std.norm_a_ego(batch['a_ego'])
-        a_opp_n = std.norm_a_opp(batch['a_opp'])
-
-        delta = batch['next_state'] - batch['state']
+        core_state = extract_core_state(batch["state"])
+        core_next_state = extract_core_state(batch["next_state"])
+        state_n = std.norm_state(core_state)
+        a_ego_n = std.norm_a_ego(batch["a_ego"])
+        a_opp_n = std.norm_a_opp(batch["a_opp"])
+        delta = core_next_state - core_state
         delta_n = std.norm_delta(delta)
-        # === input ===
-        x = jnp.concatenate([state_n, a_ego_n, a_opp_n], axis=-1)   # (B, obs+act)
-        # === predict of model ===
-        mu, logvar = state.apply_fn({'params': params}, x)  # (E,B,D)
-        # E, B, D_out = mu.shape
-        # === target ===
-        rew_target = agents_dict_to_array(batch['rew']).astype(jnp.float32)  # (B, num_agents)
-        target = jnp.concatenate([delta_n, rew_target], axis=-1)
-        target = jnp.broadcast_to(target, mu.shape)
-        loss = _nll(mu, logvar, target)
+
+        x = jnp.concatenate([state_n, a_ego_n, a_opp_n], axis=-1)
+        mu, logvar = state.apply_fn({"params": params}, x)
+
+        target = jnp.tile(delta_n[None, ...], (mu.shape[0], 1, 1))
+        nll = _nll(mu, logvar, target)
         mse = jnp.mean((mu - target) ** 2)
-        logvar = jnp.mean(logvar)
-        metrics = {"nll": loss, "mse": mse, "logvar": logvar}
-        return loss, metrics
+
+        return nll, {"transition_nll": nll, "transition_mse": mse}
 
     (loss, metrics), grads = jax.value_and_grad(loss_fn, has_aux=True)(state.params)
-    updates, new_opt_state = state.tx.update(grads, state.opt_state, state.params)
+    updates, opt_state = state.tx.update(grads, state.opt_state, state.params)
     new_params = optax.apply_updates(state.params, updates)
-    new_state = state.replace(step=state.step + 1, params=new_params, opt_state=new_opt_state)
+    new_state = state.replace(params=new_params, opt_state=opt_state)
     return new_state, metrics
 
-train_step = jax.jit(train_step, static_argnums=(2,))
+
+def train_reward_step(state, batch, std):
+
+    def loss_fn(params):
+        core_state = extract_core_state(batch["state"])
+        state_n = std.norm_state(core_state)
+        a_ego_n = std.norm_a_ego(batch["a_ego"])
+        a_opp_n = std.norm_a_opp(batch["a_opp"])
+
+        x = jnp.concatenate([state_n, a_ego_n, a_opp_n], axis=-1)   # (B, S+A+O)
+
+        # predicted reward: (B, num_agents)
+        rew_pred = state.apply_fn({"params": params}, x)
+
+        # target reward: (B, num_agents)
+        # rew_target = jnp.concatenate(
+        #     [batch["rew"][f"agent_{i}"].squeeze(-1) for i in range(rew_pred.shape[-1])],
+        #     axis=-1
+        # )
+        def agents_dict_to_array(agent_dict: dict) -> jnp.ndarray:
+            # 以 agent_0, agent_1, ... 的顺序稳定堆叠
+            keys = sorted(agent_dict.keys(), key=lambda s: int(s.split('_')[-1]))
+            arrs = [jnp.asarray(agent_dict[k]).reshape(-1) for k in keys]  # 每个是 (B,)
+            return jnp.stack(arrs, axis=-1)  # -> (B, num_agents)
+
+        rew_target = agents_dict_to_array(batch['rew']).astype(jnp.float32)  # (B, num_agents)
+
+        mse = jnp.mean((rew_pred - rew_target) ** 2)
+
+        return mse, {"reward_mse": mse}
+
+    (loss, metrics), grads = jax.value_and_grad(loss_fn, has_aux=True)(state.params)
+
+    updates, opt_state = state.tx.update(grads, state.opt_state, state.params)
+    new_params = optax.apply_updates(state.params, updates)
+
+    new_state = state.replace(params=new_params, opt_state=opt_state)
+    return new_state, metrics
+
+# def train_step(state: TrainState,
+#                batch: dict,
+#                std: Standardizer):
+#     """
+#     :param state: dynamics TrainState
+#     :param batch: dict with keys {obs, act, next_obs}
+#     :param std:   Standardizer (静态)
+#     :return: new_state, metrics
+#     """
+#
+#
+#
+#     def loss_fn(params):
+#         # === standardize inputs/targets ===
+#         state_n = std.norm_state(batch['state'])
+#         a_ego_n = std.norm_a_ego(batch['a_ego'])
+#         a_opp_n = std.norm_a_opp(batch['a_opp'])
+#         delta = batch['next_state'] - batch['state']
+#         delta_n = std.norm_delta(delta)
+#
+#         # === input ===
+#         x = jnp.concatenate([state_n, a_ego_n, a_opp_n], axis=-1)   # (B, obs+act)
+#         # === predict of model ===
+#         mu, logvar = state.apply_fn({'params': params}, x)  # (E,B,D)
+#         # E, B, D_out = mu.shape
+#         # === target ===
+#         rew_target = agents_dict_to_array(batch['rew']).astype(jnp.float32)  # (B, num_agents)
+#         target = jnp.concatenate([delta_n, rew_target], axis=-1)
+#         target = jnp.broadcast_to(target, mu.shape)
+#         loss = _nll(mu, logvar, target)
+#         mse = jnp.mean((mu - target) ** 2)
+#         logvar = jnp.mean(logvar)
+#         metrics = {"nll": loss, "mse": mse, "logvar": logvar}
+#         return loss, metrics
+#
+#     (loss, metrics), grads = jax.value_and_grad(loss_fn, has_aux=True)(state.params)
+#     updates, new_opt_state = state.tx.update(grads, state.opt_state, state.params)
+#     new_params = optax.apply_updates(state.params, updates)
+#     new_state = state.replace(step=state.step + 1, params=new_params, opt_state=new_opt_state)
+#     return new_state, metrics
+#
+# train_step = jax.jit(train_step, static_argnums=())
 
 
 
 # Prediction & Evaluation
-def predict_next(state: TrainState,
+def predict_next(transition_state: TrainState,
+                 reward_state: TrainState,
                  std: Standardizer,
                  state_agent: jnp.ndarray,   # (B, obs_dim)
                  a_ego: jnp.ndarray,   # (B, act_dim)
                  a_opp: jnp.ndarray,
+                 cfg: DictConfig,
                  rng: Optional[Any] = None,
                  deterministic: bool = True,
-                 member_idx: Optional[int] = None)-> Tuple[jnp.ndarray, Dict[str, jnp.ndarray], Dict[str,jnp.ndarray], Dict[str,jnp.ndarray]]:
+                 member_idx: Optional[int] = None,
+                 )-> Tuple[jnp.ndarray, Dict[str, jnp.ndarray], Dict[str,jnp.ndarray], Dict[str,jnp.ndarray]]:
     """
     Return predicted next state s' (denormalized).
     - If member_idx is None: 随机选一个 ensemble 成员（需要 rng）
@@ -297,12 +491,13 @@ def predict_next(state: TrainState,
     a_ego = jnp.asarray(a_ego)
     a_opp = jnp.asarray(a_opp)
     state_agent = jnp.asarray(state_agent)
-    state_agent_n = std.norm_state(state_agent)
+    core_state = extract_core_state(state_agent)
+    state_agent_n = std.norm_state(core_state)
     a_ego_n = std.norm_a_ego(a_ego)
     a_opp_n = std.norm_a_opp(a_opp)
     x = jnp.concatenate([state_agent_n, a_ego_n, a_opp_n], axis=-1)  # (B, in_dim)
 
-    mu, logvar = state.apply_fn({'params': state.params}, x)  # (E,B,D)
+    mu, logvar = transition_state.apply_fn({"params": transition_state.params}, x)   # (E,B,D)
 
     if member_idx is None:
         assert rng is not None, "predict_next: rng is required when member_idx is None."
@@ -312,20 +507,19 @@ def predict_next(state: TrainState,
     logvar_m = logvar[member_idx]
 
     if deterministic:
-        delta_and_rew = mu_m
+        delta_n = mu_m
     else:
         assert rng is not None, "predict_next: rng required for stochastic sampling."
         rng, sub = jax.random.split(rng)
         stddev = jnp.exp(0.5 * logvar_m)
-        delta_and_rew = mu_m + stddev * jax.random.normal(sub, mu_m.shape)
+        delta_n = mu_m + stddev * jax.random.normal(sub, mu_m.shape)
 
-    state_dim =state_agent.shape[-1]
-    delta_n = delta_and_rew[..., :state_dim]
-    reward_pred = delta_and_rew[..., state_dim:]
-    reward_dict = {f"agent_{i}": reward_pred[..., i:i+1] for i in range(reward_pred.shape[-1])}
+    reward = reward_state.apply_fn({"params": reward_state.params}, x)
+    reward_dict = {f"agent_{i}": reward[..., i:i + 1] for i in range(reward.shape[-1])}
 
     delta = std.denorm_delta(delta_n)      # (B,D)
-    next_state_agent = state_agent + delta
+    core_next_state_agent = core_state + delta
+    next_state_agent = restore_full_state(state_agent, core_next_state_agent, cfg)
 
     # from state get obs and dones
     restored_state = manual_unflatten_state(next_state_agent)

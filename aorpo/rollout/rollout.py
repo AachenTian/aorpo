@@ -72,7 +72,8 @@ def add_batch_model_to_replay(replay: ReplayBuffer, batch: dict, cfg:DictConfig)
 # -----------------------------------------------------
 def rollout_model(
     rng: Any,
-    model_state: Any,
+    transition_state: Any,
+    reward_state: Any,
     std: Any,
     policy_state: Any,
     opponent_policies: List[Dict[str, Any]],
@@ -85,7 +86,8 @@ def rollout_model(
 
     Args:
         rng: jax.random.PRNGKey
-        model_state: trained dynamics model
+        transition_state: dynamics model (predict next_state)
+        reward_state: reward model (predict reward)
         std: Standardizer (for model_dynamics normalization)
         policy_state: main agent policy (πζ)
         opponent_policies: list of opponent policy dicts [{state, model}, ...]
@@ -99,18 +101,23 @@ def rollout_model(
     batch_env = replay_env.sample(subkey, cfg.rollout.batch_size, cfg.train.num_opponents)
     obs = batch_env["obs"]
     state = batch_env["state"]
+    a_opp = batch_env["a_opp"]
 
     # 2️ 计算每个 opponent 模型误差 ε̂_j
     errors = []
     for j, opp in enumerate(opponent_policies):
-        eps_j = eval_error(
-            real_state=policy_state,
-            opp_state=opp["state"],
-            std=std,
-            batch=batch_env,
-            deterministic=True,
-            member_idx=j,
-        )
+        target = a_opp[:, j * cfg.env.act_dim:(j + 1) * cfg.env.act_dim]
+        pred, _ = opp["state"].apply_fn({"params": opp["state"].params}, obs[f"agent_{j + 1}"])
+        pred = jnp.tanh(pred)
+        eps_j = jnp.mean((pred - target) ** 2)
+        # eps_j = eval_error(
+        #     real_state=policy_state,
+        #     opp_state=opp["state"],
+        #     std=std,
+        #     batch=batch_env,
+        #     deterministic=True,
+        #     member_idx=j,
+        # )
         errors.append(float(eps_j))
 
     # 3️ 根据公式计算每个对手的 rollout 步数 n^j
@@ -154,11 +161,13 @@ def rollout_model(
         a_js = jnp.concatenate(a_js, axis=-1)  # 形状：(batch_size, opp_num * act_dim)
         # 预测下一状态（模型）
         next_state, next_obs, reward_dict, dones_dict= predict_next(
-            state=model_state,
+            transition_state=transition_state,
+            reward_state=reward_state,
             std=std,
             state_agent=state,
             a_ego=a_i,
             a_opp=a_js,
+            cfg=cfg,
             rng=subkey,
             deterministic=False,
         )
@@ -178,20 +187,7 @@ def rollout_model(
             rew=reward_dict,
             dones=dones_dict,
         )
-        # print("batch_model_state.shape:", batch_model["state"].shape)
-        # print("batch_model_obs.shape:", batch_model["obs"].shape)
-        # # batch_model["state"] = dict_to_state(batch_model["state"])
-        # # batch_model["next_state"] = dict_to_state(batch_model["next_state"])
-        # batch_model["state"] = batch_model["state"][:, None, :]
-        # batch_model["next_state"] = batch_model["next_state"][:, None, :]
-        # print("batch_model_state.shape:", batch_model["state"].shape)
-        # batch_model["state"] = unflatten_batch(batch_model["state"])
-        # batch_model["next_state"] = unflatten_batch(batch_model["next_state"])
-        # print("batch_model_state.shape:", batch_model["state"].p_pos.shape)
-        # print("batch_model_state.shape:", batch_model["state"].p_vel.shape)
-        # print("batch_model_state.shape:", batch_model["state"].c.shape)
-        # print("batch_model_state.shape:", batch_model["state"].dones.shape)
-        # print("batch_model_state.shape:", batch_model["state"].step.shape)
+
         # 存储到模型经验池
         replay_model = add_batch_model_to_replay(replay_model, batch_model, cfg)
         obs = next_obs

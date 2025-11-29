@@ -15,10 +15,13 @@ collect:
 train:
   epochs: 200
   batch_size: 256
-  batch_size_std:   300
+  batch_size_std: 300
   model_updates: 50       # 每个 epoch 训练 dynamics 的次数
   gradient_updates: 100   # 每个 epoch 用 D_model 的更新次数
   num_opponents: 2
+  num_landmark: 3
+  core_state_dim: 18
+  max_steps: 25
 
 rollout:
   batch_size: 256
@@ -39,6 +42,7 @@ q_function:
   hidden_dims: [256, 256]
   act_dim: 2
   agent_num: 3
+  reward_scale: 1
 
 policy:
   lr: 0.01

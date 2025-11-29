@@ -29,19 +29,25 @@ def update_policy(
         agent_id = policy_state.agent_id
         obs = batch["obs"][agent_id]
         state = batch["state"]
-        a_i, log_prob, _ = PolicyNet.sample_action(
+        a_i, log_prob, rng = PolicyNet.sample_action(
             params, policy_state.apply_fn, rng, obs
         )
         a_js = []
         for j, opp in enumerate(opponent_policies):
             # 使用 learned opponent policy
             rng, subkey = jax.random.split(rng)
-            a_j, _, _ = PolicyNet.sample_action(
+            # a_j, _, _ = PolicyNet.sample_action(
+            #     opp["state"].params,
+            #     opp["state"].apply_fn,
+            #     subkey,
+            #     batch["obs"][f"agent_{j + 1}"],
+            # )
+            a_j = PolicyNet.deterministic_action(
                 opp["state"].params,
                 opp["state"].apply_fn,
-                subkey,
                 batch["obs"][f"agent_{j + 1}"],
             )
+            a_j = jax.lax.stop_gradient(a_j)
             a_js.append(a_j)
 
         action = jnp.concatenate([a_i] + a_js, axis=-1)

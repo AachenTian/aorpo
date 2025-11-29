@@ -14,31 +14,38 @@ def env_reset(env, key):
     return state, obs, key
 
 def env_step(env, state, a_ego, a_opps, key):
+    a_ego = a_ego.reshape(1,-1)
+    a_opps = a_opps.reshape(2, -1)
     actions = jnp.concatenate([a_ego, a_opps], axis=0)
     actions = {agent: actions[i] for i,agent in enumerate(env.agents)}
     obs, next_state, rewards, dones, infos = env.step(key, state, actions)
     return next_state, obs, rewards, dones, key
 
 
-# @hydra.main(config_path="../configs", config_name="train", version_base=None)
-# def main(cfg: DictConfig):
-#     rng = jax.random.PRNGKey(cfg.seed)
-#
-#     env = make_mpe_env(cfg)
-#     print(f"✅ Env initialized: {cfg.env.ENV_NAME}")
-#
-#     state, obs, key = env_reset(env, rng)
-#     print("obs keys:", obs.keys())
-#     print("state:", state)
-#
-#     a_ego = jnp.zeros((cfg.env.act_dim,))
-#     a_opps = jnp.zeros((cfg.train.num_opponents, cfg.env.act_dim))
-#     next_state, obs, rewards, dones, key = env_step(env, state, a_ego, a_opps, key)
-#     print("next_state:",next_state)
-#     print("obs:", obs)
-#     print("rewards:", rewards)
-#     print("dones:", dones)
-#
-# if __name__ == "__main__":
-#     os.environ.setdefault("HYDRA_FULL_ERROR", "1")
-#     main()
+@hydra.main(config_path="../configs", config_name="train", version_base=None)
+def main(cfg: DictConfig):
+    rng = jax.random.PRNGKey(cfg.seed)
+
+    env = make_mpe_env(cfg)
+    print(f"✅ Env initialized: {cfg.env.ENV_NAME}")
+    rng, subrng = jax.random.split(rng,2)
+    state, obs, key = env_reset(env, subrng)
+    print("obs keys:", obs.keys())
+    print("state:", state)
+
+    a_ego = jnp.zeros((cfg.env.act_dim,))
+    a_opps = jnp.zeros((cfg.train.num_opponents * cfg.env.act_dim))
+    for i in range(2):
+        next_state, obs, rewards, dones, key = env_step(env, state, a_ego, a_opps, key)
+        print("landmarks:", next_state.p_pos[3:])
+        print("episode done flags:", dones)
+        print("next_state:", next_state.step)
+        # print("next_state:",next_state)
+        # print("obs:", obs)
+        # print("rewards:", rewards)
+        # print("dones:", dones)
+        state = next_state
+
+if __name__ == "__main__":
+    os.environ.setdefault("HYDRA_FULL_ERROR", "1")
+    main()

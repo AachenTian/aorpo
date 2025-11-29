@@ -17,7 +17,7 @@ from aorpo.rollout.rollout import rollout_model, compute_rollout_lengths
 
 from aorpo.agents.policy import init_policy_model, PolicyNet
 from aorpo.agents.q_function import init_q_function   # 你在 q_function.py 里提供的初始化函数
-from aorpo.agents.update_q_function import update_q_function
+from aorpo.agents.update_q_function import update_q_function, evaluate_fixed_q_loss
 from aorpo.agents.update_policy import update_policy
 
 
@@ -34,12 +34,13 @@ run = wandb.init(
     entity="yachen-tian-rwth-aachen-university",
     # Set the wandb project where this run will be logged.
     project="AORPO",
+    # mode="offline",
     # Track hyperparameters and run metadata.
     config={
         "learning_rate": 3e-4,
         "architecture": "AORPO",
         "Environment": "mpe_spread_v3",
-        "epochs": 10,
+        "epochs": 200,
     },
 )
 
@@ -123,8 +124,7 @@ def main(cfg: DictConfig):
     # --- Replay Buffers
     replay_env = ReplayBuffer.create(cfg.replay.capacity, obs_dim, act_dim, opp_num, state_dim)
     replay_model = ReplayBuffer.create(cfg.replay.capacity, obs_dim, act_dim, opp_num, state_dim)
-    dummy_state = replay_env.state[0]
-    _, unravel_fn = ravel_pytree(dummy_state)
+    replay_env_fix = ReplayBuffer.create(cfg.replay.capacity, obs_dim, act_dim, opp_num, state_dim)
 
 
     # --- 初始化网络
@@ -161,6 +161,25 @@ def main(cfg: DictConfig):
 
     print("✅ Init done.")
 
+    #prepare fixed_batch
+    rng, k_fix = jax.random.split(rng)
+    policy_fn = make_policy_fn(policy_state)
+    real_opp_fn = make_opp_fn(real_opponent_states)
+    batch_env_fix, final_state_fix, rng = collect_real_data(
+        policy_fn=policy_fn,
+        opp_fn=real_opp_fn,
+        obs_dim=obs_dim,
+        act_dim=act_dim,
+        opp_num=opp_num,
+        opp_dim=act_dim,  # 如果每个对手与 ego 维度不同，这里改成对应维度
+        key=k_fix,
+        cfg=cfg
+    )
+    rng, k_fix_sample = jax.random.split(rng)
+    replay_env_fix = add_batch_env_to_replay(replay_env_fix, batch_env_fix, cfg)
+    batch_env_fix_sample = replay_env_fix.sample(k_fix_sample, batch_size=cfg.train.batch_size, opp_num=opp_num)
+
+
     # ============= 训练循环 =============
     for epoch in tqdm(range(1, cfg.train.epochs + 1), desc="Training Epochs"):
         print(f"\n===== Epoch {epoch}/{cfg.train.epochs} =====")
@@ -183,24 +202,14 @@ def main(cfg: DictConfig):
             key=kc,
             cfg=cfg
         )
-        # def state_to_dict(s):
-        #     return {
-        #         "p_pos": s.p_pos,
-        #         "p_vel": s.p_vel,
-        #         "c": s.c,
-        #         "done": s.done,
-        #         "step": s.step,
-        #     }
-        # batch_env["state"] = state_to_dict(batch_env["state"])
-        # batch_env["next_state"] = state_to_dict(batch_env["next_state"])
-        print("batch_env.shape:", batch_env["state"].p_pos.shape)
+
         replay_env = add_batch_env_to_replay(replay_env, batch_env, cfg)
         # -------------------------------------------------
         # 2) 基于 D_env 拟合 Standardizer，并训练 dynamics
         # -------------------------------------------------
         # 用一批 env 数据估计均值方差
         rng, ks = jax.random.split(rng)
-        boot = replay_env.sample(ks, batch_size=min(epoch*cfg.train.batch_size, len(replay_env)), opp_num=opp_num)
+        boot = replay_env.sample(ks, batch_size=min(epoch * cfg.train.batch_size, len(replay_env)), opp_num=opp_num)
         std = Standardizer.fit(boot["state"], boot["a_ego"], boot["a_opp"], boot["next_state"])
 
         # 训练 dynamics
@@ -266,14 +275,14 @@ def main(cfg: DictConfig):
                 # print("Q2 is smaller, mean:", float(mean_q2))
 
 
-            # policy_state, pi_metrics = update_policy(
-            #     policy_state=policy_state,
-            #     q_state=smaller_q_state,   # 如果你在 update_policy 里使用 min(Q1,Q2)，这里传个结构或改函数
-            #     batch=batch,
-            #     cfg=cfg.policy,
-            #     rng=rng,
-            #     opponent_policies=[{"state": s} for s in real_opponent_states],
-            # )
+            policy_state, pi_metrics = update_policy(
+                policy_state=policy_state,
+                q_state=smaller_q_state,   # 如果你在 update_policy 里使用 min(Q1,Q2)，这里传个结构或改函数
+                batch=batch,
+                cfg=cfg.policy,
+                rng=rng,
+                opponent_policies=[{"state": s} for s in real_opponent_states],
+            )
             # 软更新 target Q
             target_q1_state = soft_update(target_q1_state, q1_state, cfg.q_function.tau)
             target_q2_state = soft_update(target_q2_state, q2_state, cfg.q_function.tau)
@@ -294,8 +303,8 @@ def main(cfg: DictConfig):
                 step = policy_state.step,
             )
             update_real_opp_state.append(opp_state)
-
         real_opponent_states = update_real_opp_state
+
         rng, kr = jax.random.split(rng, 2)
         policy_fn = make_policy_fn(policy_state)
         opp_fn = make_opp_fn(real_opponent_states)
@@ -309,6 +318,28 @@ def main(cfg: DictConfig):
         q2l = float(q_metrics.get("q2_loss", 0.0))
         # pil = float(pi_metrics.get("policy_loss", 0.0))
         print(f"[Epoch {epoch}] Q1 {q1l:.4f} | Q2 {q2l:.4f} | Policy") # {pil:.4f}
+
+        #evaluate fixed q loss use fixed batch
+        eval_metrics = evaluate_fixed_q_loss(
+            q1_state,
+            q2_state,
+            target_q1_state,
+            target_q2_state,
+            policy_state,
+            real_opponent_states,
+            batch_env_fix_sample,
+            cfg.q_function,
+            rng,
+        )
+        wandb.log({
+            "fixed_q1_loss": float(eval_metrics["q1_eval_loss"]),
+            "fixed_q2_loss": float(eval_metrics["q2_eval_loss"]),
+            "fixed_q1_pred_mean": float(eval_metrics["q1_pred_mean"]),
+            "fixed_q2_pred_mean": float(eval_metrics["q2_pred_mean"]),
+            "fixed_target_mean": float(eval_metrics["target_mean"]),
+        })
+        print("Q eval loss:", eval_metrics["q1_eval_loss"])
+
     rng, compare_key = jax.random.split(rng, 2)
     state_env, state_dyna = rollout_compare(
         policy_fn=policy_fn,

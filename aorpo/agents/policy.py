@@ -29,6 +29,7 @@ class PolicyNet(nn.Module):
         log_std = jnp.clip(log_std, self.min_logvar, self.max_logvar)
         return mu, log_std
 
+
     @staticmethod
     def sample_action(params, apply_fn, rng, obs):
         """Sample an action from the policy (Gaussian & tanh)."""
@@ -42,6 +43,21 @@ class PolicyNet(nn.Module):
         log_prob -=jnp.sum(jnp.log(1- action ** 2 + 1e-6), axis=-1)
 
         return action, log_prob, rng
+
+    @staticmethod
+    def deterministic_action(params, apply_fn, obs):
+        """
+        Deterministic policy action: tanh(mu)
+        This is used for evaluation, not for exploration or training.
+
+        params: policy parameters
+        apply_fn: policy_state.apply_fn
+        obs: observation tensor (B, obs_dim)
+        """
+        mu, log_std = apply_fn({"params": params}, obs)
+        action = jnp.tanh(mu)
+        return action
+
 
 def init_policy_model(rng: Any,
                       obs_dim: int,

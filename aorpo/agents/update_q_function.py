@@ -63,12 +63,18 @@ def update_q_function(
         for j, opp in enumerate(opponent_policies):
             # 使用 learned opponent policy
             rng, subkey = jax.random.split(rng)
-            a_j, _, _ = PolicyNet.sample_action(
+            # a_j, _, _ = PolicyNet.sample_action(
+            #     opp["state"].params,
+            #     opp["state"].apply_fn,
+            #     subkey,
+            #     next_obs[f"agent_{j+1}"],
+            # )
+            a_j = PolicyNet.deterministic_action(
                 opp["state"].params,
                 opp["state"].apply_fn,
-                subkey,
-                next_obs[f"agent_{j+1}"],
+                next_obs[f"agent_{j + 1}"],
             )
+            a_j = jax.lax.stop_gradient(a_j)
             a_js.append(a_j)
 
         next_action = jnp.concatenate([a_i] + a_js, axis=-1)
@@ -80,13 +86,15 @@ def update_q_function(
         )
         q_target_next = jnp.minimum(q1_target_next, q2_target_next)
 
-        rewards = jnp.stack(
-            [batch["rew"][f"agent_{i}"] for i in range(cfg.agent_num)], axis=-1
-        )  # (B, num_agents)
-        reward = jnp.sum(rewards, axis=-1)  # (B,)
-        target_q = reward.squeeze(-1) + cfg.gamma * (
-            1.0 - batch["dones"]['agent_0'].squeeze(-1)
-        ) * (q_target_next - cfg.alpha * log_prob)
+        # rewards = jnp.stack(
+        #     [batch["rew"][f"agent_{i}"] for i in range(cfg.agent_num)], axis=-1
+        # )  # (B, num_agents)
+        #reward = jnp.sum(rewards, axis=-1)  # (B,)
+        # reward = reward / cfg.agent_num
+        reward = batch["rew"]["agent_0"]
+        reward = reward / cfg.reward_scale
+        target_q = reward.squeeze(-1) + cfg.gamma * (1.0 - batch["dones"]['agent_0'].squeeze(-1)) * (q_target_next - cfg.alpha * log_prob)
+        target_q = jax.lax.stop_gradient(target_q)
 
         #Q1, Q2 MSE
         loss_q1 = jnp.mean((q1_pred - target_q) **2)
@@ -116,3 +124,99 @@ def update_q_function(
     return new_q1_state, new_q2_state, metrics, rng
 
 update_q_function = jax.jit(update_q_function, static_argnums=(7,))
+
+
+
+def evaluate_fixed_q_loss(
+    q1_state,
+    q2_state,
+    target_q1_state,
+    target_q2_state,
+    policy_state,
+    opponent_policies,
+    fixed_batch,
+    cfg,
+    rng,
+):
+    """
+    Evaluate Q-loss on a fixed batch of data (no randomness).
+    This allows you to see if Q-function is actually improving.
+
+    fixed_batch keys:
+    {
+      "obs", "next_obs", "a_ego", "a_opp",
+      "state", "next_state",
+      "rew", "dones"
+    }
+    """
+
+    def compute_loss(params1, params2, rng):
+        ego_act = fixed_batch["a_ego"]
+        opp_act = fixed_batch["a_opp"]
+        state = fixed_batch["state"]
+        next_state = fixed_batch["next_state"]
+
+        # 1. Current Q(s, a)
+        joint_act = jnp.concatenate([ego_act, opp_act], axis=-1)
+        q1_pred = q1_state.apply_fn({"params": params1}, state, joint_act)
+        q2_pred = q2_state.apply_fn({"params": params2}, state, joint_act)
+
+        # 2. Next actions (we freeze RNG so the evaluation is deterministic)
+        rng, subkey = jax.random.split(rng)
+
+        a_i = PolicyNet.deterministic_action(
+            policy_state.params,
+            policy_state.apply_fn,
+            fixed_batch["next_obs"]["agent_0"],
+        )
+        log_prob = 0
+        a_js = []
+        for j, opp in enumerate(opponent_policies):
+            rng, sub = jax.random.split(rng)
+            a_j = PolicyNet.deterministic_action(
+                opp.params,
+                opp.apply_fn,
+                fixed_batch["next_obs"][f"agent_{j+1}"]
+            )
+            a_js.append(a_j)
+
+        next_action = jnp.concatenate([a_i] + a_js, axis=-1)
+
+        # 3. Compute Q-target
+        q1_t = target_q1_state.apply_fn({"params": target_q1_state.params},
+                                        next_state, next_action)
+        q2_t = target_q2_state.apply_fn({"params": target_q2_state.params},
+                                        next_state, next_action)
+        q_target_next = jnp.minimum(q1_t, q2_t)
+
+        # reward sum over agents
+        # rewards = jnp.stack(
+        #     [fixed_batch["rew"][f"agent_{i}"] for i in range(cfg.agent_num)], axis=-1
+        # )
+        # reward = jnp.sum(rewards, axis=-1)
+        # reward = reward / cfg.agent_num
+        reward = fixed_batch["rew"]["agent_0"]
+        reward = reward / cfg.reward_scale
+
+        target_q = (
+            reward.squeeze(-1)
+            + cfg.gamma
+            * (1 - fixed_batch["dones"]["agent_0"].squeeze(-1))
+            * (q_target_next - cfg.alpha * log_prob)
+        )
+
+        # 4. Q-loss (no gradient, one-shot eval)
+        loss_q1 = jnp.mean((q1_pred - target_q) ** 2)
+        loss_q2 = jnp.mean((q2_pred - target_q) ** 2)
+
+        return {
+            "q1_eval_loss": loss_q1,
+            "q2_eval_loss": loss_q2,
+            "q1_pred_mean": jnp.mean(q1_pred),
+            "q2_pred_mean": jnp.mean(q2_pred),
+            "target_mean": jnp.mean(target_q),
+        }
+
+    compute_loss = jax.jit(compute_loss)
+
+    return compute_loss(q1_state.params, q2_state.params, rng)

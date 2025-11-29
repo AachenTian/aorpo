@@ -1,0 +1,109 @@
+wandb_version: 1
+
+_wandb:
+  desc: null
+  value:
+    python_version: 3.10.19
+    cli_version: 0.23.0
+    is_jupyter_run: false
+    is_kaggle_kernel: false
+    start_time: 1763749978
+    t:
+      1:
+      - 12
+      - 45
+      - 50
+      2:
+      - 12
+      - 45
+      - 50
+      3:
+      - 4
+      - 16
+      - 42
+      4: 3.10.19
+      5: 0.23.0
+      13: linux-x86_64
+    e:
+      z8fzrcm57hq86mqwxsg7o35h4sr6zf9h:
+        os: Linux-5.14.0-570.58.1.el9_6.x86_64-x86_64-with-glibc2.34
+        python: CPython 3.10.19
+        started_at: '2025-11-21T18:32:57.266685Z'
+        program: /rwthfs/rz/cluster/work/llg28990/aorpo/train.py
+        code_path: train.py
+        code_path_local: train.py
+        git:
+          remote_url: git@github.com:AachenTian/aorpo.git
+          commit: fd1cc7eb747d83c81f54a1ad393c0dbb815db46b
+        root: /rwthfs/rz/cluster/work/llg28990/aorpo
+        host: n23g0004.hpc.itc.rwth-aachen.de
+        executable: /home/llg28990/miniconda3/envs/aorpo_jax/bin/python
+        cpu_count: 96
+        cpu_count_logical: 96
+        gpu_type: NVIDIA H100
+        gpu_count: 1
+        disk:
+          /:
+            total: '52361691136'
+            used: '15654367232'
+        memory:
+          total: '540133511168'
+        gpu_nvidia:
+        - name: NVIDIA H100
+          memory_total: '100485038080'
+          cuda_cores: 16896
+          architecture: Hopper
+          uuid: GPU-a91f68ab-537e-1267-38f9-0cfc9d42feed
+        cuda_version: '12.8'
+        slurm:
+          job_num_nodes: '1'
+          job_uid: '52175'
+          get_user_env: '1'
+          gpus_on_node: '1'
+          topology_addr: spines1234.ibsw09.n23g0004
+          nodeid: '0'
+          localid: '0'
+          nnodes: '1'
+          procid: '0'
+          job_nodelist: n23g0004
+          cpus_per_task: '4'
+          job_account: p0021919
+          conf: /etc/slurm/slurm.conf
+          export_env: NONE
+          topology_addr_pattern: switch.switch.node
+          gtids: '0'
+          cluster_name: rcc
+          job_user: llg28990
+          job_cpus_per_node: '4'
+          jobid: '62574139'
+          nodelist: n23g0004
+          node_aliases: (null)
+          task_pid: '497140'
+          job_gid: '52175'
+          job_id: '62574139'
+          cpus_on_node: '4'
+          script_context: prolog_task
+          job_gpus: '1'
+          mem_per_node: '61440'
+          submit_host: login23-1.hpc.itc.rwth-aachen.de
+          job_name: aorpo_single
+          prio_process: '0'
+          working_cluster: rcc:wlm23-1:6750:9728:109
+          job_qos: normal
+          tasks_per_node: '1'
+          constraint: Rocky9
+          submit_dir: /rwthfs/rz/cluster/work/llg28990/aorpo
+          job_partition: c23g
+        writer_id: z8fzrcm57hq86mqwxsg7o35h4sr6zf9h
+learning_rate:
+  desc: null
+  value: 0.0003
+architecture:
+  desc: null
+  value: AORPO
+Environment:
+  desc: null
+  value: mpe_spread_v3
+epochs:
+  desc: null
+  value: 200
