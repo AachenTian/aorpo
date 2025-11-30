@@ -76,7 +76,7 @@ def rollout_model(
     reward_state: Any,
     std: Any,
     policy_state: Any,
-    opponent_policies: List[Dict[str, Any]],
+    opponent_policies: List[Any],
     replay_env: Any,
     replay_model: Any,
     cfg: Any,
@@ -107,7 +107,7 @@ def rollout_model(
     errors = []
     for j, opp in enumerate(opponent_policies):
         target = a_opp[:, j * cfg.env.act_dim:(j + 1) * cfg.env.act_dim]
-        pred, _ = opp["state"].apply_fn({"params": opp["state"].params}, obs[f"agent_{j + 1}"])
+        pred, _ = opp.apply_fn({"params": opp.params}, obs[f"agent_{j + 1}"])
         pred = jnp.tanh(pred)
         eps_j = jnp.mean((pred - target) ** 2)
         # eps_j = eval_error(
@@ -146,8 +146,8 @@ def rollout_model(
             if step < n_js[j]:
                 # 使用 learned opponent policy
                 a_j, _, subkey = PolicyNet.sample_action(
-                    opp["state"].params,
-                    opp["state"].apply_fn,
+                    opp.params,
+                    opp.apply_fn,
                     subkey,
                     obs[f"agent_{j+1}"],
                 )
@@ -191,6 +191,7 @@ def rollout_model(
         # 存储到模型经验池
         replay_model = add_batch_model_to_replay(replay_model, batch_model, cfg)
         obs = next_obs
+        state = next_state
     wandb.log({
         "episode rewards": reward_roll
     })

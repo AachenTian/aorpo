@@ -22,20 +22,21 @@ train:
   num_landmark: 3
   core_state_dim: 18
   max_steps: 25
+  eval_interval: 1
 
 rollout:
   batch_size: 256
-  k: 10                   # 公式里的 k（最长 rollout 步数）
+  k: 25                   # 公式里的 k（最长 rollout 步数）
 
 model_dynamics:
-  lr: 0.01
+  lr: 3e-4
   num_members: 10
   hidden_dims: [256, 256, 256, 256]
   min_logvar: -10.0
   max_logvar: 0.5
 
 q_function:
-  lr: 0.01
+  lr: 3e-4
   gamma: 0.95
   alpha: 0.2
   tau: 0.005
@@ -45,7 +46,7 @@ q_function:
   reward_scale: 1
 
 policy:
-  lr: 0.01
+  lr: 3e-4
   hidden_dims: [64, 64, 64]
   min_logvar: -5.0
   max_logvar: 2.0

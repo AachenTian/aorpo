@@ -34,7 +34,7 @@ def update_q_function(
         target_q1_state: TrainState,
         target_q2_state: TrainState,
         policy_state: TrainState,
-        opponent_policies: List[Dict[str, Any]],
+        opponent_policies: List[TrainState],
         batch: Dict[str, jnp.ndarray],
         cfg: DictConfig,
         rng: Any,
@@ -70,11 +70,11 @@ def update_q_function(
             #     next_obs[f"agent_{j+1}"],
             # )
             a_j = PolicyNet.deterministic_action(
-                opp["state"].params,
-                opp["state"].apply_fn,
+                opp.params,
+                opp.apply_fn,
                 next_obs[f"agent_{j + 1}"],
             )
-            a_j = jax.lax.stop_gradient(a_j)
+            # a_j = jax.lax.stop_gradient(a_j)
             a_js.append(a_j)
 
         next_action = jnp.concatenate([a_i] + a_js, axis=-1)
@@ -107,6 +107,16 @@ def update_q_function(
 
     grad_fn = jax.value_and_grad(loss_fn, argnums=(0,1), has_aux=True)
     (loss, metrics), (grads1, grads2) = grad_fn(q1_state.params, q2_state.params, rng)
+
+    # === 打印梯度大小 ===
+    grad_norm1 = jax.tree_util.tree_reduce(
+        lambda a, b: a + jnp.linalg.norm(b), grads1, initializer=0.0
+    )
+    grad_norm2 = jax.tree_util.tree_reduce(
+        lambda a, b: a + jnp.linalg.norm(b), grads2, initializer=0.0
+    )
+    jax.debug.print("q1 function grad_norm_agent_opp = {}", grad_norm1)
+    jax.debug.print("q2 function grad_norm_agent_opp = {}", grad_norm2)
 
     updates1, opt_state1 = q1_state.tx.update(grads1, q1_state.opt_state, q1_state.params)
     updates2, opt_state2 = q2_state.tx.update(grads2, q2_state.opt_state, q2_state.params)

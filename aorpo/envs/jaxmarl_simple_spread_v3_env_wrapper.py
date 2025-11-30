@@ -33,7 +33,7 @@ def main(cfg: DictConfig):
     print("obs keys:", obs.keys())
     print("state:", state)
 
-    a_ego = jnp.zeros((cfg.env.act_dim,))
+    a_ego = jnp.ones((cfg.env.act_dim,))
     a_opps = jnp.zeros((cfg.train.num_opponents * cfg.env.act_dim))
     for i in range(2):
         next_state, obs, rewards, dones, key = env_step(env, state, a_ego, a_opps, key)
@@ -42,7 +42,7 @@ def main(cfg: DictConfig):
         print("next_state:", next_state.step)
         # print("next_state:",next_state)
         # print("obs:", obs)
-        # print("rewards:", rewards)
+        print("rewards:", rewards)
         # print("dones:", dones)
         state = next_state
 

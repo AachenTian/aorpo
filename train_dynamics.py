@@ -19,7 +19,7 @@ from aorpo.agents.policy import init_policy_model, PolicyNet
 from aorpo.agents.q_function import init_q_function
 
 from aorpo.agents.update_q_function import update_q_function, evaluate_fixed_q_loss
-from aorpo.agents.update_policy import update_policy
+from aorpo.agents.update_policy import update_policy, update_opponent_policy
 from aorpo.agents.update_opponents_model import update_opponent_model
 
 
@@ -257,7 +257,7 @@ def main(cfg: DictConfig):
             reward_state=reward_state,
             std=std,
             policy_state=policy_state,
-            opponent_policies=[{"state": s} for s in opponent_states],
+            opponent_policies=opponent_states,
             replay_env=replay_env,
             replay_model=replay_model,
             cfg=cfg,
@@ -279,7 +279,7 @@ def main(cfg: DictConfig):
                 target_q1_state=target_q1_state,
                 target_q2_state=target_q2_state,
                 policy_state=policy_state,
-                opponent_policies=[{"state": s} for s in opponent_states],
+                opponent_policies=opponent_states,
                 batch=batch,
                 cfg=cfg.q_function,
                 rng=rng,
@@ -297,25 +297,52 @@ def main(cfg: DictConfig):
                 smaller_q_state = q2_state
                 # print("Q2 is smaller, mean:", float(mean_q2))
 
+
+
+
+            #update ego policy
             policy_state, pi_metrics = update_policy(
                 policy_state=policy_state,
                 q_state=smaller_q_state,  # 如果你在 update_policy 里使用 min(Q1,Q2)，这里传个结构或改函数
                 batch=batch,
                 cfg=cfg.policy,
                 rng=rng,
-                opponent_policies=[{"state": s} for s in opponent_states],
+                opponent_policies=opponent_states,
             )
-            # 软更新 target Q
-            target_q1_state = soft_update(target_q1_state, q1_state, cfg.q_function.tau)
-            target_q2_state = soft_update(target_q2_state, q2_state, cfg.q_function.tau)
-            wandb.log({
-                "q1_loss": q_metrics["q1_loss"],
-                "q2_loss": q_metrics["q2_loss"],
-                "q1_pred": q_metrics["q1_pred"],
-                "q2_pred": q_metrics["q2_pred"],
-                # "policy_loss": pi_metrics["policy_loss"],
-                "sac_step": i
-            })
+
+
+            if epoch % 10 == 0:
+                # update real opponents policy
+                new_opponent_states = []
+
+                for i in range(len(opponent_states)):
+                    update_opp = opponent_states[i]  # 当前的 opponent_policy_state
+
+                    # 更新该 opponent 的 policy
+                    new_state, metrics = update_opponent_policy(
+                        opponent_state=update_opp,
+                        q_state=smaller_q_state,
+                        batch=batch,
+                        cfg=cfg.policy,
+                        rng=rng,
+                        ego_policy_state=policy_state,
+                        all_opponent_states=opponent_states,
+                    )
+
+                    new_opponent_states.append(new_state)
+                opponent_states = new_opponent_states
+
+        # 软更新 target Q
+        target_q1_state = soft_update(target_q1_state, q1_state, cfg.q_function.tau)
+        target_q2_state = soft_update(target_q2_state, q2_state, cfg.q_function.tau)
+        wandb.log({
+            "q1_loss": q_metrics["q1_loss"],
+            "q2_loss": q_metrics["q2_loss"],
+            "q1_pred": q_metrics["q1_pred"],
+            "q2_pred": q_metrics["q2_pred"],
+            # "policy_loss": pi_metrics["policy_loss"],
+            "sac_step": i
+        })
 
         # update_real_opp_state = []
         # for state in real_opponent_states:
@@ -363,63 +390,88 @@ def main(cfg: DictConfig):
             "fixed_target_mean": float(eval_metrics["target_mean"]),
         })
         print("Q eval loss:", eval_metrics["q1_eval_loss"])
+        # -------------------------------------------------
+        # 7) evaluate episode_reward
+        # -------------------------------------------------
+        if epoch % cfg.train.eval_interval == 0:
+            rng, compare_key = jax.random.split(rng, 2)
+            state_env, reward_env, state_dyna, reward_dyna = rollout_compare(
+                policy_fn=policy_fn,
+                opp_fn=real_opp_fn,
+                transition_state=transition_state,
+                reward_state=reward_state,
+                std=std,
+                key=compare_key,
+                horizon=15,
+                cfg=cfg
+            )
+            T = state_dyna.shape[0]
+            mse_list = []
+            l2_list = []
+            episode_reward_env = {f"agent_{i}": 0.0 for i in range(3)}
+            episode_reward_dyna = {f"agent_{i}": 0.0 for i in range(3)}
+            for t in range(T):
+                env_state_t = {
+                    "p_pos": state_env.p_pos[t],
+                    "p_vel": state_env.p_vel[t],
+                    "c": state_env.c[t],
+                    "done": state_env.done[t],
+                    "step": state_env.step[t]
+                }
+                flat_env= manual_flatten_dict(env_state_t)
+                flat_dyna = state_dyna[t]
+                diff = flat_env - flat_dyna
+                mse = jnp.mean(diff**2)
+                l2 = jnp.linalg.norm(diff)
+                mse_list.append(mse)
+                l2_list.append(l2)
 
+                # reward error
+                reward_mse_per_agent = {}
+                reward_abs_per_agent = {}
+                reward_errors = []  # MSE
 
+                for agent_i in reward_env.keys():
+                    env_r = reward_env[agent_i][t]  # (1,)
+                    dyna_r = reward_dyna[agent_i][t]  # (1,)
 
-    rng, compare_key = jax.random.split(rng, 2)
-    state_env, reward_env, state_dyna, reward_dyna = rollout_compare(
-        policy_fn=policy_fn,
-        opp_fn=real_opp_fn,
-        transition_state=transition_state,
-        reward_state=reward_state,
-        std=std,
-        key=compare_key,
-        horizon=15,
-        cfg=cfg
-    )
-    T = state_dyna.shape[0]
-    mse_list = []
-    l2_list = []
-    for t in range(T):
-        env_state_t = {
-            "p_pos": state_env.p_pos[t],
-            "p_vel": state_env.p_vel[t],
-            "c": state_env.c[t],
-            "done": state_env.done[t],
-            "step": state_env.step[t]
-        }
-        flat_env= manual_flatten_dict(env_state_t)
-        flat_dyna = state_dyna[t]
-        diff = flat_env - flat_dyna
-        mse = jnp.mean(diff**2)
-        l2 = jnp.linalg.norm(diff)
-        mse_list.append(mse)
-        l2_list.append(l2)
+                    r_diff = env_r - dyna_r  # (1,)
+                    mse_i = jnp.mean(r_diff ** 2)
 
-        # reward error
-        reward_mse_per_agent = {}
-        reward_abs_per_agent = {}
-        reward_errors = []  # MSE
+                    reward_mse_per_agent[agent_i] = mse_i
+                    reward_abs_per_agent[agent_i] = jnp.abs(r_diff)
 
-        for agent_i in reward_env.keys():
-            env_r = reward_env[agent_i][t]  # (1,)
-            dyna_r = reward_dyna[agent_i][t]  # (1,)
+                    reward_errors.append(mse_i)
 
-            r_diff = env_r - dyna_r  # (1,)
-            mse_i = jnp.mean(r_diff ** 2)
+                # === 总 reward MSE ===
+                reward_errors = jnp.stack(reward_errors)  # (N,)
+                reward_mse_total = jnp.mean(reward_errors)
+                wandb.log({
+                        "mse" : mse,
+                        "l2" : l2,
+                        "reward_error": reward_mse_total,
+                    })
+            for agent_i in reward_env.keys():
+                episode_reward_env[agent_i] = float(jnp.sum(reward_env[agent_i]).item())
+                episode_reward_dyna[agent_i] = float(jnp.sum(reward_dyna[agent_i]).item())
 
-            reward_mse_per_agent[agent_i] = mse_i
-            reward_abs_per_agent[agent_i] = jnp.abs(r_diff)
+            log_dict = {}
+            log_dict["episode_reward_env"] = (
+                                                          episode_reward_env["agent_0"] +
+                                                          episode_reward_env["agent_1"] +
+                                                          episode_reward_env["agent_2"]
+                                                  )
 
-            reward_errors.append(mse_i)
-
-        # === 总 reward MSE ===
-        reward_errors = jnp.stack(reward_errors)  # (N,)
-        reward_mse_total = jnp.mean(reward_errors)
-        wandb.log({
-                "mse" : mse,
-                "l2" : l2,
-                "reward_error": reward_mse_total,
+            log_dict["episode_reward_dyna"] = (
+                                                           episode_reward_dyna["agent_0"] +
+                                                           episode_reward_dyna["agent_1"] +
+                                                           episode_reward_dyna["agent_2"]
+                                                   )
+            wandb.log({
+                "episode_reward_env_agent_0": episode_reward_env["agent_0"],
+                "episode_reward_dyna_agent_0": episode_reward_dyna["agent_0"],
+                "episode_reward_env": log_dict["episode_reward_env"],
+                "episode_reward_dyna": log_dict["episode_reward_dyna"],
             })
     # print("state_env:", state_env)
     # print("state_dyna:", state_dyna)

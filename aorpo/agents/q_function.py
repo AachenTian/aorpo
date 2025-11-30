@@ -28,7 +28,7 @@ def init_q_function(rng, state_dim:int, act_dim: int, cfg: DictConfig):
     dummy_obs = jnp.zeros((1, state_dim))
     dummy_act = jnp.zeros((1, act_dim * cfg.agent_num))
     params = model.init(rng, dummy_obs, dummy_act)['params']
-    tx = optax.adam(cfg.lr)
+    tx = optax.chain(optax.clip_by_global_norm(1.0), optax.adam(cfg.lr))
     state = TrainState.create(
         apply_fn = model.apply,
         params=params,
