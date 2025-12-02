@@ -269,8 +269,8 @@ def main(cfg: DictConfig):
 
         for i in range(cfg.train.gradient_updates):
             rng, subkey = jax.random.split(rng)
-            batch = replay_model.sample(subkey, batch_size=cfg.train.batch_size, opp_num=opp_num)
-            # batch = replay_env.sample(subkey, batch_size=cfg.train.batch_size, opp_num=opp_num)
+            # batch = replay_model.sample(subkey, batch_size=cfg.train.batch_size, opp_num=opp_num)
+            batch = replay_env.sample(subkey, batch_size=cfg.train.batch_size, opp_num=opp_num)
 
             # 先更新两个 Q（update_q_function 里已做最小化目标）
             q1_state, q2_state, q_metrics, rng = update_q_function(
@@ -300,59 +300,59 @@ def main(cfg: DictConfig):
 
 
 
-            #update ego policy
-            policy_state, pi_metrics = update_policy(
-                policy_state=policy_state,
-                q_state=smaller_q_state,  # 如果你在 update_policy 里使用 min(Q1,Q2)，这里传个结构或改函数
-                batch=batch,
-                cfg=cfg.policy,
-                rng=rng,
-                opponent_policies=opponent_states,
-            )
+            # #update ego policy
+            # policy_state, pi_metrics = update_policy(
+            #     policy_state=policy_state,
+            #     q_state=smaller_q_state,  # 如果你在 update_policy 里使用 min(Q1,Q2)，这里传个结构或改函数
+            #     batch=batch,
+            #     cfg=cfg.policy,
+            #     rng=rng,
+            #     opponent_policies=opponent_states,
+            # )
+            #
+            #
+            # if epoch % 10 == 0:
+            #     # update real opponents policy
+            #     new_opponent_states = []
+            #
+            #     for i in range(len(opponent_states)):
+            #         update_opp = opponent_states[i]  # 当前的 opponent_policy_state
+            #
+            #         # 更新该 opponent 的 policy
+            #         new_state, metrics = update_opponent_policy(
+            #             opponent_state=update_opp,
+            #             q_state=smaller_q_state,
+            #             batch=batch,
+            #             cfg=cfg.policy,
+            #             rng=rng,
+            #             ego_policy_state=policy_state,
+            #             all_opponent_states=opponent_states,
+            #         )
+            #
+            #         new_opponent_states.append(new_state)
+            #     opponent_states = new_opponent_states
 
+            # 软更新 target Q
+            target_q1_state = soft_update(target_q1_state, q1_state, cfg.q_function.tau)
+            target_q2_state = soft_update(target_q2_state, q2_state, cfg.q_function.tau)
+            wandb.log({
+                "q1_loss": q_metrics["q1_loss"],
+                "q2_loss": q_metrics["q2_loss"],
+                "q1_pred": q_metrics["q1_pred"],
+                "q2_pred": q_metrics["q2_pred"],
+                # "policy_loss": pi_metrics["policy_loss"],
+                "sac_step": i
+            })
 
-            if epoch % 10 == 0:
-                # update real opponents policy
-                new_opponent_states = []
-
-                for i in range(len(opponent_states)):
-                    update_opp = opponent_states[i]  # 当前的 opponent_policy_state
-
-                    # 更新该 opponent 的 policy
-                    new_state, metrics = update_opponent_policy(
-                        opponent_state=update_opp,
-                        q_state=smaller_q_state,
-                        batch=batch,
-                        cfg=cfg.policy,
-                        rng=rng,
-                        ego_policy_state=policy_state,
-                        all_opponent_states=opponent_states,
-                    )
-
-                    new_opponent_states.append(new_state)
-                opponent_states = new_opponent_states
-
-        # 软更新 target Q
-        target_q1_state = soft_update(target_q1_state, q1_state, cfg.q_function.tau)
-        target_q2_state = soft_update(target_q2_state, q2_state, cfg.q_function.tau)
-        wandb.log({
-            "q1_loss": q_metrics["q1_loss"],
-            "q2_loss": q_metrics["q2_loss"],
-            "q1_pred": q_metrics["q1_pred"],
-            "q2_pred": q_metrics["q2_pred"],
-            # "policy_loss": pi_metrics["policy_loss"],
-            "sac_step": i
-        })
-
-        # update_real_opp_state = []
-        # for state in real_opponent_states:
-        #     opp_state = state.replace(
-        #         params=copy.deepcopy(policy_state.params),
-        #         opt_state=copy.deepcopy(policy_state.opt_state),
-        #         step=policy_state.step,
-        #     )
-        #     update_real_opp_state.append(opp_state)
-        # real_opponent_states = update_real_opp_state
+            # update_real_opp_state = []
+            # for state in real_opponent_states:
+            #     opp_state = state.replace(
+            #         params=copy.deepcopy(policy_state.params),
+            #         opt_state=copy.deepcopy(policy_state.opt_state),
+            #         step=policy_state.step,
+            #     )
+            #     update_real_opp_state.append(opp_state)
+            # real_opponent_states = update_real_opp_state
 
         rng, kr = jax.random.split(rng, 2)
         policy_fn = make_policy_fn(policy_state)

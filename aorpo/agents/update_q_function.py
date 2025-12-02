@@ -74,7 +74,7 @@ def update_q_function(
                 opp.apply_fn,
                 next_obs[f"agent_{j + 1}"],
             )
-            # a_j = jax.lax.stop_gradient(a_j)
+            a_j = jax.lax.stop_gradient(a_j)
             a_js.append(a_j)
 
         next_action = jnp.concatenate([a_i] + a_js, axis=-1)

@@ -22,7 +22,7 @@ train:
   num_landmark: 3
   core_state_dim: 18
   max_steps: 25
-  eval_interval: 1
+  eval_interval: 20
 
 rollout:
   batch_size: 256
@@ -46,7 +46,7 @@ q_function:
   reward_scale: 1
 
 policy:
-  lr: 3e-4
+  lr: 0.01
   hidden_dims: [64, 64, 64]
   min_logvar: -5.0
   max_logvar: 2.0

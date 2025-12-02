@@ -75,10 +75,11 @@ def init_policy_model(rng: Any,
     rng, init_rng = jax.random.split(rng)
     dummy_obs = jnp.zeros((1, obs_dim))
     params = model.init(init_rng, dummy_obs)["params"]
-    tx = optax.chain(
-    optax.clip_by_global_norm(1.0),     # <—— 加这个！
-    optax.adam(cfg.lr)
-)
+    tx = optax.adam(cfg.lr)
+#     tx = optax.chain(
+#     optax.clip_by_global_norm(1.0),     # <—— 加这个！
+#     optax.adam(cfg.lr)
+# )
 
     state = TrainStateid.create(
         apply_fn = model.apply,
