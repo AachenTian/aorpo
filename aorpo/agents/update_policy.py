@@ -68,11 +68,11 @@ def update_policy(
 
     grads, metrics = jax.grad(loss_fn, has_aux=True)(policy_state.params, rng)
 
-    # === 打印梯度大小 ===
-    grad_norm = jax.tree_util.tree_reduce(
-        lambda a, b: a + jnp.linalg.norm(b), grads, initializer=0.0
-    )
-    jax.debug.print("policy grad_norm_agent_0 = {}", grad_norm)
+    # # === 打印梯度大小 ===
+    # grad_norm = jax.tree_util.tree_reduce(
+    #     lambda a, b: a + jnp.linalg.norm(b), grads, initializer=0.0
+    # )
+    # jax.debug.print("policy grad_norm_agent_0 = {}", grad_norm)
 
     # --- 更新参数
     updates, opt_state = policy_state.tx.update(grads, policy_state.opt_state, policy_state.params)
@@ -167,11 +167,11 @@ def update_opponent_policy(
     # === compute grad ===
     grads, metrics = jax.grad(loss_fn, has_aux=True)(opponent_state.params, rng)
 
-    # === 打印梯度大小 ===
-    grad_norm = jax.tree_util.tree_reduce(
-        lambda a, b: a + jnp.linalg.norm(b), grads, initializer=0.0
-    )
-    jax.debug.print("policy grad_norm_agent_opp = {}", grad_norm)
+    # # === 打印梯度大小 ===
+    # grad_norm = jax.tree_util.tree_reduce(
+    #     lambda a, b: a + jnp.linalg.norm(b), grads, initializer=0.0
+    # )
+    # jax.debug.print("policy grad_norm_agent_opp = {}", grad_norm)
 
     # === update params ===
     updates, opt_state = opponent_state.tx.update(

@@ -21,7 +21,7 @@ from aorpo.agents.q_function import init_q_function
 from aorpo.agents.update_q_function import update_q_function, evaluate_fixed_q_loss
 from aorpo.agents.update_policy import update_policy, update_opponent_policy
 from aorpo.agents.update_opponents_model import update_opponent_model
-
+from aorpo.visualiztion.make_animation import animate_episode
 
 from aorpo.agents.model_dynamics import (
     init_model,
@@ -129,6 +129,7 @@ def main(cfg: DictConfig):
 
     # --- 初始化网络
     rng, k1 = jax.random.split(rng)
+    rng, k11 = jax.random.split(rng)
     _, policy_state = init_policy_model(k1, obs_dim, act_dim, cfg.policy, "agent_0")
 
     rng, kq1 = jax.random.split(rng)
@@ -168,6 +169,12 @@ def main(cfg: DictConfig):
         act_dim_ego=act_dim,
         act_dim_opp=act_dim * opp_num,
     )
+
+    # init animation parameters
+    episode_reward_list = []
+    saved_policy_states = []
+    saved_opponent_states = []
+    epochs_to_render = [1, 3, 5, 10, 15, 20]
 
     print("✅ Init done.")
 
@@ -263,6 +270,7 @@ def main(cfg: DictConfig):
             cfg=cfg,
         )
 
+
         # -------------------------------------------------
         # 5) 用 D_model 更新 Q & Policy
         # -------------------------------------------------
@@ -300,37 +308,37 @@ def main(cfg: DictConfig):
 
 
 
-            # #update ego policy
-            # policy_state, pi_metrics = update_policy(
-            #     policy_state=policy_state,
-            #     q_state=smaller_q_state,  # 如果你在 update_policy 里使用 min(Q1,Q2)，这里传个结构或改函数
-            #     batch=batch,
-            #     cfg=cfg.policy,
-            #     rng=rng,
-            #     opponent_policies=opponent_states,
-            # )
-            #
-            #
-            # if epoch % 10 == 0:
-            #     # update real opponents policy
-            #     new_opponent_states = []
-            #
-            #     for i in range(len(opponent_states)):
-            #         update_opp = opponent_states[i]  # 当前的 opponent_policy_state
-            #
-            #         # 更新该 opponent 的 policy
-            #         new_state, metrics = update_opponent_policy(
-            #             opponent_state=update_opp,
-            #             q_state=smaller_q_state,
-            #             batch=batch,
-            #             cfg=cfg.policy,
-            #             rng=rng,
-            #             ego_policy_state=policy_state,
-            #             all_opponent_states=opponent_states,
-            #         )
-            #
-            #         new_opponent_states.append(new_state)
-            #     opponent_states = new_opponent_states
+            #update ego policy
+            policy_state, pi_metrics = update_policy(
+                policy_state=policy_state,
+                q_state=smaller_q_state,  # 如果你在 update_policy 里使用 min(Q1,Q2)，这里传个结构或改函数
+                batch=batch,
+                cfg=cfg.policy,
+                rng=rng,
+                opponent_policies=opponent_states,
+            )
+
+
+            if epoch % 10 == 0:
+                # update real opponents policy
+                new_opponent_states = []
+
+                for i in range(len(opponent_states)):
+                    update_opp = opponent_states[i]  # 当前的 opponent_policy_state
+
+                    # 更新该 opponent 的 policy
+                    new_state, metrics = update_opponent_policy(
+                        opponent_state=update_opp,
+                        q_state=smaller_q_state,
+                        batch=batch,
+                        cfg=cfg.policy,
+                        rng=rng,
+                        ego_policy_state=policy_state,
+                        all_opponent_states=opponent_states,
+                    )
+
+                    new_opponent_states.append(new_state)
+                opponent_states = new_opponent_states
 
             # 软更新 target Q
             target_q1_state = soft_update(target_q1_state, q1_state, cfg.q_function.tau)
@@ -354,10 +362,10 @@ def main(cfg: DictConfig):
             #     update_real_opp_state.append(opp_state)
             # real_opponent_states = update_real_opp_state
 
-        rng, kr = jax.random.split(rng, 2)
+        eval_rng = jax.random.PRNGKey(0)
         policy_fn = make_policy_fn(policy_state)
-        opp_fn = make_opp_fn(real_opponent_states)
-        epi_reward = episode_reward(policy_fn, opp_fn, num_agents, kr, cfg)
+        opp_fn = make_opp_fn(opponent_states)
+        epi_reward, _ = episode_reward(policy_fn, opp_fn, num_agents, eval_rng, cfg)
         wandb.log({
             "episode_reward": epi_reward
         })
@@ -394,7 +402,8 @@ def main(cfg: DictConfig):
         # 7) evaluate episode_reward
         # -------------------------------------------------
         if epoch % cfg.train.eval_interval == 0:
-            rng, compare_key = jax.random.split(rng, 2)
+            # rng, compare_key = jax.random.split(rng, 2)
+            compare_key = jax.random.PRNGKey(40)
             state_env, reward_env, state_dyna, reward_dyna = rollout_compare(
                 policy_fn=policy_fn,
                 opp_fn=real_opp_fn,
@@ -410,7 +419,7 @@ def main(cfg: DictConfig):
             l2_list = []
             episode_reward_env = {f"agent_{i}": 0.0 for i in range(3)}
             episode_reward_dyna = {f"agent_{i}": 0.0 for i in range(3)}
-            for t in range(T):
+            for t in range(T):   # State to dict
                 env_state_t = {
                     "p_pos": state_env.p_pos[t],
                     "p_vel": state_env.p_vel[t],
@@ -418,7 +427,7 @@ def main(cfg: DictConfig):
                     "done": state_env.done[t],
                     "step": state_env.step[t]
                 }
-                flat_env= manual_flatten_dict(env_state_t)
+                flat_env= manual_flatten_dict(env_state_t) # dict to flat
                 flat_dyna = state_dyna[t]
                 diff = flat_env - flat_dyna
                 mse = jnp.mean(diff**2)
@@ -473,9 +482,17 @@ def main(cfg: DictConfig):
                 "episode_reward_env": log_dict["episode_reward_env"],
                 "episode_reward_dyna": log_dict["episode_reward_dyna"],
             })
-    # print("state_env:", state_env)
-    # print("state_dyna:", state_dyna)
-    # print("state_env[0]:",state_env[0])
+
+        if epoch in epochs_to_render:
+            rng, k_eval = jax.random.split(rng)
+            policy_fn = make_policy_fn(policy_state)
+            opp_fn = make_opp_fn(opponent_states)
+
+            epi_reward, traj = episode_reward(policy_fn, opp_fn, num_agents, k_eval, cfg)
+
+            animate_episode(traj, save_path=f"episode_epoch_{epoch}.mp4")
+
+
     wandb.finish()
     print("\n🎉 Training finished.")
 

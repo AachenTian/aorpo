@@ -519,10 +519,10 @@ def predict_next(transition_state: TrainState,
 
     delta = std.denorm_delta(delta_n)      # (B,D)
     core_next_state_agent = core_state + delta
-    next_state_agent = restore_full_state(state_agent, core_next_state_agent, cfg)
+    next_state_agent = restore_full_state(state_agent, core_next_state_agent, cfg) # 18 to 34
 
     # from state get obs and dones
-    restored_state = manual_unflatten_state(next_state_agent)
+    restored_state = manual_unflatten_state(next_state_agent) # 34 to State
     next_obs = get_obs(restored_state)
     dones_pred = next_state_agent[..., -4:-1]
     dones_bool = dones_pred > 0.0

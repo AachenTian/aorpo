@@ -33,6 +33,9 @@ def episode_reward(policy_fn, opp_fn, num_agents, key, cfg):
     state, obs, key = env_reset(env, key)
 
     total_reward = 0.
+    step_reward_list = []  # record the step reward in one rollout
+    traj_agents = []  # shape (T, 3, 2)
+    traj_landmarks = []  # shape (3, 2) (静态)
 
     for t in range(25):
         key, sub1 = jax.random.split(key, 2)
@@ -45,11 +48,21 @@ def episode_reward(policy_fn, opp_fn, num_agents, key, cfg):
         state, obs, rewards, dones, sub3 = env_step(env, state, a_ego, a_opp, sub3)
 
         total_reward += sum(float(rewards[f"agent_{i}"]) for i in range(num_agents))
+        step_reward_list.append(total_reward)
+
+        p = state.p_pos
+        traj_agents.append(p[:3])
+        traj_landmarks.append(p[3:6])
 
         if dones["agent_0"]:
-            break
+                break
 
-    return float(total_reward)
+    traj = {
+        "agents": jnp.array(traj_agents),  # (T, 3, 2)
+        "landmarks": jnp.array(traj_landmarks),  # (3, 2)
+        "rewards": jnp.array(step_reward_list),  # (T,)
+    }
+    return float(total_reward), traj
 
 
 def rollout_env(policy_fn, opp_fn, init_state, init_obs, key, horizon, cfg: DictConfig):
@@ -84,7 +97,7 @@ def rollout_dynamics(policy_fn, opp_fn, transition_state, reward_state, std, ini
             a_opp=a_opp,
             cfg=cfg,
             rng=k3,
-            deterministic=False,
+            deterministic=True,
         )
         next_obs = jax.tree_util.tree_map(lambda x: x.squeeze(0), next_obs)
         return (next_state, next_obs, key_dyna), (next_state, reward_dict)
