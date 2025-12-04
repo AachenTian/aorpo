@@ -171,10 +171,8 @@ def main(cfg: DictConfig):
     )
 
     # init animation parameters
-    episode_reward_list = []
-    saved_policy_states = []
-    saved_opponent_states = []
-    epochs_to_render = [1, 3, 5, 10, 15, 20]
+    episode_reward_history = []
+    epochs_to_render = [1, 3, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 100, 130, 160, 200]
 
     print("✅ Init done.")
 
@@ -319,26 +317,26 @@ def main(cfg: DictConfig):
             )
 
 
-            if epoch % 10 == 0:
-                # update real opponents policy
-                new_opponent_states = []
+            # if epoch % 10 == 0:
+            # update real opponents policy
+            new_opponent_states = []
 
-                for i in range(len(opponent_states)):
-                    update_opp = opponent_states[i]  # 当前的 opponent_policy_state
+            for i in range(len(opponent_states)):
+                update_opp = opponent_states[i]  # 当前的 opponent_policy_state
 
-                    # 更新该 opponent 的 policy
-                    new_state, metrics = update_opponent_policy(
-                        opponent_state=update_opp,
-                        q_state=smaller_q_state,
-                        batch=batch,
-                        cfg=cfg.policy,
-                        rng=rng,
-                        ego_policy_state=policy_state,
-                        all_opponent_states=opponent_states,
-                    )
+                # 更新该 opponent 的 policy
+                new_state, metrics = update_opponent_policy(
+                    opponent_state=update_opp,
+                    q_state=smaller_q_state,
+                    batch=batch,
+                    cfg=cfg.policy,
+                    rng=rng,
+                    ego_policy_state=policy_state,
+                    all_opponent_states=opponent_states,
+                )
 
-                    new_opponent_states.append(new_state)
-                opponent_states = new_opponent_states
+                new_opponent_states.append(new_state)
+            opponent_states = new_opponent_states
 
             # 软更新 target Q
             target_q1_state = soft_update(target_q1_state, q1_state, cfg.q_function.tau)
@@ -365,9 +363,11 @@ def main(cfg: DictConfig):
         eval_rng = jax.random.PRNGKey(0)
         policy_fn = make_policy_fn(policy_state)
         opp_fn = make_opp_fn(opponent_states)
-        epi_reward, _ = episode_reward(policy_fn, opp_fn, num_agents, eval_rng, cfg)
+        epi_reward, epi_reward_0, _ = episode_reward(policy_fn, opp_fn, num_agents, eval_rng, cfg)
+        episode_reward_history.append(epi_reward)
         wandb.log({
-            "episode_reward": epi_reward
+            "episode_reward": epi_reward,
+            "epi_reward_agent-0": epi_reward_0,
         })
 
         # 简单日志
@@ -430,6 +430,9 @@ def main(cfg: DictConfig):
                 flat_env= manual_flatten_dict(env_state_t) # dict to flat
                 flat_dyna = state_dyna[t]
                 diff = flat_env - flat_dyna
+                print("flat_env:", flat_env)
+                print("flat_dyna:", flat_dyna)
+                print("diff of flat_env and flat_dyna:", diff)
                 mse = jnp.mean(diff**2)
                 l2 = jnp.linalg.norm(diff)
                 mse_list.append(mse)
@@ -488,9 +491,9 @@ def main(cfg: DictConfig):
             policy_fn = make_policy_fn(policy_state)
             opp_fn = make_opp_fn(opponent_states)
 
-            epi_reward, traj = episode_reward(policy_fn, opp_fn, num_agents, k_eval, cfg)
+            epi_reward, _, traj = episode_reward(policy_fn, opp_fn, num_agents, k_eval, cfg)
 
-            animate_episode(traj, save_path=f"episode_epoch_{epoch}.mp4")
+            animate_episode(traj, episode_reward_history, save_path=f"episode_epoch_{epoch}.mp4")
 
 
     wandb.finish()

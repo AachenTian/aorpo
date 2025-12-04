@@ -33,6 +33,7 @@ def episode_reward(policy_fn, opp_fn, num_agents, key, cfg):
     state, obs, key = env_reset(env, key)
 
     total_reward = 0.
+    total_reward_agent_0 = 0.
     step_reward_list = []  # record the step reward in one rollout
     traj_agents = []  # shape (T, 3, 2)
     traj_landmarks = []  # shape (3, 2) (静态)
@@ -44,9 +45,14 @@ def episode_reward(policy_fn, opp_fn, num_agents, key, cfg):
         key, sub2 = jax.random.split(key, 2)
         a_opp, sub2 = opp_fn(obs, sub2)
 
+
         key, sub3 = jax.random.split(key,2)
         state, obs, rewards, dones, sub3 = env_step(env, state, a_ego, a_opp, sub3)
-
+        if t == 0:
+            print("action of ego:", a_ego)
+            print("action of opp:", a_opp)
+            print("episode_reward_step_0:", rewards)
+        total_reward_agent_0 += float(rewards["agent_0"])
         total_reward += sum(float(rewards[f"agent_{i}"]) for i in range(num_agents))
         step_reward_list.append(total_reward)
 
@@ -62,7 +68,7 @@ def episode_reward(policy_fn, opp_fn, num_agents, key, cfg):
         "landmarks": jnp.array(traj_landmarks),  # (3, 2)
         "rewards": jnp.array(step_reward_list),  # (T,)
     }
-    return float(total_reward), traj
+    return float(total_reward), float(total_reward_agent_0), traj
 
 
 def rollout_env(policy_fn, opp_fn, init_state, init_obs, key, horizon, cfg: DictConfig):

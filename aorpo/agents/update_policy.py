@@ -61,6 +61,7 @@ def update_policy(
             action
         )
 
+        log_prob = log_prob.reshape(-1, 1)
         # --- 策略损失 Eq.(4)
         policy_loss = jnp.mean(cfg.alpha * log_prob - q_value)
 
@@ -158,7 +159,7 @@ def update_opponent_policy(
             state,
             joint_action
         )
-
+        logp_i = logp_i.reshape(-1, 1)
         # === 5. SAC policy objective ===
         policy_loss = jnp.mean(cfg.alpha * logp_i - q_value)
 
