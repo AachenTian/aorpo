@@ -10,8 +10,8 @@ def make_mpe_env(cfg: DictConfig):
     return env
 
 def env_reset(env, key):
-    key = jax.random.PRNGKey(40)
-    obs, state = env.reset(key)
+    key_reset = jax.random.PRNGKey(40)
+    obs, state = env.reset(key_reset)
     return state, obs, key
 
 def env_step(env, state, a_ego, a_opps, key):

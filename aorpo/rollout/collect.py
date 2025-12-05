@@ -10,20 +10,45 @@ from omegaconf import DictConfig
 def collect_real_data(policy_fn, opp_fn, obs_dim, act_dim, opp_num, opp_dim, key, cfg: DictConfig):
     """Collect real environment data using JAX scan."""
     def rollout(carry, _):
-        state, obs, key = carry
+        state, obs, key, dones = carry
+        # ❗ 如果 done=True，则 reset 环境
+        state, obs = jax.lax.cond(
+            state.step == 25,
+            lambda _: env_reset(env, key)[:2],  # reset 给新的 state, obs
+            lambda _: (state, obs),
+            operand=None
+        )
         key, sub1, sub2 = jax.random.split(key, 3)
         a_ego, sub1 = policy_fn(obs, sub1)
         a_opps, sub2 = opp_fn(obs, sub2)
         state2, obs2, r, dones, key = env_step(env, state, a_ego, a_opps, key)
+        dones_True = {
+            "__all__": jnp.array(True),
+            "agent_0": jnp.array(True),
+            "agent_1": jnp.array(True),
+            "agent_2": jnp.array(True),
+        }
+        dones = jax.lax.cond(
+            state2.step == 25,
+            lambda _: dones_True,  # reset 给新的 state, obs
+            lambda _: dones,
+            operand=None
+        )
 
         # joint_act = jnp.concatenate([a_ego, a_opps], axis=-1)
-        return (state2, obs2, key), (state2, obs2, state, obs, a_ego, a_opps, r, dones)
+        return (state2, obs2, key, dones), (state2, obs2, state, obs, a_ego, a_opps, r, dones)
 
     # 初始化环境状态
     env = make_mpe_env(cfg)
     state, obs, key = env_reset(env, key)
-    (final_state, final_obs, _), (next_state, next_obs, state, obs, a_ego, a_opp, rew, dones) = jax.lax.scan(
-        rollout, (state, obs, key), None, length=cfg.collect.steps_per_epoch
+    dones = {
+        "__all__": jnp.array(False),
+        "agent_0": jnp.array(False),
+        "agent_1": jnp.array(False),
+        "agent_2": jnp.array(False),
+    }
+    (final_state, final_obs, _, _), (next_state, next_obs, state, obs, a_ego, a_opp, rew, dones) = jax.lax.scan(
+        rollout, (state, obs, key, dones), None, length=cfg.collect.steps_per_epoch
     )
     batch = dict(state= state, obs=obs, a_ego=a_ego, a_opp=a_opp,  next_obs=next_obs, next_state=next_state, rew=rew, dones=dones)
     return batch, final_state, key

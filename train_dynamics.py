@@ -174,8 +174,6 @@ def main(cfg: DictConfig):
     episode_reward_history = []
     epochs_to_render = [1, 3, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 100, 130, 160, 200]
 
-    print("✅ Init done.")
-
     # prepare fixed_batch
     rng, k_fix = jax.random.split(rng)
     policy_fn = make_policy_fn(policy_state)
@@ -194,7 +192,7 @@ def main(cfg: DictConfig):
     replay_env_fix = add_batch_env_to_replay(replay_env_fix, batch_env_fix, cfg)
     batch_env_fix_sample = replay_env_fix.sample(k_fix_sample, batch_size=cfg.train.batch_size, opp_num=opp_num)
 
-
+    print("✅ Init done.")
 
     for epoch in tqdm(range(1, cfg.train.epochs + 1), desc="Training Epochs"):
         print(f"\n===== Epoch {epoch}/{cfg.train.epochs} =====")
@@ -266,6 +264,7 @@ def main(cfg: DictConfig):
             replay_env=replay_env,
             replay_model=replay_model,
             cfg=cfg,
+            epoch=epoch,
         )
 
 
@@ -275,8 +274,8 @@ def main(cfg: DictConfig):
 
         for i in range(cfg.train.gradient_updates):
             rng, subkey = jax.random.split(rng)
-            # batch = replay_model.sample(subkey, batch_size=cfg.train.batch_size, opp_num=opp_num)
-            batch = replay_env.sample(subkey, batch_size=cfg.train.batch_size, opp_num=opp_num)
+            batch = replay_model.sample(subkey, batch_size=cfg.train.batch_size, opp_num=opp_num)
+            # batch = replay_env.sample(subkey, batch_size=cfg.train.batch_size, opp_num=opp_num)
 
             # 先更新两个 Q（update_q_function 里已做最小化目标）
             q1_state, q2_state, q_metrics, rng = update_q_function(

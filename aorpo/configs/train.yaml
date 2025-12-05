@@ -1,6 +1,7 @@
 seed: 0
 
 env:
+  seed_reset: 40
   state_dim: 34
   obs_dim: 18
   act_dim: 5
@@ -26,7 +27,7 @@ train:
 
 rollout:
   batch_size: 1024
-  k: 5                   # 公式里的 k（最长 rollout 步数）
+  k: 6                   # 公式里的 k（最长 rollout 步数）
 
 model_dynamics:
   lr: 3e-4

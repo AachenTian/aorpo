@@ -80,6 +80,7 @@ def rollout_model(
     replay_env: Any,
     replay_model: Any,
     cfg: Any,
+    epoch: Any,
 ):
     """
     Perform adaptive opponent-wise model rollouts.
@@ -121,8 +122,27 @@ def rollout_model(
         errors.append(float(eps_j))
 
     # 3️ 根据公式计算每个对手的 rollout 步数 n^j
-    n_js = compute_rollout_lengths(errors, cfg.rollout.k)
     max_n = cfg.rollout.k  # 最大 rollout 步数上限
+    def get_k(epoch, max_n):
+        epoch = jnp.asarray(epoch)
+        start_epoch = 15
+        end_epoch = 100
+        k_min = 1
+        k_max = max_n
+
+        # 线性插值 (浮点)
+        k_float = k_min + (k_max - k_min) * ((epoch - start_epoch) / (end_epoch - start_epoch))
+
+        # 四舍五入为整数
+        k_int = jnp.round(k_float)
+
+        # 三段逻辑：epoch < 15 → 1；epoch > 100 → max_n；中间 → 插值
+        k = jnp.where(epoch < start_epoch, k_min,
+                      jnp.where(epoch > end_epoch, k_max, k_int))
+
+        return k.astype(int)
+    max_n = get_k(epoch, max_n)
+    n_js = compute_rollout_lengths(errors, int(max_n))
 
     print(f"Opponent model errors: {errors}")
     print(f"Adaptive rollout steps (n^j): {n_js}")
