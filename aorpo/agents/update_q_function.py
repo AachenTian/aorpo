@@ -55,28 +55,33 @@ def update_q_function(
         q1_pred = q1_state.apply_fn({"params":params1}, state, joint_act)
         q2_pred = q2_state.apply_fn({"params":params2}, state, joint_act)
 
+        log_prob_s = []
         rng, subkey = jax.random.split(rng)
-        a_i, log_prob, key = PolicyNet.sample_action(
+        a_i, log_prob_i, key = PolicyNet.sample_action(
             policy_state.params, policy_state.apply_fn, rng, next_obs['agent_0']
         )
+        log_prob_s.append(log_prob_i)
+
         a_js = []
         for j, opp in enumerate(opponent_policies):
             # 使用 learned opponent policy
             rng, subkey = jax.random.split(rng)
-            # a_j, _, _ = PolicyNet.sample_action(
-            #     opp["state"].params,
-            #     opp["state"].apply_fn,
-            #     subkey,
-            #     next_obs[f"agent_{j+1}"],
-            # )
-            a_j = PolicyNet.deterministic_action(
+            a_j, log_prob_j , _ = PolicyNet.sample_action(
                 opp.params,
                 opp.apply_fn,
-                next_obs[f"agent_{j + 1}"],
+                subkey,
+                next_obs[f"agent_{j+1}"],
             )
-            a_j = jax.lax.stop_gradient(a_j)
+            # a_j = PolicyNet.deterministic_action(
+            #     opp.params,
+            #     opp.apply_fn,
+            #     next_obs[f"agent_{j + 1}"],
+            # )
+            # a_j = jax.lax.stop_gradient(a_j)
             a_js.append(a_j)
+            log_prob_s.append(log_prob_j)
 
+        log_prob =  sum(log_prob_s) / cfg.agent_num
         next_action = jnp.concatenate([a_i] + a_js, axis=-1)
         q1_target_next = target_q1_state.apply_fn(
             {"params":target_q1_state.params}, next_state, next_action
@@ -91,9 +96,9 @@ def update_q_function(
         # )  # (B, num_agents)
         #reward = jnp.sum(rewards, axis=-1)  # (B,)
         # reward = reward / cfg.agent_num
-        reward = batch["rew"]["agent_0"]
+        reward = 3 * batch["rew"]["agent_0"]
         reward = reward / cfg.reward_scale
-        target_q = reward.squeeze(-1) + cfg.gamma * (1.0 - batch["dones"]['agent_0'].squeeze(-1)) * (q_target_next - cfg.alpha * log_prob)
+        target_q = reward.squeeze(-1) + cfg.gamma * (1.0 - batch["dones"]['agent_0'].squeeze(-1)) * (q_target_next - cfg.alpha * log_prob) #* (q_target_next - cfg.alpha * log_prob) delete other agent's entropy
         target_q = jax.lax.stop_gradient(target_q)
 
         #Q1, Q2 MSE
@@ -205,7 +210,7 @@ def evaluate_fixed_q_loss(
         # )
         # reward = jnp.sum(rewards, axis=-1)
         # reward = reward / cfg.agent_num
-        reward = fixed_batch["rew"]["agent_0"]
+        reward = 3 * fixed_batch["rew"]["agent_0"]
         reward = reward / cfg.reward_scale
 
         target_q = (
