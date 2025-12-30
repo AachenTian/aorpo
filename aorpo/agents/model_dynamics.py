@@ -506,6 +506,15 @@ def predict_next(transition_state: TrainState,
     mu_m = mu[member_idx]       # (B,D)
     logvar_m = logvar[member_idx]
 
+    # mu_m = jnp.mean(mu, axis=0)
+    # var = jnp.exp(logvar)
+    # var_m = jnp.mean(var, axis=0)
+    # logvar_m = jnp.log(var_m)
+    # print("mu.shape", mu.shape)
+    # print("logvar.shape", logvar.shape)
+    # print("mu_m.shape", mu_m.shape)
+    # print("logvar_m.shape", logvar_m.shape)
+
     if deterministic:
         delta_n = mu_m
     else:

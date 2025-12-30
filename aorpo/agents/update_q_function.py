@@ -11,7 +11,7 @@ from flax.training.train_state import TrainState
 from omegaconf import DictConfig
 
 from aorpo.agents.q_function import QNet
-from aorpo.agents.policy import PolicyNet
+from aorpo.agents.policy import PolicyNet, EnsemblePolicyUtils
 
 
 # --------------------------------
@@ -55,33 +55,34 @@ def update_q_function(
         q1_pred = q1_state.apply_fn({"params":params1}, state, joint_act)
         q2_pred = q2_state.apply_fn({"params":params2}, state, joint_act)
 
-        log_prob_s = []
+        # log_prob_s = []
         rng, subkey = jax.random.split(rng)
         a_i, log_prob_i, key = PolicyNet.sample_action(
             policy_state.params, policy_state.apply_fn, rng, next_obs['agent_0']
         )
-        log_prob_s.append(log_prob_i)
+        # log_prob_s.append(log_prob_i)
+        log_prob = log_prob_i
 
         a_js = []
         for j, opp in enumerate(opponent_policies):
             # 使用 learned opponent policy
             rng, subkey = jax.random.split(rng)
-            a_j, log_prob_j , _ = PolicyNet.sample_action(
+            a_j, _, _ , _ = EnsemblePolicyUtils.sample_action_ensemble(
                 opp.params,
                 opp.apply_fn,
                 subkey,
                 next_obs[f"agent_{j+1}"],
             )
-            # a_j = PolicyNet.deterministic_action(
+            # a_j = EnsemblePolicyUtils.sample_deterministic_action_ensemble(
             #     opp.params,
             #     opp.apply_fn,
             #     next_obs[f"agent_{j + 1}"],
             # )
             # a_j = jax.lax.stop_gradient(a_j)
             a_js.append(a_j)
-            log_prob_s.append(log_prob_j)
+            # log_prob_s.append(log_prob_j)
 
-        log_prob =  sum(log_prob_s) / cfg.agent_num
+        # log_prob =  sum(log_prob_s) / cfg.agent_num
         next_action = jnp.concatenate([a_i] + a_js, axis=-1)
         q1_target_next = target_q1_state.apply_fn(
             {"params":target_q1_state.params}, next_state, next_action

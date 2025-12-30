@@ -15,7 +15,7 @@ from aorpo.rollout.collect import collect_real_data, episode_reward, rollout_com
 from aorpo.rollout.rollout import rollout_model, compute_rollout_lengths
 
 
-from aorpo.agents.policy import init_policy_model, PolicyNet
+from aorpo.agents.policy import init_policy_model, PolicyNet, init_policy_ensemble
 from aorpo.agents.q_function import init_q_function
 
 from aorpo.agents.update_q_function import update_q_function, evaluate_fixed_q_loss
@@ -152,7 +152,7 @@ def main(cfg: DictConfig):
     for i in range(opp_num):
         rng, ko = jax.random.split(rng)
         j = i+1
-        _, opp_state = init_policy_model(ko, obs_dim, act_dim, cfg.policy, f"agent_{j}")
+        _, opp_state = init_policy_ensemble(ko, obs_dim, act_dim, cfg.policy, f"agent_{j}")
         opponent_states.append(opp_state)
 
     # real opponent
@@ -274,8 +274,10 @@ def main(cfg: DictConfig):
 
         for i in range(cfg.train.gradient_updates):
             rng, subkey = jax.random.split(rng)
+            # if epoch > 15:
             batch = replay_model.sample(subkey, batch_size=cfg.train.batch_size, opp_num=opp_num)
-            # batch = replay_env.sample(subkey, batch_size=cfg.train.batch_size, opp_num=opp_num)
+            # else:
+            #     batch = replay_env.sample(subkey, batch_size=cfg.train.batch_size, opp_num=opp_num)
 
             # 先更新两个 Q（update_q_function 里已做最小化目标）
             q1_state, q2_state, q_metrics, rng = update_q_function(
@@ -320,8 +322,8 @@ def main(cfg: DictConfig):
             # update real opponents policy
             new_opponent_states = []
 
-            for i in range(len(opponent_states)):
-                update_opp = opponent_states[i]  # 当前的 opponent_policy_state
+            for i in range(len(real_opponent_states)):
+                update_opp = real_opponent_states[i]  # 当前的 opponent_policy_state
 
                 # 更新该 opponent 的 policy
                 new_state, metrics = update_opponent_policy(
@@ -331,11 +333,11 @@ def main(cfg: DictConfig):
                     cfg=cfg.policy,
                     rng=rng,
                     ego_policy_state=policy_state,
-                    all_opponent_states=opponent_states,
+                    all_opponent_states=real_opponent_states,
                 )
 
                 new_opponent_states.append(new_state)
-            opponent_states = new_opponent_states
+            real_opponent_states = new_opponent_states
 
             # 软更新 target Q
             target_q1_state = soft_update(target_q1_state, q1_state, cfg.q_function.tau)
@@ -361,7 +363,7 @@ def main(cfg: DictConfig):
 
         eval_rng = jax.random.PRNGKey(0)
         policy_fn = make_policy_fn(policy_state)
-        opp_fn = make_opp_fn(opponent_states)
+        opp_fn = make_opp_fn(real_opponent_states)
         epi_reward, epi_reward_0, _ = episode_reward(policy_fn, opp_fn, num_agents, eval_rng, cfg)
         episode_reward_history.append(epi_reward)
         wandb.log({
@@ -429,9 +431,9 @@ def main(cfg: DictConfig):
                 flat_env= manual_flatten_dict(env_state_t) # dict to flat
                 flat_dyna = state_dyna[t]
                 diff = flat_env - flat_dyna
-                print("flat_env:", flat_env)
-                print("flat_dyna:", flat_dyna)
-                print("diff of flat_env and flat_dyna:", diff)
+                # print("flat_env:", flat_env)
+                # print("flat_dyna:", flat_dyna)
+                # print("diff of flat_env and flat_dyna:", diff)
                 mse = jnp.mean(diff**2)
                 l2 = jnp.linalg.norm(diff)
                 mse_list.append(mse)
@@ -488,7 +490,7 @@ def main(cfg: DictConfig):
         if epoch in epochs_to_render:
             rng, k_eval = jax.random.split(rng)
             policy_fn = make_policy_fn(policy_state)
-            opp_fn = make_opp_fn(opponent_states)
+            opp_fn = make_opp_fn(real_opponent_states)
 
             epi_reward, _, traj = episode_reward(policy_fn, opp_fn, num_agents, k_eval, cfg)
 

@@ -8,7 +8,7 @@ import optax
 from flax.training.train_state import TrainState
 from omegaconf import DictConfig
 
-from aorpo.agents.policy import PolicyNet, TrainStateid
+from aorpo.agents.policy import PolicyNet, TrainStateid, EnsemblePolicyUtils
 
 
 def update_policy(
@@ -42,7 +42,7 @@ def update_policy(
             #     subkey,
             #     batch["obs"][f"agent_{j + 1}"],
             # )
-            a_j = PolicyNet.deterministic_action(
+            a_j, _ = EnsemblePolicyUtils.sample_deterministic_action_ensemble(
                 opp.params,
                 opp.apply_fn,
                 batch["obs"][f"agent_{j + 1}"],

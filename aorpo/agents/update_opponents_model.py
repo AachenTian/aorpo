@@ -24,57 +24,40 @@ def update_opponent_model(
     a_opp_all = batch["a_opp"]
     act_dim = a_opp_all.shape[-1] // opp_num
 
-    # 将所有 params + opt_state 组合成 pytree 列表
-    params_all = jax.tree_util.tree_map(lambda *x: jnp.stack(x), *[s.params for s in opponent_states])
-    opt_all    = jax.tree_util.tree_map(lambda *x: jnp.stack(x), *[s.opt_state for s in opponent_states])
-
-    # 每个 opponent 的 obs 和 target
     obs_list  = [batch["obs"][f"agent_{j+1}"] for j in range(opp_num)]
-    obs_all   = jnp.stack(obs_list)  # (opp_num, B, obs_dim)
+    obs_all   = jnp.stack(obs_list )   # (opp_num, B, obs_dim)
 
-    target_list = [
-        a_opp_all[:, j*act_dim:(j+1)*act_dim] for j in range(opp_num)
-    ]
-    target_all = jnp.stack(target_list)  # (opp_num, B, act_dim)
+    target_all = jnp.stack([
+        a_opp_all[:, j*act_dim:(j+1)*act_dim]
+        for j in range(opp_num)
+    ])                                   # (opp_num, B, act_dim)
 
-    apply_fn = opponent_states[0].apply_fn  # 所有 opponent 共享相同 architecture
+    apply_fn = opponent_states[0].apply_fn
 
-    # --------------------------------------------------
-    # vmap over opponents → 一次性计算所有 grad
-    # --------------------------------------------------
     def loss_fn(params, obs, target):
         return _bc_loss(params, apply_fn, obs, target)
 
-    loss_grad_fn = jax.vmap(jax.value_and_grad(loss_fn), in_axes=(0,0,0))
-    losses, grads = loss_grad_fn(params_all, obs_all, target_all)
-
-    # --------------------------------------------------
-    # 更新：vmap optax.update
-    # --------------------------------------------------
-    updates, new_opt = jax.vmap(
-        opponent_states[0].tx.update, in_axes=(0,0,0)
-    )(grads, opt_all, params_all)
-
-    new_params_all = jax.vmap(optax.apply_updates)(params_all, updates)
-
-    # --------------------------------------------------
-    # 解包：还原成 TrainState 列表
-    # --------------------------------------------------
     new_states = []
+    losses = []
+
     for j, s in enumerate(opponent_states):
-        new_state = s.replace(
-            params=jax.tree_util.tree_map(lambda x: x[j], new_params_all),
-            opt_state=jax.tree_util.tree_map(lambda x: x[j], new_opt),
-            step=s.step + 1,
+        loss, grads = jax.value_and_grad(loss_fn)(
+            s.params, obs_all[j], target_all[j]
         )
-        new_states.append(new_state)
 
-    metrics = {
-        "opp_loss_mean": jnp.mean(losses),
-        "opp_loss_each": losses,
+        updates, new_opt = s.tx.update(grads, s.opt_state, s.params)
+        new_params = optax.apply_updates(s.params, updates)
+
+        new_states.append(
+            s.replace(
+                params=new_params,
+                opt_state=new_opt,
+                step=s.step + 1,
+            )
+        )
+        losses.append(loss)
+
+    return new_states, {
+        "opp_loss_mean": jnp.mean(jnp.stack(losses)),
+        "opp_loss_each": jnp.stack(losses),
     }
-
-    return new_states, metrics
-
-
-update_opponent_fast = jax.jit(update_opponent_model, static_argnums=0)
