@@ -361,7 +361,7 @@ def main(cfg: DictConfig):
 
         eval_rng = jax.random.PRNGKey(0)
         policy_fn = make_policy_fn(policy_state)
-        opp_fn = make_opp_fn(opponent_states)
+        opp_fn = make_opp_fn(real_opponent_states)
         epi_reward, epi_reward_0, _ = episode_reward(policy_fn, opp_fn, num_agents, eval_rng, cfg)
         episode_reward_history.append(epi_reward)
         wandb.log({
@@ -488,7 +488,7 @@ def main(cfg: DictConfig):
         if epoch in epochs_to_render:
             rng, k_eval = jax.random.split(rng)
             policy_fn = make_policy_fn(policy_state)
-            opp_fn = make_opp_fn(opponent_states)
+            opp_fn = make_opp_fn(real_opponent_states)
 
             epi_reward, _, traj = episode_reward(policy_fn, opp_fn, num_agents, k_eval, cfg)
 
