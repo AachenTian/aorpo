@@ -1,3 +1,0 @@
-env:
-  obs_dim: 4
-  act_dim: 2
