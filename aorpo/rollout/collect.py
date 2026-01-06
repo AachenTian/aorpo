@@ -73,10 +73,10 @@ def episode_reward(policy_fn, opp_fn, num_agents, key, cfg):
 
         key, sub3 = jax.random.split(key,2)
         state, obs, rewards, dones, sub3 = env_step(env, state, a_ego, a_opp, sub3)
-        if t == 0:
-            print("action of ego:", a_ego)
-            print("action of opp:", a_opp)
-            print("episode_reward_step_0:", rewards)
+        # if t == 0:
+        #     print("action of ego:", a_ego)
+        #     print("action of opp:", a_opp)
+        #     print("episode_reward_step_0:", rewards)
         total_reward_agent_0 += float(rewards["agent_0"])
         total_reward += sum(float(rewards[f"agent_{i}"]) for i in range(num_agents))
         step_reward_list.append(total_reward)
@@ -86,7 +86,8 @@ def episode_reward(policy_fn, opp_fn, num_agents, key, cfg):
         traj_landmarks.append(p[3:6])
 
         if dones["agent_0"]:
-                break
+            print("break time of epi_reward:{}", t)
+            break
 
     traj = {
         "agents": jnp.array(traj_agents),  # (T, 3, 2)
@@ -119,7 +120,7 @@ def rollout_dynamics(policy_fn, opp_fn, transition_state, reward_state, std, ini
         a_opp, k2 = opp_fn(obs, k2)
         a_ego = jnp.expand_dims(a_ego, axis=0)
         a_opp = jnp.expand_dims(a_opp, axis=0)
-        next_state, next_obs, reward_dict, dones_dict = predict_next(
+        next_state, next_obs, reward_dict, dones_dict, _, _ = predict_next(
             transition_state=transition_state,
             reward_state=reward_state,
             std=std,

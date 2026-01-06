@@ -469,6 +469,33 @@ def train_reward_step(state, batch, std):
 #
 # train_step = jax.jit(train_step, static_argnums=())
 
+# compute the entropy of dynamics model
+def dynamics_uncertainty_per_dim(mu: jnp.ndarray, logvar: jnp.ndarray):
+    """
+    Args:
+        mu:     (E, B, k)
+        logvar: (E, B, k)
+
+    Returns:
+        total_var:      (B, k)
+        epistemic_var:  (B, k)
+        aleatoric_var:  (B, k)
+        entropy_dim:    (B, k)
+    """
+    # aleatoric
+    aleatoric_var = jnp.mean(jnp.exp(logvar), axis=0)  # (B, k)
+
+    # epistemic
+    mu_bar = jnp.mean(mu, axis=0)                      # (B, k)
+    epistemic_var = jnp.mean((mu - mu_bar[None, ...]) ** 2, axis=0)
+
+    # total
+    total_var = aleatoric_var + epistemic_var
+
+    # per-dim entropy (optional)
+    entropy_dim = 0.5 * jnp.log(2.0 * jnp.pi * jnp.e * total_var + 1e-6)
+
+    return total_var, epistemic_var, aleatoric_var, entropy_dim
 
 
 # Prediction & Evaluation
@@ -482,7 +509,7 @@ def predict_next(transition_state: TrainState,
                  rng: Optional[Any] = None,
                  deterministic: bool = True,
                  member_idx: Optional[int] = None,
-                 )-> Tuple[jnp.ndarray, Dict[str, jnp.ndarray], Dict[str,jnp.ndarray], Dict[str,jnp.ndarray]]:
+                 )-> Tuple[jnp.ndarray, Dict[str, jnp.ndarray], Dict[str,jnp.ndarray], Dict[str,jnp.ndarray], jnp.ndarray, jnp.ndarray]:
     """
     Return predicted next state s' (denormalized).
     - If member_idx is None: 随机选一个 ensemble 成员（需要 rng）
@@ -536,7 +563,7 @@ def predict_next(transition_state: TrainState,
     dones_pred = next_state_agent[..., -4:-1]
     dones_bool = dones_pred > 0.0
     dones_dict = {f"agent_{i}": dones_bool[..., i:i+1] for i in range(dones_pred.shape[-1])}
-    return next_state_agent, next_obs, reward_dict, dones_dict
+    return next_state_agent, next_obs, reward_dict, dones_dict, mu, logvar
 
 def eval_error(real_state:TrainState,###############
                opp_state: TrainState,###################

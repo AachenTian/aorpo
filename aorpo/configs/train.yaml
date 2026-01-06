@@ -29,6 +29,9 @@ rollout:
   batch_size: 1024
   k: 6                   # 公式里的 k（最长 rollout 步数）
   quantile_opp: 0.99
+  zeta1: 0.99
+  zeta2: 0.01
+  xi: 2.0
 
 model_dynamics:
   lr: 3e-4

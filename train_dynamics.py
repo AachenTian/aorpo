@@ -173,6 +173,7 @@ def main(cfg: DictConfig):
     # init animation parameters
     episode_reward_history = []
     epochs_to_render = [1, 3, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 100, 130, 160, 200]
+    total_comm_count = 0
 
     # prepare fixed_batch
     rng, k_fix = jax.random.split(rng)
@@ -254,7 +255,7 @@ def main(cfg: DictConfig):
         #    （rollout.py 内部已包含 adaptive n^j 逻辑）
         # -------------------------------------------------
         rng, kr = jax.random.split(rng)
-        replay_model = rollout_model(
+        replay_model, comm_count_cum = rollout_model(
             rng=kr,
             transition_state=transition_state,
             reward_state=reward_state,
@@ -267,6 +268,10 @@ def main(cfg: DictConfig):
             epoch=epoch,
         )
 
+        total_comm_count += comm_count_cum
+        wandb.log({
+            "total_comm_count": total_comm_count,
+        })
 
         # -------------------------------------------------
         # 5) 用 D_model 更新 Q & Policy
@@ -493,7 +498,7 @@ def main(cfg: DictConfig):
             opp_fn = make_opp_fn(real_opponent_states)
 
             epi_reward, _, traj = episode_reward(policy_fn, opp_fn, num_agents, k_eval, cfg)
-
+            # episode_reward_history.append(epi_reward)
             animate_episode(traj, episode_reward_history, save_path=f"episode_epoch_{epoch}.mp4")
 
 
