@@ -173,6 +173,7 @@ def main(cfg: DictConfig):
     # init animation parameters
     episode_reward_history = []
     epochs_to_render = [1, 3, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 60, 70, 80, 100, 130, 160, 200]
+    total_comm_count = 0
 
     # prepare fixed_batch
     rng, k_fix = jax.random.split(rng)
@@ -254,7 +255,7 @@ def main(cfg: DictConfig):
         #    （rollout.py 内部已包含 adaptive n^j 逻辑）
         # -------------------------------------------------
         rng, kr = jax.random.split(rng)
-        replay_model = rollout_model(
+        replay_model, comm_count_cum = rollout_model(
             rng=kr,
             transition_state=transition_state,
             reward_state=reward_state,
@@ -266,6 +267,10 @@ def main(cfg: DictConfig):
             cfg=cfg,
             epoch=epoch,
         )
+        total_comm_count += comm_count_cum
+        wandb.log({
+            "total_comm_count": total_comm_count,
+        })
 
 
         # -------------------------------------------------
@@ -429,9 +434,9 @@ def main(cfg: DictConfig):
                 flat_env= manual_flatten_dict(env_state_t) # dict to flat
                 flat_dyna = state_dyna[t]
                 diff = flat_env - flat_dyna
-                print("flat_env:", flat_env)
-                print("flat_dyna:", flat_dyna)
-                print("diff of flat_env and flat_dyna:", diff)
+                # print("flat_env:", flat_env)
+                # print("flat_dyna:", flat_dyna)
+                # print("diff of flat_env and flat_dyna:", diff)
                 mse = jnp.mean(diff**2)
                 l2 = jnp.linalg.norm(diff)
                 mse_list.append(mse)

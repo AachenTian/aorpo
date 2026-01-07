@@ -148,6 +148,8 @@ def rollout_model(
     print(f"Adaptive rollout steps (n^j): {n_js}")
 
     reward_roll = 0
+    comm_count_cum = 0
+    rollout_steps = 0
     # 4️ 模型rollout 循环
     for step in range(max_n):
         rng, subkey = jax.random.split(rng)
@@ -173,6 +175,7 @@ def rollout_model(
                 )
             else:
                 # 超出 n_j 时Communicate
+                comm_count_cum += cfg.rollout.batch_size
                 a_j, subkey = Comm(policy_state, obs[f"agent_{j+1}"], subkey)
             a_js.append(a_j)
 
@@ -207,13 +210,15 @@ def rollout_model(
             rew=reward_dict,
             dones=dones_dict,
         )
+        rollout_steps += 1
 
         # 存储到模型经验池
         replay_model = add_batch_model_to_replay(replay_model, batch_model, cfg)
         obs = next_obs
         state = next_state
     wandb.log({
-        "episode rewards": reward_roll
+        "episode rewards": reward_roll,
+        "rollout_step": rollout_steps,
     })
 
-    return replay_model
+    return replay_model, comm_count_cum
