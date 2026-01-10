@@ -235,7 +235,7 @@ def rollout_model(
         if step > 0:
             if jnp.all(ood_any):
                 break
-        if step >= 15:
+        if step >= cfg.rollout.k:
             break
         # state = jax.tree_util.tree_map(lambda x: x[None], state)
         # next_state = jax.tree_util.tree_map(lambda x: x[None], next_state)
