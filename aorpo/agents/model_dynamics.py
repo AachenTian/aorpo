@@ -483,19 +483,25 @@ def dynamics_uncertainty_per_dim(mu: jnp.ndarray, logvar: jnp.ndarray):
         entropy_dim:    (B, k)
     """
     # aleatoric
-    aleatoric_var = jnp.mean(jnp.exp(logvar), axis=0)  # (B, k)
+    var_e = jnp.exp(logvar)
+    prec_e = 1.0 / (var_e + 1e-6)
+    aleatoric_var = 1.0 / jnp.mean(prec_e, axis=0)
 
     # epistemic
-    mu_bar = jnp.mean(mu, axis=0)                      # (B, k)
+    mu_bar  = aleatoric_var * jnp.mean(prec_e * mu, axis=0)
     epistemic_var = jnp.mean((mu - mu_bar[None, ...]) ** 2, axis=0)
 
+    K = aleatoric_var / (aleatoric_var + epistemic_var + 1e-6)
+    tilde_var = (1.0 - K) * aleatoric_var
     # total
     total_var = aleatoric_var + epistemic_var
 
     # per-dim entropy (optional)
-    entropy_dim = 0.5 * jnp.log(2.0 * jnp.pi * jnp.e * total_var + 1e-6)
+    # entropy_dim = 0.5 * jnp.log(2.0 * jnp.pi * jnp.e * total_var + 1e-6)
+    entropy_dim = 0.5 * jnp.log(2.0 * jnp.pi * jnp.e * tilde_var + 1e-6)
+    entropy_dim_shifted = entropy_dim - jnp.min(entropy_dim, axis=0, keepdims=True)
 
-    return total_var, epistemic_var, aleatoric_var, entropy_dim
+    return total_var, epistemic_var, aleatoric_var, entropy_dim_shifted
 
 
 # Prediction & Evaluation
@@ -525,6 +531,14 @@ def predict_next(transition_state: TrainState,
     x = jnp.concatenate([state_agent_n, a_ego_n, a_opp_n], axis=-1)  # (B, in_dim)
 
     mu, logvar = transition_state.apply_fn({"params": transition_state.params}, x)   # (E,B,D)
+    var_e = jnp.exp(logvar)
+    prec_e = 1.0 / (var_e + 1e-6)
+    aleatoric_var = 1.0 / jnp.mean(prec_e, axis=0)  # (B,D)
+    mu_bar = aleatoric_var * jnp.mean(prec_e * mu, axis=0)  # (B,D)
+    epistemic_var = jnp.mean(
+        (mu - mu_bar[None, ...]) ** 2, axis=0
+    )  # (B,D)
+
 
     if member_idx is None:
         assert rng is not None, "predict_next: rng is required when member_idx is None."
@@ -532,6 +546,14 @@ def predict_next(transition_state: TrainState,
         member_idx = jax.random.randint(sub, shape=(), minval=0, maxval=mu.shape[0])
     mu_m = mu[member_idx]       # (B,D)
     logvar_m = logvar[member_idx]
+    var_m = var_e[member_idx]
+    rng, sub1 = jax.random.split(rng)
+    hat_delta_n = mu_m + jnp.sqrt(var_m) * \
+                  jax.random.normal(sub1, mu_m.shape)
+    K = aleatoric_var / (aleatoric_var + epistemic_var + 1e-6)
+
+    tilde_mu = mu_bar + K * (hat_delta_n - mu_bar)
+    tilde_var = (1.0 - K) * aleatoric_var
 
     # mu_m = jnp.mean(mu, axis=0)
     # var = jnp.exp(logvar)
@@ -543,12 +565,13 @@ def predict_next(transition_state: TrainState,
     # print("logvar_m.shape", logvar_m.shape)
 
     if deterministic:
-        delta_n = mu_m
+        delta_n = tilde_mu
     else:
         assert rng is not None, "predict_next: rng required for stochastic sampling."
         rng, sub = jax.random.split(rng)
-        stddev = jnp.exp(0.5 * logvar_m)
-        delta_n = mu_m + stddev * jax.random.normal(sub, mu_m.shape)
+        # stddev = jnp.exp(0.5 * logvar_m)
+        # delta_n = mu_m + stddev * jax.random.normal(sub, mu_m.shape)
+        delta_n = tilde_mu + jnp.sqrt(tilde_var) * jax.random.normal(sub, tilde_mu.shape)
 
     reward = reward_state.apply_fn({"params": reward_state.params}, x)
     reward_dict = {f"agent_{i}": reward[..., i:i + 1] for i in range(reward.shape[-1])}

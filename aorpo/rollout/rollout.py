@@ -227,16 +227,20 @@ def rollout_model(
         )
         total_var, _, _, entropy_dim = dynamics_uncertainty_per_dim(mu, logvar)
         entropy_cum += entropy_dim
+        print("entropy_dim:", entropy_dim)
+        print("entropy_cum:", entropy_cum)
+        print("lambda2_dyn:", lambda2_dyn)
 
-        # ood_step = jnp.any(entropy_dim > (lambda1_dyn+0.1), axis=-1)  # λ1
+
+        # ood_step = jnp.any(entropy_dim > (lambda1_dyn), axis=-1)  # λ1
         ood_step = jnp.any(total_var > total_var_threshold, axis=-1)  # λ1
         ood_long = jnp.any(entropy_cum > lambda2_dyn, axis=-1)  # λ2
         ood_any = jnp.logical_or(ood_step, ood_long)
         if step > 0:
             if jnp.all(ood_any):
                 break
-        if step >= cfg.rollout.k:
-            break
+        # if step >= cfg.rollout.k:
+        #     break
         # state = jax.tree_util.tree_map(lambda x: x[None], state)
         # next_state = jax.tree_util.tree_map(lambda x: x[None], next_state)
 
@@ -258,8 +262,8 @@ def rollout_model(
         obs = next_obs
         state = next_state
         step += 1
-        # if step >= max_n:
-        #     break
+
+
     jax.debug.print("rollout step ={}",step)
     wandb.log({
         "episode rewards": reward_roll,

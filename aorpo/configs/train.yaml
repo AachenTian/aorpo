@@ -31,7 +31,7 @@ rollout:
   quantile_opp: 0.99
   zeta1: 0.99
   zeta2: 0.01
-  xi: 2.0
+  xi: 30.0
 
 model_dynamics:
   lr: 3e-4

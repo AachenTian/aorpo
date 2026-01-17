@@ -3,7 +3,7 @@ from __future__ import annotations
 import jax
 import jax.numpy as jnp
 
-from aorpo.agents.model_dynamics import extract_core_state
+from aorpo.agents.model_dynamics import extract_core_state, dynamics_uncertainty_per_dim
 
 # -----------------------------------------------------
 # uncertainty threshold of opponent model action
@@ -146,10 +146,10 @@ def compute_entropy_thresholds(
     mu, logvar = transition_state.apply_fn({"params": transition_state.params}, x)
 
     # entropy: (B, D)
-    entropy, total_var = gaussian_entropy_from_logvar(mu, logvar)
+    total_var, _, _, entropy = dynamics_uncertainty_per_dim(mu, logvar)
 
     total_var_threshold = compute_total_var_threshold(total_var, zeta1=cfg.rollout.zeta1)
     lambda1 = jnp.quantile(entropy, cfg.rollout.zeta1, axis=0)
-    lambda2 = jnp.quantile(entropy, cfg.rollout.zeta2, axis=0) + jnp.log(cfg.rollout.xi)
+    lambda2 = jnp.quantile(entropy, cfg.rollout.zeta2, axis=0) * cfg.rollout.xi
 
     return lambda1, lambda2, total_var_threshold
