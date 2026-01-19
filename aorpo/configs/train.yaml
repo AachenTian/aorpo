@@ -5,7 +5,7 @@ env:
   state_dim: 34
   obs_dim: 18
   act_dim: 5
-  ENV_NAME: MPE_simple_spread_v3
+  ENV_NAME: MPE_simple_facmac_3a_v1
 
 replay:
   capacity: 50000

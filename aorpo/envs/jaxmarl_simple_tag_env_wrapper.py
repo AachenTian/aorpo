@@ -1,0 +1,57 @@
+import jax
+import jax.numpy as jnp
+from jaxmarl import make
+from jaxmarl.environments.mpe import MPEVisualizer
+import os
+import hydra
+from omegaconf import DictConfig
+
+def make_mpe_env(cfg: DictConfig):
+    env = make(cfg.env.ENV_NAME)    #"MPE_simple_v3"
+    return env
+
+def env_reset(env, key):
+    key_reset = jax.random.PRNGKey(40)
+    obs, state = env.reset(key_reset)
+    return state, obs, key
+
+def env_step(env, state, a_ego, a_opps, key):
+    a_ego = a_ego.reshape(1,-1)
+    a_opps = a_opps.reshape(2, -1)
+    actions = jnp.concatenate([a_ego, a_opps], axis=0)
+    actions = {agent: actions[i] for i,agent in enumerate(env.agents)}
+    obs, next_state, rewards, dones, infos = env.step(key, state, actions)
+    return next_state, obs, rewards, dones, key
+
+@hydra.main(config_path="../configs", config_name="train", version_base=None)
+def main(cfg: DictConfig):
+    max_steps = 25
+    key = jax.random.PRNGKey(0)
+    env = make_mpe_env(cfg)
+    state, obs, key = env_reset(env, key)
+    # Sample random actions
+    key, key_a = jax.random.split(key, 2)
+    key_a = jax.random.split(key_a, env.num_agents)
+    actions = {agent: env.action_space(agent).sample(key_a[i]) for i, agent in enumerate(env.agents)}
+
+    state_seq = []
+    for i in range(max_steps):
+        state_seq.append(state)
+        key, key_s, key_a = jax.random.split(key, 3)
+        key_a = jax.random.split(key_a, env.num_agents)
+        actions = {agent: env.action_space(agent).sample(key_a[i]) for i, agent in enumerate(env.agents)}
+
+        obs, state, rewards, dones, infos = env.step(key, state, actions)
+        if i == 10:
+            print("state:", state)
+            print("actions:", actions)
+            print("rewards:", rewards)
+            print("dones:", dones)
+            print("obs:", obs)
+
+    viz = MPEVisualizer(env, state_seq)
+    viz.animate(view=True)
+
+if __name__ == "__main__":
+    os.environ.setdefault("HYDRA_FULL_ERROR", "1")
+    main()
