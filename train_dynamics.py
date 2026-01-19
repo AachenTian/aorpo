@@ -38,13 +38,13 @@ run = wandb.init(
     # Set the wandb entity where your project will be logged (generally your team name).
     entity="yachen-tian-rwth-aachen-university",
     # Set the wandb project where this run will be logged.
-    project="AORPO-dynamics model",
+    project="AORPO-overcooked_v2",
     # mode="offline",
     # Track hyperparameters and run metadata.
     config={
         "learning_rate": 3e-4,
         "architecture": "AORPO",
-        "Environment": "mpe_spread_v3",
+        "Environment": "overcooked_v2",
         "epochs": 10,
     },
 )

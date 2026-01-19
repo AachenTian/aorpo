@@ -4,8 +4,12 @@ env:
   seed_reset: 40
   state_dim: 34
   obs_dim: 18
-  act_dim: 5
-  ENV_NAME: MPE_simple_spread_v3
+  act_dim: 1
+  ENV_NAME: "overcooked_v2"
+  LAYOUT: "cramped_room"
+  MAX_STEPS: 10
+  VIEW_RADIUS: 2
+  agent_view_size: 5
 
 replay:
   capacity: 50000
@@ -19,7 +23,7 @@ train:
   batch_size_std: 300
   model_updates: 50       # 每个 epoch 训练 dynamics 的次数
   gradient_updates: 100   # 每个 epoch 用 D_model 的更新次数
-  num_opponents: 2
+  num_opponents: 1
   num_landmark: 3
   core_state_dim: 18
   max_steps: 25
