@@ -58,7 +58,7 @@ def update_q_function(
         # log_prob_s = []
         rng, subkey = jax.random.split(rng)
         a_i, log_prob_i, key = PolicyNet.sample_action(
-            policy_state.params, policy_state.apply_fn, rng, next_obs['agent_0']
+            policy_state.params, policy_state.apply_fn, rng, next_obs['adversary_0']
         )
         # log_prob_s.append(log_prob_i)
         log_prob = log_prob_i
@@ -71,7 +71,7 @@ def update_q_function(
                 opp.params,
                 opp.apply_fn,
                 subkey,
-                next_obs[f"agent_{j+1}"],
+                next_obs[f"adversary_{j+1}"],
             )
             # a_j = EnsemblePolicyUtils.sample_deterministic_action_ensemble(
             #     opp.params,
@@ -97,9 +97,9 @@ def update_q_function(
         # )  # (B, num_agents)
         #reward = jnp.sum(rewards, axis=-1)  # (B,)
         # reward = reward / cfg.agent_num
-        reward = 3 * batch["rew"]["agent_0"]
+        reward = 3 * batch["rew"]["adversary_0"]
         reward = reward / cfg.reward_scale
-        target_q = reward.squeeze(-1) + cfg.gamma * (1.0 - batch["dones"]['agent_0'].squeeze(-1)) * (q_target_next - cfg.alpha * log_prob) #* (q_target_next - cfg.alpha * log_prob) delete other agent's entropy
+        target_q = reward.squeeze(-1) + cfg.gamma * (1.0 - batch["dones"]['adversary_0'].squeeze(-1)) * (q_target_next - cfg.alpha * log_prob) #* (q_target_next - cfg.alpha * log_prob) delete other agent's entropy
         target_q = jax.lax.stop_gradient(target_q)
 
         #Q1, Q2 MSE
@@ -183,7 +183,7 @@ def evaluate_fixed_q_loss(
         a_i = PolicyNet.deterministic_action(
             policy_state.params,
             policy_state.apply_fn,
-            fixed_batch["next_obs"]["agent_0"],
+            fixed_batch["next_obs"]["adversary_0"],
         )
         log_prob = 0
         a_js = []
@@ -192,7 +192,7 @@ def evaluate_fixed_q_loss(
             a_j = PolicyNet.deterministic_action(
                 opp.params,
                 opp.apply_fn,
-                fixed_batch["next_obs"][f"agent_{j+1}"]
+                fixed_batch["next_obs"][f"adversary_{j+1}"]
             )
             a_js.append(a_j)
 
@@ -211,13 +211,13 @@ def evaluate_fixed_q_loss(
         # )
         # reward = jnp.sum(rewards, axis=-1)
         # reward = reward / cfg.agent_num
-        reward = 3 * fixed_batch["rew"]["agent_0"]
+        reward = 3 * fixed_batch["rew"]["adversary_0"]
         reward = reward / cfg.reward_scale
 
         target_q = (
             reward.squeeze(-1)
             + cfg.gamma
-            * (1 - fixed_batch["dones"]["agent_0"].squeeze(-1))
+            * (1 - fixed_batch["dones"]["adversary_0"].squeeze(-1))
             * (q_target_next - cfg.alpha * log_prob)
         )
 

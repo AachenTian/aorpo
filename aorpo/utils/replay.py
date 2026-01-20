@@ -93,7 +93,7 @@ class ReplayBuffer:
 
     def add_batch(self, batch, cfg:DictConfig):
         """Add a batch (dict of jnp arrays) to replay buffer."""
-        B = batch["obs"]["agent_0"].shape[0]
+        B = batch["obs"]["adversary_0"].shape[0]
         idx = (jnp.arange(B) + self.ptr) % self.max_size
         flatten_fn = jax.vmap(manual_flatten_state)
         flat_state = flatten_fn(batch["state"]) # type: ignore
@@ -135,7 +135,7 @@ class ReplayBuffer:
         )
     def add_batch_model(self, batch, cfg:DictConfig):
         """Add a batch (dict of jnp arrays) to replay buffer."""
-        B = batch["obs"]["agent_0"].shape[0]
+        B = batch["obs"]["adversary_0"].shape[0]
         idx = (jnp.arange(B) + self.ptr) % self.max_size
         flat_state = batch["state"] # type: ignore
         flat_next_state = batch["next_state"] # type: ignore
@@ -195,7 +195,7 @@ class ReplayBuffer:
         agent_dict = {}
         for i in range(num_agents):
             start, end = i * agent_dim, (i + 1) * agent_dim
-            agent_dict[f"agent_{i}"] = flat_array[..., start:end]
+            agent_dict[f"adversary_{i}"] = flat_array[..., start:end]
         return agent_dict
 
 

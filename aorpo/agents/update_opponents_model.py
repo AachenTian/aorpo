@@ -24,7 +24,7 @@ def update_opponent_model(
     a_opp_all = batch["a_opp"]
     act_dim = a_opp_all.shape[-1] // opp_num
 
-    obs_list  = [batch["obs"][f"agent_{j+1}"] for j in range(opp_num)]
+    obs_list  = [batch["obs"][f"adversary_{j+1}"] for j in range(opp_num)]
     obs_all   = jnp.stack(obs_list )   # (opp_num, B, obs_dim)
 
     target_all = jnp.stack([

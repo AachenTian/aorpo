@@ -12,7 +12,7 @@ import copy
 # ===== 你项目里的模块 =====
 from aorpo.utils.replay import ReplayBuffer, manual_flatten_dict
 from aorpo.rollout.collect import collect_real_data, episode_reward, rollout_compare
-from aorpo.rollout.rollout import rollout_model, compute_rollout_lengths
+from aorpo.rollout.rollout import rollout_model
 
 
 from aorpo.agents.policy import init_policy_model, PolicyNet, init_policy_ensemble
@@ -38,7 +38,7 @@ run = wandb.init(
     # Set the wandb entity where your project will be logged (generally your team name).
     entity="yachen-tian-rwth-aachen-university",
     # Set the wandb project where this run will be logged.
-    project="AORPO-dynamics model",
+    project="AORPO-simple_tag",
     # mode="offline",
     # Track hyperparameters and run metadata.
     config={
@@ -77,7 +77,7 @@ def make_policy_fn(policy_state):
             policy_state.params,
             policy_state.apply_fn,
             key,
-            obs["agent_0"],
+            obs["adversary_0"],
         )
         return act, new_key
     return policy_fn
@@ -93,7 +93,7 @@ def make_opp_fn(opponent_states):
                 state.params,
                 state.apply_fn,
                 sub,
-                obs[f"agent_{i+1}"]
+                obs[f"adversary_{i+1}"]
             )
             acts.append(a_j)
         return jnp.concatenate(acts, -1), sub
@@ -130,7 +130,7 @@ def main(cfg: DictConfig):
     # --- 初始化网络
     rng, k1 = jax.random.split(rng)
     rng, k11 = jax.random.split(rng)
-    _, policy_state = init_policy_model(k1, obs_dim, act_dim, cfg.policy, "agent_0")
+    _, policy_state = init_policy_model(k1, obs_dim, act_dim, cfg.policy, "adversary_0")
 
     rng, kq1 = jax.random.split(rng)
     q1_net, q1_state = init_q_function(kq1, state_dim, act_dim, cfg.q_function)
@@ -152,14 +152,14 @@ def main(cfg: DictConfig):
     for i in range(opp_num):
         rng, ko = jax.random.split(rng)
         j = i+1
-        _, opp_state = init_policy_ensemble(ko, obs_dim, act_dim, cfg.policy, f"agent_{j}")
+        _, opp_state = init_policy_ensemble(ko, obs_dim, act_dim, cfg.policy, f"adversary_{j}")
         opponent_states.append(opp_state)
 
     # real opponent
     real_opponent_states = []
     for i in range(opp_num):
         rng, ko = jax.random.split(rng)
-        _, real_opp_state = init_policy_model(ko, obs_dim, act_dim, cfg.policy, f"agent_{i+1}")
+        _, real_opp_state = init_policy_model(ko, obs_dim, act_dim, cfg.policy, f"adversary_{i+1}")
         real_opponent_states.append(real_opp_state)
 
     # init std
@@ -498,7 +498,6 @@ def main(cfg: DictConfig):
             opp_fn = make_opp_fn(real_opponent_states)
 
             epi_reward, _, traj = episode_reward(policy_fn, opp_fn, num_agents, k_eval, cfg)
-            # episode_reward_history.append(epi_reward)
             animate_episode(traj, episode_reward_history, save_path=f"episode_epoch_{epoch}.mp4")
 
 

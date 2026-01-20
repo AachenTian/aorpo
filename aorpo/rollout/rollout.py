@@ -183,7 +183,7 @@ def rollout_model(
             policy_state.params,
             policy_state.apply_fn,
             subkey,
-            obs["agent_0"],
+            obs["adversary_0"],
         )
 
         # 每个对手动作 a_j
@@ -195,14 +195,14 @@ def rollout_model(
                 opp.params,
                 opp.apply_fn,
                 subkey,
-                obs[f"agent_{j+1}"],
+                obs[f"adversary_{j+1}"],
             )
             current_entropy = EnsemblePolicyUtils.get_infoprop_entropy(mu_j, log_std_j)
             ood_mask_j = current_entropy > thresholds[j]
             opp_j_is_ood = ood_mask_j #jnp.any(ood_mask_j, axis=-1)
             step_ood_any_opp = jnp.logical_or(step_ood_any_opp, opp_j_is_ood)
 
-            a_j_comm, subkey = Comm(policy_state, obs[f"agent_{j+1}"], subkey)
+            a_j_comm, subkey = Comm(policy_state, obs[f"adversary_{j+1}"], subkey)
             actual_a_j = jnp.where(opp_j_is_ood, a_j_comm, a_j_ens)
             a_js.append(actual_a_j)
 
@@ -244,7 +244,7 @@ def rollout_model(
         # state = jax.tree_util.tree_map(lambda x: x[None], state)
         # next_state = jax.tree_util.tree_map(lambda x: x[None], next_state)
 
-        reward_mean = jnp.mean(reward_dict["agent_0"])
+        reward_mean = jnp.mean(reward_dict["adversary_0"])
         reward_roll += reward_mean
         batch_model = dict(
             state=state,

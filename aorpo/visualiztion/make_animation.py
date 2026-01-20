@@ -47,7 +47,8 @@ import numpy as np
 
 def animate_episode(traj, episode_reward_history, save_path="episode_animation.mp4"):
 
-    agents = np.array(traj["agents"])        # (T, 3, 2)
+    adversary = np.array(traj["adversary"])        # (T, 3, 2)
+    agents = np.array(traj["agents"])
     landmarks = np.array(traj["landmarks"])  # (T, 3, 2)
     rewards = np.array(traj["rewards"])      # (T,)
     T = agents.shape[0]
@@ -82,10 +83,12 @@ def animate_episode(traj, episode_reward_history, save_path="episode_animation.m
     ax_env.set_ylim(-1.5, 1.5)
     # ax_env.grid(True)
 
-    scat_agents = ax_env.scatter([], [], s=80)
+    scat_adversary = ax_env.scatter([], [], s=80)
+    scat_agents = ax_env.scatter([], [], s=40)
     scat_landmarks = ax_env.scatter([], [], s=120, marker='X', color='black')
 
-    agent_colors = ['red', 'blue', 'green']
+    adversary_colors = ['red', 'blue', 'yellow']
+    agent_colors = ['green']
 
     # ---------- 更新函数 ----------
     def update(frame):
@@ -93,14 +96,18 @@ def animate_episode(traj, episode_reward_history, save_path="episode_animation.m
         # 更新 step reward 曲线
         line_reward.set_data(np.arange(frame), rewards[:frame])
 
-        # 更新 agents
+        # 更新 adversary
+        scat_adversary.set_offsets(adversary[frame])
+        scat_adversary.set_color(adversary_colors)
+
+        # 更新 adversary
         scat_agents.set_offsets(agents[frame])
         scat_agents.set_color(agent_colors)
 
         # 更新 landmarks
         scat_landmarks.set_offsets(landmarks[frame])
 
-        return line_reward, scat_agents, scat_landmarks
+        return line_reward, scat_adversary, scat_landmarks
 
     # ---------- 动画 ----------
     ani = animation.FuncAnimation(

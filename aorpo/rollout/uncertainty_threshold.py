@@ -74,7 +74,7 @@ def compute_opponent_threshold(opponent_states, replay_env, cfg):
         opp_num=cfg.train.num_opponents
     )
 
-    obs_list = [batch["obs"][f"agent_{j + 1}"] for j in range(cfg.train.num_opponents)]
+    obs_list = [batch["obs"][f"adversary_{j + 1}"] for j in range(cfg.train.num_opponents)]
     obs_all = jnp.stack(obs_list, axis=0)  # (num_opps, B, obs_dim)
 
     # ✅ 不再需要 combined_params（因为 apply_fn 已经处理 ensemble params）

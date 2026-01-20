@@ -2,7 +2,7 @@
 import jax
 import jax.numpy as jnp
 from aorpo.agents.policy import PolicyNet
-from aorpo.envs.jaxmarl_simple_spread_v3_env_wrapper import make_mpe_env, env_step, env_reset
+from aorpo.envs.jaxmarl_simple_tag_env_wrapper import make_mpe_env, env_step, env_reset
 from aorpo.agents.model_dynamics import predict_next
 from jax.flatten_util import ravel_pytree
 from omegaconf import DictConfig
@@ -24,9 +24,10 @@ def collect_real_data(policy_fn, opp_fn, obs_dim, act_dim, opp_num, opp_dim, key
         state2, obs2, r, dones, key = env_step(env, state, a_ego, a_opps, key)
         dones_True = {
             "__all__": jnp.array(True),
-            "agent_0": jnp.array(True),
-            "agent_1": jnp.array(True),
-            "agent_2": jnp.array(True),
+            "adversary_0": jnp.array(True),
+            "adversary_1": jnp.array(True),
+            "adversary_2": jnp.array(True),
+            # "agent_0": jnp.array(True),
         }
         dones = jax.lax.cond(
             state2.step == 25,
@@ -43,9 +44,10 @@ def collect_real_data(policy_fn, opp_fn, obs_dim, act_dim, opp_num, opp_dim, key
     state, obs, key = env_reset(env, key)
     dones = {
         "__all__": jnp.array(False),
-        "agent_0": jnp.array(False),
-        "agent_1": jnp.array(False),
-        "agent_2": jnp.array(False),
+        "adversary_0": jnp.array(False),
+        "adversary_1": jnp.array(False),
+        "adversary_2": jnp.array(False),
+        # "agent_0": jnp.array(False),
     }
     (final_state, final_obs, _, _), (next_state, next_obs, state, obs, a_ego, a_opp, rew, dones) = jax.lax.scan(
         rollout, (state, obs, key, dones), None, length=cfg.collect.steps_per_epoch
@@ -60,8 +62,9 @@ def episode_reward(policy_fn, opp_fn, num_agents, key, cfg):
     total_reward = 0.
     total_reward_agent_0 = 0.
     step_reward_list = []  # record the step reward in one rollout
-    traj_agents = []  # shape (T, 3, 2)
-    traj_landmarks = []  # shape (3, 2) (静态)
+    traj_adversary = []  # shape (T, 3, 2)
+    traj_agents = []  # shape (T, 1, 2)
+    traj_landmarks = []  # shape (2, 2) (静态)
 
     for t in range(25):
         key, sub1 = jax.random.split(key, 2)
@@ -77,21 +80,23 @@ def episode_reward(policy_fn, opp_fn, num_agents, key, cfg):
         #     print("action of ego:", a_ego)
         #     print("action of opp:", a_opp)
         #     print("episode_reward_step_0:", rewards)
-        total_reward_agent_0 += float(rewards["agent_0"])
-        total_reward += sum(float(rewards[f"agent_{i}"]) for i in range(num_agents))
+        total_reward_agent_0 += float(rewards["adversary_0"])
+        total_reward += sum(float(rewards[f"adversary_{i}"]) for i in range(num_agents))
         step_reward_list.append(total_reward)
 
         p = state.p_pos
-        traj_agents.append(p[:3])
-        traj_landmarks.append(p[3:6])
+        traj_adversary.append(p[:3])
+        traj_agents.append(p[3:4])
+        traj_landmarks.append(p[4:6])
 
-        if dones["agent_0"]:
+        if dones["adversary_0"]:
             print("break time of epi_reward:{}", t)
             break
 
     traj = {
         "agents": jnp.array(traj_agents),  # (T, 3, 2)
-        "landmarks": jnp.array(traj_landmarks),  # (3, 2)
+        "adversary": jnp.array(traj_adversary), # (T, 1, 2)
+        "landmarks": jnp.array(traj_landmarks),  # (2, 2)
         "rewards": jnp.array(step_reward_list),  # (T,)
     }
     return float(total_reward), float(total_reward_agent_0), traj

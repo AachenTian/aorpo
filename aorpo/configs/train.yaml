@@ -2,8 +2,8 @@ seed: 0
 
 env:
   seed_reset: 40
-  state_dim: 34
-  obs_dim: 18
+  state_dim: 37
+  obs_dim: 16
   act_dim: 5
   ENV_NAME: MPE_simple_facmac_3a_v1
 
@@ -20,8 +20,8 @@ train:
   model_updates: 50       # 每个 epoch 训练 dynamics 的次数
   gradient_updates: 100   # 每个 epoch 用 D_model 的更新次数
   num_opponents: 2
-  num_landmark: 3
-  core_state_dim: 18
+  num_landmark: 2
+  core_state_dim: 24
   max_steps: 25
   eval_interval: 1
 

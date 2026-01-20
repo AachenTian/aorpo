@@ -45,7 +45,7 @@ def update_policy(
             a_j, _ = EnsemblePolicyUtils.sample_deterministic_action_ensemble(
                 opp.params,
                 opp.apply_fn,
-                batch["obs"][f"agent_{j + 1}"],
+                batch["obs"][f"adversary_{j + 1}"],
             )
             a_j = jax.lax.stop_gradient(a_j)
             a_js.append(a_j)
@@ -123,7 +123,7 @@ def update_opponent_policy(
         actions = []
 
         # -- 先添加 ego --
-        obs_ego = batch["obs"]["agent_0"]
+        obs_ego = batch["obs"]["adversary_0"]
         a_ego = PolicyNet.deterministic_action(
             ego_policy_state.params,
             ego_policy_state.apply_fn,
@@ -134,7 +134,7 @@ def update_opponent_policy(
 
         # --- 添加所有 opponent 的动作 ---
         for j, opp_state in enumerate(all_opponent_states):
-            obs_j = batch["obs"][f"agent_{j+1}"]   # opponent 从 1 开始编号
+            obs_j = batch["obs"][f"adversary_{j+1}"]   # opponent 从 1 开始编号
 
             if j+1 == agent_idx:
                 # 当前正在更新的 opponent

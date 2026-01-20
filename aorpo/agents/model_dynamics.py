@@ -12,6 +12,8 @@ from flax.training.train_state import TrainState
 from omegaconf import DictConfig
 from brax.training.acme import running_statistics
 from aorpo.utils.replay import ReplayBuffer
+from aorpo.envs.jaxmarl_simple_tag_env_wrapper import get_adversary_obs_batched
+from jaxmarl import make
 
 # -------------------------------
 # Standardization helpers
@@ -138,7 +140,7 @@ class State:
     dones: jnp.ndarray
     step: jnp.ndarray
 
-def manual_unflatten_state(flat_state: jnp.ndarray, num_agents: int = 3, num_land: int = 3):
+def manual_unflatten_state(flat_state: jnp.ndarray, num_agents: int = 4, num_land: int = 2):
     B = flat_state.shape[0]
     idx = 0
     num_object = num_agents +num_land
@@ -187,14 +189,14 @@ def unflatten_batch(flat_batch):
         step=jnp.squeeze(jnp.stack([s.step for s in states]),axis=1),
     )
 def extract_core_state(flat_state):
-    return flat_state[:, :18]
+    return flat_state[:, :24]
 
 def restore_full_state(prev_flat_state, next_core_state, cfg):
     B = prev_flat_state.shape[0]
 
-    # 1) 先把前 18 维替换掉，后 16 维先照抄
+    # 1) 先把前 24 维替换掉，后   维先照抄
     full = jnp.concatenate(
-        [next_core_state, prev_flat_state[:, 18:]],
+        [next_core_state, prev_flat_state[:, 24:]],
         axis=-1
     )
     prev_step = prev_flat_state[:, -1]  # (B,)
@@ -210,50 +212,50 @@ def restore_full_state(prev_flat_state, next_core_state, cfg):
 
 
 
-def get_obs(state) -> Dict[str, jnp.ndarray]:
-    """计算 batched 状态下每个智能体的观测"""
-    num_agents = state.c.shape[1]                     # 第二维是 agent
-    num_landmarks = state.p_pos.shape[1] - num_agents
-
-    # === 拆分数据 ===
-    agent_pos = state.p_pos[..., :num_agents, :]        # (B, num_agents, 2)
-    agent_vel = state.p_vel[..., :num_agents, :]        # (B, num_agents, 2)
-    landmark_pos = state.p_pos[..., num_agents:, :]     # (B, num_landmarks, 2)
-    comm = state.c[..., :num_agents, :]                 # (B, num_agents, comm_dim)
-
-    obs = {}
-
-    # === 为每个智能体计算观测 ===
-    for i in range(num_agents):
-        self_pos = agent_pos[..., i, :]                 # (B, 2)
-        self_vel = agent_vel[..., i, :]                 # (B, 2)
-
-        # 相对 landmark 位置
-        rel_landmark = landmark_pos - self_pos[..., None, :]  # (B, num_landmarks, 2)
-
-        # 相对其他 agent 位置
-        other_pos = jnp.concatenate(
-            [agent_pos[..., :i, :], agent_pos[..., i + 1:, :]], axis=1
-        )                                             # (B, num_agents - 1, 2)
-        rel_others = other_pos - self_pos[..., None, :]  # (B, num_agents - 1, 2)
-
-        # 其他 agent 的 communication
-        other_comm = jnp.concatenate(
-            [comm[..., :i, :], comm[..., i + 1:, :]], axis=1
-        )                                             # (B, num_agents - 1, comm_dim)
-
-        # 拼接观测
-        obs_i = jnp.concatenate([
-            self_vel,                                 # (B, 2)
-            self_pos,                                 # (B, 2)
-            rel_landmark.reshape(rel_landmark.shape[0], -1),
-            rel_others.reshape(rel_others.shape[0], -1),
-            other_comm.reshape(other_comm.shape[0], -1),
-        ], axis=-1)                                   # (B, obs_dim)
-
-        obs[f"agent_{i}"] = obs_i
-
-    return obs
+# def get_obs(state) -> Dict[str, jnp.ndarray]:
+#     """计算 batched 状态下每个智能体的观测"""
+#     num_agents = state.c.shape[1]                     # 第二维是 agent
+#     num_landmarks = state.p_pos.shape[1] - num_agents
+#
+#     # === 拆分数据 ===
+#     agent_pos = state.p_pos[..., :num_agents, :]        # (B, num_agents, 2)
+#     agent_vel = state.p_vel[..., :num_agents, :]        # (B, num_agents, 2)
+#     landmark_pos = state.p_pos[..., num_agents:, :]     # (B, num_landmarks, 2)
+#     comm = state.c[..., :num_agents, :]                 # (B, num_agents, comm_dim)
+#
+#     obs = {}
+#
+#     # === 为每个智能体计算观测 ===
+#     for i in range(num_agents):
+#         self_pos = agent_pos[..., i, :]                 # (B, 2)
+#         self_vel = agent_vel[..., i, :]                 # (B, 2)
+#
+#         # 相对 landmark 位置
+#         rel_landmark = landmark_pos - self_pos[..., None, :]  # (B, num_landmarks, 2)
+#
+#         # 相对其他 agent 位置
+#         other_pos = jnp.concatenate(
+#             [agent_pos[..., :i, :], agent_pos[..., i + 1:, :]], axis=1
+#         )                                             # (B, num_agents - 1, 2)
+#         rel_others = other_pos - self_pos[..., None, :]  # (B, num_agents - 1, 2)
+#
+#         # 其他 agent 的 communication
+#         other_comm = jnp.concatenate(
+#             [comm[..., :i, :], comm[..., i + 1:, :]], axis=1
+#         )                                             # (B, num_agents - 1, comm_dim)
+#
+#         # 拼接观测
+#         obs_i = jnp.concatenate([
+#             self_vel,                                 # (B, 2)
+#             self_pos,                                 # (B, 2)
+#             rel_landmark.reshape(rel_landmark.shape[0], -1),
+#             rel_others.reshape(rel_others.shape[0], -1),
+#             other_comm.reshape(other_comm.shape[0], -1),
+#         ], axis=-1)                                   # (B, obs_dim)
+#
+#         obs[f"adversary_{i}"] = obs_i
+#
+#     return obs
 
 
 # -------------------------------
@@ -320,7 +322,7 @@ class RewardNet(nn.Module):
 # -------------------------------
 
 def init_model(rng, num_agents, act_dim, opp_dim, cfg):
-    core_state_dim = (num_agents*2 + cfg.train.num_landmark) * 2
+    core_state_dim = cfg.train.core_state_dim
     # transition model
     transition = EnsembleTransition(
         num_members=cfg.model_dynamics.num_members,
@@ -508,7 +510,7 @@ def dynamics_uncertainty_per_dim(mu: jnp.ndarray, logvar: jnp.ndarray):
 def predict_next(transition_state: TrainState,
                  reward_state: TrainState,
                  std: Standardizer,
-                 state_agent: jnp.ndarray,   # (B, obs_dim)
+                 state_agent: jnp.ndarray,
                  a_ego: jnp.ndarray,   # (B, act_dim)
                  a_opp: jnp.ndarray,
                  cfg: DictConfig,
@@ -574,7 +576,7 @@ def predict_next(transition_state: TrainState,
         delta_n = tilde_mu + jnp.sqrt(tilde_var) * jax.random.normal(sub, tilde_mu.shape)
 
     reward = reward_state.apply_fn({"params": reward_state.params}, x)
-    reward_dict = {f"agent_{i}": reward[..., i:i + 1] for i in range(reward.shape[-1])}
+    reward_dict = {f"adversary_{i}": reward[..., i:i + 1] for i in range(reward.shape[-1])}
 
     delta = std.denorm_delta(delta_n)      # (B,D)
     core_next_state_agent = core_state + delta
@@ -582,10 +584,11 @@ def predict_next(transition_state: TrainState,
 
     # from state get obs and dones
     restored_state = manual_unflatten_state(next_state_agent) # 34 to State
-    next_obs = get_obs(restored_state)
+    env = make(cfg.env.ENV_NAME)
+    next_obs = get_adversary_obs_batched(restored_state, env)
     dones_pred = next_state_agent[..., -4:-1]
     dones_bool = dones_pred > 0.0
-    dones_dict = {f"agent_{i}": dones_bool[..., i:i+1] for i in range(dones_pred.shape[-1])}
+    dones_dict = {f"adversary_{i}": dones_bool[..., i:i+1] for i in range(dones_pred.shape[-1])}
     return next_state_agent, next_obs, reward_dict, dones_dict, mu, logvar
 
 def eval_error(real_state:TrainState,###############
