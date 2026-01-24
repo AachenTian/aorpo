@@ -2,6 +2,8 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from typing import Sequence, Optional, Any, Dict, Tuple
+from functools import partial
+
 
 import jax
 import jax.numpy as jnp
@@ -12,8 +14,6 @@ from flax.training.train_state import TrainState
 from omegaconf import DictConfig
 from brax.training.acme import running_statistics
 from aorpo.utils.replay import ReplayBuffer
-from aorpo.envs.jaxmarl_simple_tag_env_wrapper import get_adversary_obs_batched
-from jaxmarl import make
 
 # -------------------------------
 # Standardization helpers
@@ -132,13 +132,29 @@ class StandardizerRS:
 # -------------------------------
 # State unflatten
 # -------------------------------
+@jax.tree_util.register_pytree_node_class
 @dataclass
 class State:
     p_pos: jnp.ndarray
     p_vel: jnp.ndarray
     c: jnp.ndarray
-    dones: jnp.ndarray
+    done: jnp.ndarray
     step: jnp.ndarray
+
+    def tree_flatten(self):
+        children = (
+            self.p_pos,
+            self.p_vel,
+            self.c,
+            self.done,
+            self.step,
+        )
+        aux_data = None
+        return children, aux_data
+
+    @classmethod
+    def tree_unflatten(cls, aus_data, children):
+        return cls(*children)
 
 def manual_unflatten_state(flat_state: jnp.ndarray, num_agents: int = 4, num_land: int = 2):
     B = flat_state.shape[0]
@@ -160,43 +176,46 @@ def manual_unflatten_state(flat_state: jnp.ndarray, num_agents: int = 4, num_lan
     idx += c_dim
 
     # --- done ---
-    dones = flat_state[..., idx : idx + num_agents].reshape(B, num_agents)
+    done = flat_state[..., idx : idx + num_agents].reshape(B, num_agents)
     idx += num_agents
 
     # --- step ---
-    step = flat_state[..., idx:]
+    step = flat_state[..., idx]
+    idx += 1
+
+    # 🔑 dummy goal（必须是 array）
+    goal = jnp.zeros((B,), dtype=jnp.int32)
 
     restored_state = State(
         p_pos=p_pos,
         p_vel=p_vel,
         c=c,
-        dones=dones,
-        step=step
+        done=done,
+        step=step,
     )
     return restored_state
 
-def unflatten_batch(flat_batch):
-    states = []
-    for i in range(flat_batch.shape[0]):
-        s = manual_unflatten_state(flat_batch[i])   # 输入 shape (1,12) 或 (12,)
-        states.append(s)
-    # 把 256 个 State 各字段 stack 成 batched state
-    return State(
-        p_pos=jnp.squeeze(jnp.stack([s.p_pos for s in states]), axis=1),
-        p_vel=jnp.squeeze(jnp.stack([s.p_vel for s in states]),axis=1),
-        c=jnp.squeeze(jnp.stack([s.c for s in states]), axis=1),
-        dones = jnp.squeeze(jnp.array([s.dones for s in states]), axis=1),
-        step=jnp.squeeze(jnp.stack([s.step for s in states]),axis=1),
-    )
+# def unflatten_batch(flat_batch):
+#     states = []
+#     for i in range(flat_batch.shape[0]):
+#         s = manual_unflatten_state(flat_batch[i])   # 输入 shape (1,12) 或 (12,)
+#         states.append(s)
+#     # 把 256 个 State 各字段 stack 成 batched state
+#     return State(
+#         p_pos=jnp.squeeze(jnp.stack([s.p_pos for s in states]), axis=1),
+#         p_vel=jnp.squeeze(jnp.stack([s.p_vel for s in states]),axis=1),
+#         c=jnp.squeeze(jnp.stack([s.c for s in states]), axis=1),
+#         done = jnp.squeeze(jnp.array([s.dones for s in states]), axis=1),
+#         step=jnp.squeeze(jnp.stack([s.step for s in states]),axis=1),
+#     )
 def extract_core_state(flat_state):
-    return flat_state[:, :24]
+    return flat_state[:, :20]
 
 def restore_full_state(prev_flat_state, next_core_state, cfg):
-    B = prev_flat_state.shape[0]
 
-    # 1) 先把前 24 维替换掉，后   维先照抄
+    # 1) 先把前 20 维替换掉，后   维先照抄
     full = jnp.concatenate(
-        [next_core_state, prev_flat_state[:, 24:]],
+        [next_core_state, prev_flat_state[:, 20:]],
         axis=-1
     )
     prev_step = prev_flat_state[:, -1]  # (B,)
@@ -205,10 +224,46 @@ def restore_full_state(prev_flat_state, next_core_state, cfg):
     full = full.at[:, -1].set(step_next)
 
     done_flag = (step_next >= cfg.train.max_steps).astype(full.dtype)  # (B,)
-    done_vec = jnp.tile(done_flag[:, None], (1, cfg.q_function.agent_num))  # (B,3)
-    full = full.at[:, 30: 30 + cfg.q_function.agent_num].set(done_vec)
+    done_vec = jnp.tile(done_flag[:, None], (1, cfg.env.num_agents))  # (B,3)
+    full = full.at[:, 32: 32 + cfg.env.num_agents].set(done_vec)
 
     return full
+
+def unflatten_to_restore_state(flat_state, cfg):
+    """
+    flat_state: (B, D)
+    return: batched State, all fields are arrays
+    """
+    B = flat_state.shape[0]
+
+    # ===== 根据你的环境配置拆 =====
+    num_entities = cfg.env.num_entities
+    num_agents = cfg.env.num_agents
+    dim_c = cfg.env.dim_c
+
+    idx = 0
+
+    def take(shape):
+        nonlocal idx
+        size = int(jnp.prod(jnp.array(shape)))
+        out = flat_state[:, idx:idx + size]
+        idx += size
+        return out.reshape((B,) + shape)
+
+    p_pos = take((num_entities, 2))
+    p_vel = take((num_entities, 2))
+    c     = take((num_agents, dim_c))
+    done  = take((num_agents,)).astype(bool)
+    step  = take(()).astype(jnp.int32)
+
+
+    return State(
+        p_pos=p_pos,
+        p_vel=p_vel,
+        c=c,
+        done=done,
+        step=step,
+    )
 
 
 
@@ -256,6 +311,116 @@ def restore_full_state(prev_flat_state, next_core_state, cfg):
 #         obs[f"adversary_{i}"] = obs_i
 #
 #     return obs
+
+@jax.tree_util.register_pytree_node_class
+@dataclass
+class FacmacObsConfig:
+    num_agents: int
+    num_adversaries: int
+    num_landmarks: int
+    view_radius: jnp.ndarray  # (num_agents,)
+
+    def tree_flatten(self):
+        children = (self.view_radius,)
+        aux_data = (
+            self.num_agents,
+            self.num_adversaries,
+            self.num_landmarks,
+        )
+        return children, aux_data
+
+    @classmethod
+    def tree_unflatten(cls, aux_data, children):
+        (view_radius,) = children
+        num_agents, num_adversaries, num_landmarks = aux_data
+        return cls(
+            num_agents=num_agents,
+            num_adversaries=num_adversaries,
+            num_landmarks=num_landmarks,
+            view_radius=view_radius,
+        )
+
+
+# =========================
+# 单环境 get_obs（纯函数）
+# =========================
+def facmac_get_obs_single(
+    state: State,
+    cfg: FacmacObsConfig,
+) -> Dict[str, jnp.ndarray]:
+
+    num_agents = cfg.num_agents
+    num_adv = cfg.num_adversaries
+    view_radius = cfg.view_radius
+
+    agent_range = jnp.arange(num_agents)
+
+    @partial(jax.vmap, in_axes=(0,))
+    def _common_stats(aidx):
+        # landmark 相对位置
+        landmark_pos = state.p_pos[num_agents:] - state.p_pos[aidx]  # (L, 2)
+
+        # 其他 agent
+        other_pos = state.p_pos[:num_agents] - state.p_pos[aidx]
+        other_vel = state.p_vel[:num_agents]
+
+        # 去掉自身
+        other_pos = jnp.roll(other_pos, shift=num_agents - aidx - 1, axis=0)[:num_agents - 1]
+        other_vel = jnp.roll(other_vel, shift=num_agents - aidx - 1, axis=0)[:num_agents - 1]
+
+        other_pos = jnp.roll(other_pos, shift=aidx, axis=0)
+        other_vel = jnp.roll(other_vel, shift=aidx, axis=0)
+
+        # 可见性 mask
+        lm_mask = jnp.linalg.norm(landmark_pos, axis=1) > view_radius[aidx]
+        landmark_pos = jnp.where(lm_mask[:, None], 0.0, landmark_pos)
+
+        ag_mask = jnp.linalg.norm(other_pos, axis=1) > view_radius[aidx]
+        other_pos = jnp.where(ag_mask[:, None], 0.0, other_pos)
+        other_vel = jnp.where(ag_mask[:, None], 0.0, other_vel)
+
+        return landmark_pos, other_pos, other_vel
+
+    landmark_pos, other_pos, other_vel = _common_stats(agent_range)
+
+    # adversary obs (16 dim)
+    def _adversary(aidx):
+        return jnp.concatenate([
+            state.p_vel[aidx],                    # 2
+            state.p_pos[aidx],                    # 2
+            landmark_pos[aidx].reshape(-1),       # 2 * L = 4
+            other_pos[aidx].reshape(-1),          # 2 * (A-1) = 6
+            other_vel[aidx, -1],                  # 2
+        ])
+
+    # good agent obs (16 dim)
+    def _good(aidx):
+        return jnp.concatenate([
+            state.p_vel[aidx],                    # 2
+            state.p_pos[aidx],                    # 2
+            landmark_pos[aidx].reshape(-1),       # 4
+            other_pos[aidx].reshape(-1),          # 6
+            jnp.zeros_like(other_vel[aidx, -1]),  # 2
+        ])
+
+    obs = {}
+    for i in range(num_adv):
+        obs[f"adversary_{i}"] = _adversary(i)
+
+    for i in range(num_agents - num_adv):
+        obs[f"agent_{i}"] = _good(i + num_adv)
+
+    return obs
+
+_facmac_get_obs_batched = jax.jit(
+    jax.vmap(facmac_get_obs_single, in_axes=(0, None)),
+    # static_argnums=(1,),
+)
+def facmac_get_obs_batched(state_batched: State, cfg: FacmacObsConfig):
+
+    return _facmac_get_obs_batched(state_batched, cfg)
+
+
 
 
 # -------------------------------
@@ -584,8 +749,15 @@ def predict_next(transition_state: TrainState,
 
     # from state get obs and dones
     restored_state = manual_unflatten_state(next_state_agent) # 34 to State
-    env = make(cfg.env.ENV_NAME)
-    next_obs = get_adversary_obs_batched(restored_state, env)
+    # unflatten_restore_state = unflatten_to_restore_state(restored_state, cfg)
+    cfg_get_obs = FacmacObsConfig(
+        num_agents=cfg.env.num_agents,
+        num_adversaries=cfg.env.num_adversaries,
+        num_landmarks=cfg.train.num_landmark,
+        view_radius=jnp.full((cfg.env.num_agents,), cfg.env.view_radius),
+    )
+    next_obs = facmac_get_obs_batched(restored_state, cfg_get_obs)
+    next_obs.pop("agent_0", None)
     dones_pred = next_state_agent[..., -4:-1]
     dones_bool = dones_pred > 0.0
     dones_dict = {f"adversary_{i}": dones_bool[..., i:i+1] for i in range(dones_pred.shape[-1])}

@@ -66,7 +66,7 @@ def episode_reward(policy_fn, opp_fn, num_agents, key, cfg):
     traj_agents = []  # shape (T, 1, 2)
     traj_landmarks = []  # shape (2, 2) (静态)
 
-    for t in range(25):
+    for t in range(cfg.env.horizon):
         key, sub1 = jax.random.split(key, 2)
         a_ego, sub1 = policy_fn(obs, sub1)
 

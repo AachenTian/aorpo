@@ -9,7 +9,7 @@ import wandb, random
 from dataclasses import dataclass
 from functools import partial
 
-from aorpo.agents.model_dynamics import predict_next, eval_error, unflatten_batch, dynamics_uncertainty_per_dim
+from aorpo.agents.model_dynamics import predict_next, eval_error, dynamics_uncertainty_per_dim
 from aorpo.agents.policy import PolicyNet, EnsemblePolicyUtils
 from aorpo.utils.replay import ReplayBuffer
 from aorpo.rollout.uncertainty_threshold import compute_opponent_threshold, compute_entropy_thresholds

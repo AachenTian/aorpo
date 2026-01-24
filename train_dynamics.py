@@ -417,7 +417,7 @@ def main(cfg: DictConfig):
                 reward_state=reward_state,
                 std=std,
                 key=compare_key,
-                horizon=15,
+                horizon=cfg.env.horizon,
                 cfg=cfg
             )
             T = state_dyna.shape[0]
