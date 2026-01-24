@@ -369,6 +369,11 @@ def main(cfg: DictConfig):
         opp_fn = make_opp_fn(real_opponent_states)
         epi_reward, epi_reward_0, _ = episode_reward(policy_fn, opp_fn, num_agents, eval_rng, cfg)
         episode_reward_history.append(epi_reward)
+        wandb.define_metric("episode_reward", step_metric="total_comm_count_x")
+        wandb.log({
+            "total_comm_count_x": total_comm_count,
+            "episode_reward": epi_reward,
+        })
         wandb.log({
             "episode_reward": epi_reward,
             "epi_reward_agent-0": epi_reward_0,
