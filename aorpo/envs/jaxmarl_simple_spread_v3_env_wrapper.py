@@ -4,6 +4,7 @@ from jaxmarl import make
 import os
 import hydra
 from omegaconf import DictConfig
+from aorpo.visualiztion.make_animation import animate_episode
 
 def make_mpe_env(cfg: DictConfig):
     env = make(cfg.env.ENV_NAME, action_type="Continuous")    #"MPE_simple_v3"
@@ -35,6 +36,12 @@ def main(cfg: DictConfig):
     print("obs keys:", obs.keys())
     print("state:", state)
 
+    total_reward = 0.
+    total_reward_agent_0 = 0.
+    step_reward_list = []  # record the step reward in one rollout
+    traj_agents = []  # shape (T, 3, 2)
+    traj_landmarks = []  # shape (3, 2) (静态)
+
     # a_ego = jnp.ones((cfg.env.act_dim,))
     # a_opps = jnp.zeros((cfg.train.num_opponents * cfg.env.act_dim))
     # a_ego = jnp.array([-0.9009457, -0.19701889, 0.40034992, -0.6112185,  0.0424891 ]) ##(-0.6537076, -0.59736881)
@@ -45,7 +52,7 @@ def main(cfg: DictConfig):
         -0.2582537, 0.2940862, -0.98897564, -0.9850584, 0.343176
     ])
 
-    for i in range(3):
+    for i in range(50):
         if i == 0:
             a_ego = a_ego
             a_opps = a_opps
@@ -63,6 +70,21 @@ def main(cfg: DictConfig):
         # print("obs:", obs)
         print("rewards:", rewards)
         # print("dones:", dones)
+        total_reward_agent_0 += float(rewards["agent_0"])
+        total_reward += sum(float(rewards[f"agent_{i}"]) for i in range(3))
+        step_reward_list.append(total_reward)
+
+        p = state.p_pos
+        traj_agents.append(p[:3])
+        traj_landmarks.append(p[3:6])
+
+    traj = {
+        "agents": jnp.array(traj_agents),  # (T, 3, 2)
+        "landmarks": jnp.array(traj_landmarks),  # (3, 2)
+        "rewards": jnp.array(step_reward_list),  # (T,)
+    }
+    episode_reward_history = [1, 2, 3, 4, 5]
+    animate_episode(traj, episode_reward_history, save_path=f"episode_epoch_test.mp4")
 
 if __name__ == "__main__":
     os.environ.setdefault("HYDRA_FULL_ERROR", "1")
