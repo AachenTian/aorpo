@@ -9,7 +9,7 @@ import wandb, random
 from dataclasses import dataclass
 
 from aorpo.agents.model_dynamics import predict_next
-from aorpo.agents.policy import PolicyNet
+from aorpo.agents.policy import PolicyNet, EnsemblePolicyUtils
 from aorpo.utils.replay import ReplayBuffer
 
 @dataclass
@@ -167,16 +167,16 @@ def rollout_model(
         for j, opp in enumerate(opponent_policies):
             if step < n_js[j]:
                 # 使用 learned opponent policy
-                a_j, _, subkey = PolicyNet.sample_action(
+                a_j, _, _, subkey = EnsemblePolicyUtils.sample_action_ensemble(
                     opp.params,
                     opp.apply_fn,
                     subkey,
-                    obs[f"adversary_{j+1}"],
+                    obs[f"adversary_{j + 1}"],
                 )
             else:
                 # 超出 n_j 时Communicate
                 comm_count_cum += cfg.rollout.batch_size
-                a_j, subkey = Comm(opp, obs[f"adversary_{j+1}"], subkey)
+                a_j, subkey = Comm(policy_state, obs[f"adversary_{j+1}"], subkey)
             a_js.append(a_j)
 
         # 联合动作
