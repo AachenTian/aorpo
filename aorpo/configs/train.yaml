@@ -19,11 +19,13 @@ train:
   batch_size_std: 300
   model_updates: 50       # 每个 epoch 训练 dynamics 的次数
   gradient_updates: 100   # 每个 epoch 用 D_model 的更新次数
+  opp_model_updates: 100  # 每个 epoch 更新 D_model 的更新次数
   num_opponents: 2
   num_landmark: 3
   core_state_dim: 18
   max_steps: 25
   eval_interval: 1
+  reinit_opp_model: Ture
 
 rollout:
   batch_size: 1024

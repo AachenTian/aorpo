@@ -227,9 +227,9 @@ def rollout_model(
         )
         total_var, _, _, entropy_dim = dynamics_uncertainty_per_dim(mu, logvar)
         entropy_cum += entropy_dim
-        print("entropy_dim:", entropy_dim)
-        print("entropy_cum:", entropy_cum)
-        print("lambda2_dyn:", lambda2_dyn)
+        # print("entropy_dim:", entropy_dim)
+        # print("entropy_cum:", entropy_cum)
+        # print("lambda2_dyn:", lambda2_dyn)
 
 
         # ood_step = jnp.any(entropy_dim > (lambda1_dyn), axis=-1)  # λ1
