@@ -176,7 +176,7 @@ def rollout_model(
             else:
                 # 超出 n_j 时Communicate
                 comm_count_cum += cfg.rollout.batch_size
-                a_j, subkey = Comm(policy_state, obs[f"agent_{j+1}"], subkey)
+                a_j, subkey = Comm(opp, obs[f"agent_{j+1}"], subkey)
             a_js.append(a_j)
 
         # 联合动作
