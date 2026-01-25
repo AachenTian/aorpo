@@ -12,7 +12,7 @@ import copy
 # ===== 你项目里的模块 =====
 from aorpo.utils.replay import ReplayBuffer, manual_flatten_dict
 from aorpo.rollout.collect import collect_real_data, episode_reward, rollout_compare
-from aorpo.rollout.rollout import rollout_model
+from aorpo.rollout.rollout_aorpo import rollout_model
 
 
 from aorpo.agents.policy import init_policy_model, PolicyNet, init_policy_ensemble
