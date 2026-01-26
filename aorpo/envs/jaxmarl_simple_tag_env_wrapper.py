@@ -49,7 +49,7 @@ def env_step(env, state, a_ego, a_opps, key):
     min_dist_adv = jnp.min(dist, axis=1)  # (A,)
     dist_reward = -jnp.mean(min_dist_adv)  # scalar
 
-    alpha = 1.0  # 很小！
+    alpha = 10.0
     for a in env.adversaries:
         rewards[a] = rewards[a] + alpha * dist_reward
     # =========================

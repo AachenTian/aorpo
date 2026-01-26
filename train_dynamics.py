@@ -197,6 +197,16 @@ def main(cfg: DictConfig):
 
     for epoch in tqdm(range(1, cfg.train.epochs + 1), desc="Training Epochs"):
         print(f"\n===== Epoch {epoch}/{cfg.train.epochs} =====")
+        if cfg.train.reinit_opp_model:
+            # -------------------------------------------------
+            # 0) REINIT opponent model
+            # ---------------------------------——--------------
+            opponent_states = []
+            for i in range(opp_num):
+                rng, ko = jax.random.split(rng)
+                j = i + 1
+                _, opp_state = init_policy_ensemble(ko, obs_dim, act_dim, cfg.policy, f"agent_{j}")
+                opponent_states.append(opp_state)
 
         # -------------------------------------------------
         # 1) 真实环境采样 D_env
@@ -246,10 +256,11 @@ def main(cfg: DictConfig):
         # -------------------------------------------------
         # 3) update opponent model by clone learning
         # -------------------------------------------------
-        opponent_states, opp_metrics = update_opponent_model(
-            opponent_states,
-            batch_env,
-        )
+        for i in range(cfg.train.opp_model_updates):
+            opponent_states, opp_metrics = update_opponent_model(
+                opponent_states,
+                batch_env,
+            )
         # -------------------------------------------------
         # 4) 模型 rollout 生成 D_model
         #    （rollout.py 内部已包含 adaptive n^j 逻辑）
