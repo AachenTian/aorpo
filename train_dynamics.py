@@ -262,6 +262,7 @@ def main(cfg: DictConfig):
             std=std,
             policy_state=policy_state,
             opponent_policies=opponent_states,
+            real_opponent_policies=real_opponent_states,
             replay_env=replay_env,
             replay_model=replay_model,
             cfg=cfg,
