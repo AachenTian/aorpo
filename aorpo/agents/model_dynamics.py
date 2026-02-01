@@ -11,6 +11,7 @@ import optax
 from flax import linen as nn
 from flax import struct
 from flax.training.train_state import TrainState
+from aorpo.envs.jaxmarl_simple_tag_env_wrapper import reward_fn
 from omegaconf import DictConfig
 from brax.training.acme import running_statistics
 from aorpo.utils.replay import ReplayBuffer
@@ -426,9 +427,10 @@ def facmac_get_obs_batched(state_batched: State, cfg: FacmacObsConfig):
 # -------------------------------
 # Networks
 # -------------------------------
-class SingleDynamics(nn.Module):
+class SingleDynamicsTwoHead(nn.Module):
     hidden_dims: Sequence[int]
-    out_dim: int  # = state_dim (predict delta)
+    evader_dim: int
+    others_dim: int
     min_logvar: float = -10.0
     max_logvar: float = 0.5
 
@@ -437,23 +439,33 @@ class SingleDynamics(nn.Module):
         h = x
         for d in self.hidden_dims:
             h = nn.relu(nn.Dense(d)(h))
-        mu = nn.Dense(self.out_dim)(h)
-        logvar = nn.Dense(self.out_dim)(h)
-        logvar = jnp.clip(logvar, self.min_logvar, self.max_logvar)
-        return mu, logvar
+
+        # ----- evader head -----
+        mu_e = nn.Dense(self.evader_dim)(h)
+        logvar_e = nn.Dense(self.evader_dim)(h)
+
+        # ----- others head -----
+        mu_o = nn.Dense(self.others_dim)(h)
+        logvar_o = nn.Dense(self.others_dim)(h)
+
+        logvar_e = jnp.clip(logvar_e, self.min_logvar, self.max_logvar)
+        logvar_o = jnp.clip(logvar_o, self.min_logvar, self.max_logvar)
+
+        return (mu_e, logvar_e), (mu_o, logvar_o)
 
 
 
 class EnsembleTransition(nn.Module):
     num_members: int
     hidden_dims: Sequence[int]
-    out_dim: int  # state_dim
+    evader_dim: int
+    others_dim: int
     min_logvar: float = -10.0
     max_logvar: float = 0.5
 
     def setup(self):
         self.member = nn.vmap(
-            SingleDynamics,
+            SingleDynamicsTwoHead,
             variable_axes={'params': 0},
             split_rngs={'params': True},
             in_axes=None,
@@ -461,7 +473,8 @@ class EnsembleTransition(nn.Module):
             axis_size=self.num_members,
         )(
             hidden_dims=self.hidden_dims,
-            out_dim=self.out_dim,
+            evader_dim=self.evader_dim,
+            others_dim=self.others_dim,
             min_logvar=self.min_logvar,
             max_logvar=self.max_logvar,
         )
@@ -492,7 +505,8 @@ def init_model(rng, num_agents, act_dim, opp_dim, cfg):
     transition = EnsembleTransition(
         num_members=cfg.model_dynamics.num_members,
         hidden_dims=tuple(cfg.model_dynamics.hidden_dims),
-        out_dim=core_state_dim,
+        evader_dim=cfg.train.evader_dim,
+        others_dim=cfg.train.others_dim,
         min_logvar=cfg.model_dynamics.min_logvar,
         max_logvar=cfg.model_dynamics.max_logvar,
     )
@@ -526,10 +540,74 @@ def _nll(mu, logvar, target):
     nll = jnp.mean(nll_b, axis=-1)
     return jnp.mean(nll)
 
+def split_delta(delta, cfg):
+    A = cfg.env.num_agents
+    L = cfg.env.num_entities - cfg.env.num_agents
+    i = cfg.env.num_adversaries  # evader index
 
+    # pos part
+    pos = delta[:, :2*A]                  # (B, 2A)
+    vel = delta[:, 2*A+2*L:4*A+2*L]               # (B, 2A)
 
+    pos = pos.reshape(-1, A, 2)
+    vel = vel.reshape(-1, A, 2)
 
-def train_transition_step(state, batch, std):
+    evader = jnp.concatenate(
+        [pos[:, i], vel[:, i]], axis=-1
+    )                                     # (B, 4)
+
+    others_pos = jnp.delete(pos, i, axis=1)
+    others_vel = jnp.delete(vel, i, axis=1)
+
+    others = jnp.concatenate(
+        [
+            others_pos.reshape(delta.shape[0], -1),
+            others_vel.reshape(delta.shape[0], -1),
+        ],
+        axis=-1
+    )                                     # (B, (A-1)*4)
+
+    return evader, others
+
+def merge_delta(mu_e, mu_o, cfg):
+    A = cfg.env.num_agents
+    L = cfg.env.num_entities - cfg.env.num_agents
+    i = cfg.env.num_adversaries
+    B = mu_e.shape[0]
+
+    delta_agent_pos = jnp.zeros((B, A, 2))
+    delta_agent_vel = jnp.zeros((B, A, 2))
+
+    # evader
+    delta_agent_pos = delta_agent_pos.at[:, i].set(mu_e[:, :2])
+    delta_agent_vel = delta_agent_vel.at[:, i].set(mu_e[:, 2:])
+
+    # others
+    others_pos = mu_o[:, :(A-1)*2].reshape(B, A-1, 2)
+    others_vel = mu_o[:, (A-1)*2:].reshape(B, A-1, 2)
+
+    idx = jnp.concatenate([
+        jnp.arange(i),
+        jnp.arange(i + 1, A)
+    ])  # (A-1,)
+
+    delta_agent_pos = delta_agent_pos.at[:, idx].set(others_pos)
+    delta_agent_vel = delta_agent_vel.at[:, idx].set(others_vel)
+
+    delta_landmark_pos = jnp.zeros((B, L, 2))
+
+    delta_core = jnp.concatenate(
+        [
+            delta_agent_pos.reshape(B, -1),
+            delta_landmark_pos.reshape(B, -1),
+            delta_agent_vel.reshape(B, -1),
+        ],
+        axis=-1
+    )
+
+    return delta_core
+
+def train_transition_step(state, batch, std, cfg):
     def loss_fn(params):
         core_state = extract_core_state(batch["state"])
         core_next_state = extract_core_state(batch["next_state"])
@@ -540,13 +618,36 @@ def train_transition_step(state, batch, std):
         delta_n = std.norm_delta(delta)
 
         x = jnp.concatenate([state_n, a_ego_n, a_opp_n], axis=-1)
-        mu, logvar = state.apply_fn({"params": params}, x)
+        (mu_e, logvar_e), (mu_o, logvar_o) = state.apply_fn(
+            {"params": params}, x
+        )
 
-        target = jnp.tile(delta_n[None, ...], (mu.shape[0], 1, 1))
-        nll = _nll(mu, logvar, target)
-        mse = jnp.mean((mu - target) ** 2)
+        delta_e, delta_o = split_delta(delta_n, cfg)
 
-        return nll, {"transition_nll": nll, "transition_mse": mse}
+        # ensemble 对齐
+        delta_e = jnp.tile(delta_e[None, ...], (mu_e.shape[0], 1, 1))
+        delta_o = jnp.tile(delta_o[None, ...], (mu_o.shape[0], 1, 1))
+
+        nll_e = _nll(mu_e, logvar_e, delta_e)
+        nll_o = _nll(mu_o, logvar_o, delta_o)
+
+        loss = (
+                cfg.model_dynamics.evader_loss_w * nll_e
+                + nll_o
+        )
+        # -------- metrics (optional but useful) --------
+        mse_e = jnp.mean((mu_e - delta_e) ** 2)
+        mse_o = jnp.mean((mu_o - delta_o) ** 2)
+
+        metrics = {
+            "transition_loss": loss,
+            "transition_nll_evader": nll_e,
+            "transition_nll_others": nll_o,
+            "transition_mse_evader": mse_e,
+            "transition_mse_others": mse_o,
+        }
+
+        return loss, metrics
 
     (loss, metrics), grads = jax.value_and_grad(loss_fn, has_aux=True)(state.params)
     updates, opt_state = state.tx.update(grads, state.opt_state, state.params)
@@ -697,48 +798,50 @@ def predict_next(transition_state: TrainState,
     a_opp_n = std.norm_a_opp(a_opp)
     x = jnp.concatenate([state_agent_n, a_ego_n, a_opp_n], axis=-1)  # (B, in_dim)
 
-    mu, logvar = transition_state.apply_fn({"params": transition_state.params}, x)   # (E,B,D)
-    var_e = jnp.exp(logvar)
-    prec_e = 1.0 / (var_e + 1e-6)
-    aleatoric_var = 1.0 / jnp.mean(prec_e, axis=0)  # (B,D)
-    mu_bar = aleatoric_var * jnp.mean(prec_e * mu, axis=0)  # (B,D)
-    epistemic_var = jnp.mean(
-        (mu - mu_bar[None, ...]) ** 2, axis=0
-    )  # (B,D)
+    (mu_e, logvar_e), (mu_o, logvar_o) = transition_state.apply_fn(
+        {"params": transition_state.params}, x
+    )
+    # mu_e: (E,B,4)
+    # mu_o: (E,B,(A-1)*4)
 
+    def ensemble_fuse(mu, logvar, rng, deterministic):
+        # mu, logvar: (E, B, D)
+        var = jnp.exp(logvar)
+        prec = 1.0 / (var + 1e-6)
 
-    if member_idx is None:
-        assert rng is not None, "predict_next: rng is required when member_idx is None."
-        rng, sub = jax.random.split(rng)
-        member_idx = jax.random.randint(sub, shape=(), minval=0, maxval=mu.shape[0])
-    mu_m = mu[member_idx]       # (B,D)
-    logvar_m = logvar[member_idx]
-    var_m = var_e[member_idx]
-    rng, sub1 = jax.random.split(rng)
-    hat_delta_n = mu_m + jnp.sqrt(var_m) * \
-                  jax.random.normal(sub1, mu_m.shape)
-    K = aleatoric_var / (aleatoric_var + epistemic_var + 1e-6)
+        # Bayesian model average
+        aleatoric_var = 1.0 / jnp.mean(prec, axis=0)  # (B,D)
+        mu_bar = aleatoric_var * jnp.mean(prec * mu, axis=0)  # (B,D)
 
-    tilde_mu = mu_bar + K * (hat_delta_n - mu_bar)
-    tilde_var = (1.0 - K) * aleatoric_var
+        epistemic_var = jnp.mean(
+            (mu - mu_bar[None, ...]) ** 2, axis=0
+        )  # (B,D)
 
-    # mu_m = jnp.mean(mu, axis=0)
-    # var = jnp.exp(logvar)
-    # var_m = jnp.mean(var, axis=0)
-    # logvar_m = jnp.log(var_m)
-    # print("mu.shape", mu.shape)
-    # print("logvar.shape", logvar.shape)
-    # print("mu_m.shape", mu_m.shape)
-    # print("logvar_m.shape", logvar_m.shape)
+        # sample one member prediction
+        rng, sub1, sub2 = jax.random.split(rng, 3)
+        member_idx = jax.random.randint(sub1, (), 0, mu.shape[0])
+        hat_mu = mu[member_idx]  # (B,D)
+        hat_var = var[member_idx]
 
-    if deterministic:
-        delta_n = tilde_mu
-    else:
-        assert rng is not None, "predict_next: rng required for stochastic sampling."
-        rng, sub = jax.random.split(rng)
-        # stddev = jnp.exp(0.5 * logvar_m)
-        # delta_n = mu_m + stddev * jax.random.normal(sub, mu_m.shape)
-        delta_n = tilde_mu + jnp.sqrt(tilde_var) * jax.random.normal(sub, tilde_mu.shape)
+        # Kalman-like gain
+        K = aleatoric_var / (aleatoric_var + epistemic_var + 1e-6)
+
+        # posterior mean / var
+        tilde_mu = mu_bar + K * (hat_mu - mu_bar)
+        tilde_var = (1.0 - K) * aleatoric_var
+
+        if deterministic:
+            return tilde_mu
+        else:
+            eps = jax.random.normal(sub2, tilde_mu.shape)
+            return tilde_mu + jnp.sqrt(tilde_var) * eps
+
+    rng, sub1, sub2 = jax.random.split(rng, 3)
+
+    delta_e_n = ensemble_fuse(mu_e, logvar_e, sub1, deterministic)
+    delta_o_n = ensemble_fuse(mu_o, logvar_o, sub2, deterministic)
+
+    delta_n = merge_delta(delta_e_n, delta_o_n, cfg) # shape: (B, core_state_dim)
 
     reward = reward_state.apply_fn({"params": reward_state.params}, x)
     reward_dict = {f"adversary_{i}": reward[..., i:i + 1] for i in range(reward.shape[-1])}
@@ -756,12 +859,13 @@ def predict_next(transition_state: TrainState,
         num_landmarks=cfg.train.num_landmark,
         view_radius=jnp.full((cfg.env.num_agents,), cfg.env.view_radius),
     )
+    reward_dict = reward_fn(restored_state, cfg)
     next_obs = facmac_get_obs_batched(restored_state, cfg_get_obs)
     next_obs.pop("agent_0", None)
     dones_pred = next_state_agent[..., -4:-1]
     dones_bool = dones_pred > 0.0
     dones_dict = {f"adversary_{i}": dones_bool[..., i:i+1] for i in range(dones_pred.shape[-1])}
-    return next_state_agent, next_obs, reward_dict, dones_dict, mu, logvar
+    return next_state_agent, next_obs, reward_dict, dones_dict, mu_o, logvar_o
 
 def eval_error(real_state:TrainState,###############
                opp_state: TrainState,###################

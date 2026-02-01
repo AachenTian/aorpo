@@ -143,10 +143,10 @@ def compute_entropy_thresholds(
     a_opp_n = std.norm_a_opp(a_opp)
     x = jnp.concatenate([state_n, a_ego_n, a_opp_n], axis=-1)
 
-    mu, logvar = transition_state.apply_fn({"params": transition_state.params}, x)
+    (_, _), (mu_o, logvar_o) = transition_state.apply_fn({"params": transition_state.params}, x)
 
     # entropy: (B, D)
-    total_var, _, _, entropy = dynamics_uncertainty_per_dim(mu, logvar)
+    total_var, _, _, entropy = dynamics_uncertainty_per_dim(mu_o, logvar_o)
 
     total_var_threshold = compute_total_var_threshold(total_var, zeta1=cfg.rollout.zeta1)
     lambda1 = jnp.quantile(entropy, cfg.rollout.zeta1, axis=0)

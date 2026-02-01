@@ -9,7 +9,6 @@ from dataclasses import dataclass
 from typing import Any, Dict
 from jaxmarl.environments.mpe.simple import State
 from jaxmarl.environments.mpe.simple_facmac import SimpleFacmacMPE
-from aorpo.agents.model_dynamics import facmac_get_obs_batched, FacmacObsConfig
 
 class SimpleFacmacMPEFreezePrey(SimpleFacmacMPE):
     def _prey_policy(self, key, state, aidx):
@@ -49,7 +48,7 @@ def env_step(env, state, a_ego, a_opps, key):
     min_dist_adv = jnp.min(dist, axis=1)  # (A,)
     dist_reward = -jnp.mean(min_dist_adv)  # scalar
 
-    alpha = 10.0
+    alpha = 50.0
     for a in env.adversaries:
         rewards[a] = rewards[a] + alpha * dist_reward
     # =========================
@@ -59,6 +58,52 @@ def env_step(env, state, a_ego, a_opps, key):
     rewards.pop("agent_0")
     dones.pop("agent_0")
     return next_state, obs, rewards, dones, key
+
+def reward_fn(state, cfg):
+    # =========================
+    # reward shaping starts
+    # =========================
+    # adversaries: 0 .. num_adversaries-1
+    p_pos = state.p_pos
+    B, N, _ = p_pos.shape
+    adv_pos = state.p_pos[:, :cfg.env.num_adversaries, :]  # (A,2)
+    prey_pos = state.p_pos[:, cfg.env.num_adversaries:cfg.env.num_agents, :]  # (G,2)
+
+    rad_adv = jnp.full((cfg.env.num_adversaries,), 0.075)
+    rad_prey = jnp.full((cfg.env.num_agents-cfg.env.num_adversaries,), 0.05)
+
+    # 🚨 没有 prey，reward = 0
+    if prey_pos.shape[0] == 0:
+        zero = jnp.array(0.0)
+        return {
+            f"adversary_{a}": zero
+            for a in range(cfg.env.num_adversaries)
+        }
+
+    diff = adv_pos[:, :, None, :] - prey_pos[:, None, :, :]  # (A,G,2)
+    dist = jnp.linalg.norm(diff, axis=-1)  # (A,G)
+
+    # 判定碰撞：距离 < 半径之和
+    collision_thresh = rad_adv[:, None] + rad_prey[None, :]  # (A, G)
+    is_collision = dist < collision_thresh  # (A, G) Boolean
+
+    # 计算每个 adversary 抓到了多少个 prey
+    # MPE 默认逻辑：抓到一次给 +10 分
+    adv_hits = jnp.sum(is_collision, axis=1)  # (A,)
+    rew_catch = adv_hits * 10.0
+
+    min_dist_adv = jnp.min(dist, axis=1)  # (A,)
+    dist_reward = -jnp.mean(min_dist_adv, axis=-1, keepdims=True)  # scalar
+
+    alpha = 50.0
+    total_reward = rew_catch + dist_reward * alpha
+
+    rewards = {
+        f"adversary_{a}": total_reward
+        for a in range(cfg.env.num_adversaries)
+    }
+
+    return rewards
 
 def get_adversary_obs_batched(state, env):
     """
@@ -179,6 +224,9 @@ def main(cfg: DictConfig):
         a_opps = (jnp.concatenate([a_opp_1, a_opp_2], axis=0)).reshape(2, -1)
         state, obs, rewards, dones, key = env_step(env, state, a_ego, a_opps, key)
         if i == 10:
+            evader_idx = env.agents.index("agent_0")
+            print("evader_idx:", evader_idx)
+            print("evader_pos:", state.p_pos[evader_idx])
             print("rewards:", rewards)
         # if i == 10:
         #     make_state = make_manual_state()

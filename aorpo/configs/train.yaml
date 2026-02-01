@@ -31,6 +31,8 @@ train:
   core_state_dim: 20
   max_steps: 25
   eval_interval: 1
+  evader_dim: 4
+  others_dim: 12
   reinit_opp_model: True
 
 rollout:
@@ -47,6 +49,7 @@ model_dynamics:
   hidden_dims: [256, 256, 256, 256]
   min_logvar: -10.0
   max_logvar: 0.5
+  evader_loss_w: 1
 
 q_function:
   lr: 3e-4

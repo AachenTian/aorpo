@@ -214,7 +214,7 @@ def rollout_model(
         joint_act = jnp.concatenate([a_i] + a_js, axis=-1)
         a_js = jnp.concatenate(a_js, axis=-1)  # 形状：(batch_size, opp_num * act_dim)
         # 预测下一状态（模型）
-        next_state, next_obs, reward_dict, dones_dict, mu, logvar= predict_next(
+        next_state, next_obs, reward_dict, dones_dict, mu_o, logvar_o= predict_next(
             transition_state=transition_state,
             reward_state=reward_state,
             std=std,
@@ -225,7 +225,7 @@ def rollout_model(
             rng=subkey,
             deterministic=False,
         )
-        total_var, _, _, entropy_dim = dynamics_uncertainty_per_dim(mu, logvar)
+        total_var, _, _, entropy_dim = dynamics_uncertainty_per_dim(mu_o, logvar_o)
         entropy_cum += entropy_dim
         print("entropy_dim:", entropy_dim)
         print("entropy_cum:", entropy_cum)
@@ -237,7 +237,9 @@ def rollout_model(
         ood_long = jnp.any(entropy_cum > lambda2_dyn, axis=-1)  # λ2
         ood_any = jnp.logical_or(ood_step, ood_long)
         if step > 0:
-            if jnp.all(ood_any):
+            # if jnp.all(ood_any):
+            #     break
+            if step >= max_n:
                 break
         # if step >= cfg.rollout.k:
         #     break

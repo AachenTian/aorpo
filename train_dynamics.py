@@ -244,15 +244,18 @@ def main(cfg: DictConfig):
         for i in range(cfg.train.model_updates):
             rng, kb = jax.random.split(rng)
             b = replay_env.sample(kb, batch_size=cfg.train.batch_size, opp_num=opp_num)
-            transition_state, trans_metrics = train_transition_step(transition_state, b, std)
+            transition_state, trans_metrics = train_transition_step(transition_state, b, std, cfg)
             reward_state, rew_metrics = train_reward_step(reward_state, b, std)
             wandb.log({
-                "transition_nll": trans_metrics["transition_nll"],
-                "transition_mse": trans_metrics["transition_mse"],
+                "transition_loss": trans_metrics["transition_loss"],
+                "transition_nll_evader": trans_metrics["transition_nll_evader"],
+                "transition_nll_others": trans_metrics["transition_nll_others"],
+                "transition_mse_evader": trans_metrics["transition_mse_evader"],
+                "transition_mse_others": trans_metrics["transition_mse_others"],
                 "reward_mse": rew_metrics["reward_mse"],
             })
-        print(f"Model NLL: {float(trans_metrics['transition_nll']):.4f}")
-        print(f"[Epoch {epoch}] Model NLL: {float(trans_metrics['transition_nll']):.4f}")
+        print(f"Model transition_loss: {float(trans_metrics['transition_loss']):.4f}")
+        print(f"[Epoch {epoch}] Model NLL: {float(trans_metrics['transition_loss']):.4f}")
         # -------------------------------------------------
         # 3) update opponent model by clone learning
         # -------------------------------------------------
