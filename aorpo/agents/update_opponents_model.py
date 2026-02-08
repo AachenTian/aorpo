@@ -15,6 +15,23 @@ def _bc_loss(params, apply_fn, obs, act_target):
     loss = jnp.mean((pred - act_target)**2)
     return loss
 
+# Loss & Train
+def _nll(params, apply_fn, obs, act_target):
+    mu, log_std = apply_fn({"params": params}, obs)
+
+    # 标准差和方差
+    std = jnp.exp(log_std)
+    var = std ** 2
+
+    # 防止数值问题
+    var = jnp.clip(var, 1e-6, 1e6)
+
+    # Gaussian negative log likelihood
+    mse = (act_target - mu) ** 2
+    nll = 0.5 * (mse / var + 2 * log_std + jnp.log(2 * jnp.pi))
+
+    # feature维度求和 → batch求平均
+    return jnp.mean(jnp.sum(nll, axis=-1))
 
 def update_opponent_model(
     opponent_states: List[TrainState],
@@ -35,7 +52,7 @@ def update_opponent_model(
     apply_fn = opponent_states[0].apply_fn
 
     def loss_fn(params, obs, target):
-        return _bc_loss(params, apply_fn, obs, target)
+        return _nll(params, apply_fn, obs, target)
 
     new_states = []
     losses = []
