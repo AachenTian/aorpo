@@ -52,7 +52,7 @@ model_dynamics:
   evader_loss_w: 1
 
 q_function:
-  lr: 3e-4
+  lr: 1e-3 # 3e-4
   gamma: 0.95
   alpha: 0.2
   tau: 0.005
