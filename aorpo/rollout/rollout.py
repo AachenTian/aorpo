@@ -123,22 +123,22 @@ def rollout_model(
         rng=entropy_key,
     )   # shape: (state_dim,)
 
-    # 2️ 计算每个 opponent 模型误差 ε̂_j
-    errors = []
-    for j, opp in enumerate(opponent_policies):
-        target = a_opp[:, j * cfg.env.act_dim:(j + 1) * cfg.env.act_dim]
-        pred, _ = opp.apply_fn({"params": opp.params}, obs[f"agent_{j + 1}"])
-        pred = jnp.tanh(pred)
-        eps_j = jnp.mean((pred - target) ** 2)
-        # eps_j = eval_error(
-        #     real_state=policy_state,
-        #     opp_state=opp["state"],
-        #     std=std,
-        #     batch=batch_env,
-        #     deterministic=True,
-        #     member_idx=j,
-        # )
-        errors.append(float(eps_j))
+    # # 2️ 计算每个 opponent 模型误差 ε̂_j
+    # errors = []
+    # for j, opp in enumerate(opponent_policies):
+    #     target = a_opp[:, j * cfg.env.act_dim:(j + 1) * cfg.env.act_dim]
+    #     pred, _ = opp.apply_fn({"params": opp.params}, obs[f"agent_{j + 1}"])
+    #     pred = jnp.tanh(pred)
+    #     eps_j = jnp.mean((pred - target) ** 2)
+    #     # eps_j = eval_error(
+    #     #     real_state=policy_state,
+    #     #     opp_state=opp["state"],
+    #     #     std=std,
+    #     #     batch=batch_env,
+    #     #     deterministic=True,
+    #     #     member_idx=j,
+    #     # )
+    #     errors.append(float(eps_j))
 
     # 3️ 根据公式计算每个对手的 rollout 步数 n^j
     max_n = cfg.rollout.k  # 最大 rollout 步数上限
@@ -161,10 +161,10 @@ def rollout_model(
 
         return k.astype(int)
     max_n = get_k(epoch, max_n)
-    n_js = compute_rollout_lengths(errors, int(max_n))
-
-    print(f"Opponent model errors: {errors}")
-    print(f"Adaptive rollout steps (n^j): {n_js}")
+    # n_js = compute_rollout_lengths(errors, int(max_n))
+    #
+    # print(f"Opponent model errors: {errors}")
+    # print(f"Adaptive rollout steps (n^j): {n_js}")
 
     reward_roll = 0
     #initialize a all True mask
@@ -203,11 +203,11 @@ def rollout_model(
             step_ood_any_opp = jnp.logical_or(step_ood_any_opp, opp_j_is_ood)
 
             a_j_comm, subkey = Comm(policy_state, obs[f"agent_{j+1}"], subkey)
-            # actual_a_j = jnp.where(opp_j_is_ood, a_j_comm, a_j_ens)
-            if step < n_js[j]:
-                actual_a_j = a_j_ens
-            else:
-                actual_a_j = a_j_comm
+            actual_a_j = jnp.where(opp_j_is_ood, a_j_comm, a_j_ens)
+            # if step < n_js[j]:
+            #     actual_a_j = a_j_ens
+            # else:
+            #     actual_a_j = a_j_comm
             a_js.append(actual_a_j)
 
             comm_count_cum += jnp.sum((opp_j_is_ood).astype(jnp.float32))
