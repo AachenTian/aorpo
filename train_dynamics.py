@@ -12,7 +12,7 @@ import copy
 # ===== 你项目里的模块 =====
 from aorpo.utils.replay import ReplayBuffer, manual_flatten_dict
 from aorpo.rollout.collect import collect_real_data, episode_reward, rollout_compare
-from aorpo.rollout.rollout_aorpo import rollout_model
+from aorpo.rollout.rollout import rollout_model
 
 
 from aorpo.agents.policy import init_policy_model, PolicyNet, init_policy_ensemble
@@ -32,22 +32,6 @@ from aorpo.agents.model_dynamics import (
 )
 
 
-wandb.login()
-# Start a new wandb run to track this script.
-run = wandb.init(
-    # Set the wandb entity where your project will be logged (generally your team name).
-    entity="yachen-tian-rwth-aachen-university",
-    # Set the wandb project where this run will be logged.
-    project="AORPO-simple_tag",
-    # mode="offline",
-    # Track hyperparameters and run metadata.
-    config={
-        "learning_rate": 3e-4,
-        "architecture": "AORPO",
-        "Environment": "mpe_spread_v3",
-        "epochs": 10,
-    },
-)
 
 # -------------------------------------------------
 # 辅助：软更新 target Q
@@ -104,6 +88,18 @@ def make_opp_fn(opponent_states):
 # -------------------------------------------------
 @hydra.main(config_path="aorpo/configs", config_name="train", version_base=None)
 def main(cfg: DictConfig):
+    wandb.login()
+    # Start a new wandb run to track this script.
+    wandb.init(
+        # Set the wandb entity where your project will be logged (generally your team name).
+        entity="yachen-tian-rwth-aachen-university",
+        # Set the wandb project where this run will be logged.
+        project="AORPO-simple_tag",
+        # mode="offline",
+        # Track hyperparameters and run metadata.
+        dir=hydra.utils.get_original_cwd(),
+        config=OmegaConf.to_container(cfg, resolve=True)
+    )
 
     print("\n===== Config =====")
     print(OmegaConf.to_yaml(cfg))
