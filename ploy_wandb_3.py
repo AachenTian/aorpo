@@ -11,13 +11,13 @@ import wandb
 ENTITY = "yachen-tian-rwth-aachen-university"
 
 PROJECTS = {
-    "mpe_simple_spread": "AORPO-dynamics model",
-    "mpe_simple_facmac": "AORPO-simple_tag"
+    "MPE Simple Spread": "AORPO-dynamics model",
+    "MPE Simple Facmac": "AORPO-simple_tag"
 }
 
 METRICS = {
-    "mpe_simple_spread": "episode_reward_env",
-    "mpe_simple_facmac": "epi_reward_agent-0"
+    "MPE Simple Spread": "episode_reward_env",
+    "MPE Simple Facmac": "epi_reward_agent-0"
 }
 STEP_KEY = "_step"
 
@@ -27,7 +27,7 @@ os.makedirs(OUT_DIR, exist_ok=True)
 COMMON_STEPS = np.arange(0, 34000, 1400)
 
 RUN_GROUPS = {
-    "mpe_simple_spread":{
+    "MPE Simple Spread":{
         "Uncertainty-Aware": [
             "routing reset_seed = 30 k = 6 policy lr = 0.01",
             "routing reset_seed = 40 k = 6",
@@ -45,13 +45,14 @@ RUN_GROUPS = {
             "no routing reset_seed = 65",
         ],
     },
-    "mpe_simple_facmac":{
+    "MPE Simple Facmac":{
         "Uncertainty-Aware": [
             "env_reset=40 uncertainty alpha50 q1e-3 quantile_opp: 0.95",
-            "env_reset=40 uncertainty alpha50 q1e-3 quantile_opp: 0.9"
+            "env_reset=30 uncertainty alpha50 q1e-3 quantile_opp: 0.95"
         ],
         "AORPO": [
             "env_reset=40 aorpo alpha50",
+            "env_reset=30 aorpo alpha50",
         ]
     }
 }

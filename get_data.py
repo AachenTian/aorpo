@@ -60,7 +60,7 @@ else:
 #
 # ENTITY = "yachen-tian-rwth-aachen-university"
 # PROJECT = "AORPO-simple_tag"
-# RUN_IDS = ["yc5j624o", "ftaey7xg"]
+# RUN_IDS = ["yc5j624o", "86bwq0c8", "ftaey7xg", "k05ey7b6"]
 # RUN_NAMES = [""]
 # # 确保这里的 Key 名字和你打印出来的一模一样
 # METRIC_KEYS = ["total_comm_count", "epi_reward_agent-0"]

@@ -12,31 +12,31 @@ METRIC = "episode_reward_dyna"
 COMMON_STEPS = np.arange(0, 34000, 1400)
 
 RUN_GROUPS = {
-    "Uncertainty-Aware (Full)": [
+    "Uncertainty-Aware": [
         "routing reset_seed = 30 k = 6 policy lr = 0.01",
         "routing reset_seed = 40 k = 6",
-        # "routing reset_seed = 45 k=6",
+        "routing reset_seed = 45 k=6",
         # "env_reset=50 uncertainty k=6",
         # "routing reset_seed = 55 k = 6 policy lr = 0.01",
         # "routing reset_seed = 65 k = 6 policy lr = 0.01",
     ],
 
-    "Communication-Only": [
+    "Comm-Only": [
         "env_reset=30 aorpo_rollout k",
         "env_reset=40 aorpo_rollout k",
-        # "env_reset=45 aorpo_rollout k",
+        "env_reset=45 aorpo_rollout k",
     ],
 
     "Termination-Only": [
         "env_reset=30 aorpo_comm",
         "env_reset=40 aorpo_comm",
-        # "env_reset=45 aorpo_comm",
+        "env_reset=45 aorpo_comm",
     ],
 
     "AORPO": [
         "no routing aorpo rest_seed = 30 k = 6",
         "no routing aorpo rest_seed = 40",
-        # "no routing reset_seed = 45",
+        "no routing reset_seed = 45",
         # "no routing aorpo reset_seed = 50 k = 6",
         # "no routing reset_seed = 55",
         # "no routing reset_seed = 65",
@@ -84,7 +84,7 @@ def aggregate(curves):
     return mean, std
 
 
-plt.figure(figsize=(6,4))
+plt.figure(figsize=(5,4))
 
 for group, names in RUN_GROUPS.items():
 
@@ -109,16 +109,42 @@ for group, names in RUN_GROUPS.items():
 
     mean, std = aggregate(curves)
 
-    plt.plot(COMMON_STEPS, mean, linewidth=2.5, label=group)
-    plt.fill_between(COMMON_STEPS, mean-std, mean+std, alpha=0.2)
+    colors = {
+        "Uncertainty-Aware": "tab:blue",
+        "Comm-Only": "tab:orange",
+        "Termination-Only": "tab:green",
+        "AORPO": "gray",
+    }
+
+    color = colors[group]
+    plt.plot(COMMON_STEPS, mean, linewidth=2.8, label=group, color=color)
+    plt.fill_between(COMMON_STEPS, mean-std, mean+std, alpha=0.12, color=color)
 
 plt.xlabel("Environment Interactions")
 plt.ylabel("Episode Reward")
 
-plt.legend(frameon=False)
+plt.xlim(0, 33000)
+
+from matplotlib.ticker import FuncFormatter
+plt.gca().xaxis.set_major_formatter(
+    FuncFormatter(lambda x, pos: f'{int(x/1000)}K' if x != 0 else '0')
+)
+
 plt.grid(alpha=0.3)
 
-plt.tight_layout()
+handles, labels = plt.gca().get_legend_handles_labels()
+
+fig = plt.gcf()
+fig.legend(
+    handles,
+    labels,
+    loc="lower center",
+    ncol=2,
+    frameon=False
+)
+
+
+plt.tight_layout(rect=(0,0.12,1,1))
 
 plt.savefig("ablation_spread.pdf", dpi=300)
 plt.show()

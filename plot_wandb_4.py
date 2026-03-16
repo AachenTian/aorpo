@@ -4,18 +4,19 @@ import matplotlib.pyplot as plt
 
 COMM_KEY = "total_comm_count"
 REWARD_KEYS = {
-    "Spread": "episode_reward_dyna",
-    "FACMAC": "epi_reward_agent-0"
+    "MPE Simple Spread": "episode_reward_dyna",
+    "MPE Simple FACMAC": "epi_reward_agent-0"
 }
 
 FILES = {
-    "Spread": "mpe_simple_spread.csv",
-    "FACMAC": "mpe_simple_tag.csv"
+    "MPE Simple Spread": "mpe_simple_spread.csv",
+    "MPE Simple FACMAC": "mpe_simple_tag.csv"
 }
 
-def interpolate_run(df, common_comm):
+def interpolate_run(df, common_comm, reward_key):
 
     x = df[COMM_KEY].to_numpy()
+
     y = df[reward_key].to_numpy()
 
     order = np.argsort(x)
@@ -26,13 +27,13 @@ def interpolate_run(df, common_comm):
     return y_interp
 
 
-def aggregate(df, run_ids, common_comm):
+def aggregate(df, run_ids, common_comm, reward_key):
 
     curves = []
 
     for rid in run_ids:
         run_df = df[df["run_id"] == rid]
-        curves.append(interpolate_run(run_df, common_comm))
+        curves.append(interpolate_run(run_df, common_comm, reward_key))
 
     curves = np.stack(curves)
 
@@ -62,19 +63,19 @@ for i,(env, path) in enumerate(FILES.items()):
 
     COMMON_COMM = np.linspace(0, max_comm, 40)
 
-    mean_aorpo, std_aorpo = aggregate(df, aorpo_runs, COMMON_COMM)
-    mean_ours, std_ours = aggregate(df, ours_runs, COMMON_COMM)
+    mean_aorpo, std_aorpo = aggregate(df, aorpo_runs, COMMON_COMM, reward_key)
+    mean_ours, std_ours = aggregate(df, ours_runs, COMMON_COMM, reward_key)
 
     ax = axes[i]
 
-    ax.plot(COMMON_COMM, mean_ours, linewidth=2.5, label="Uncertainty-Aware")
-    ax.fill_between(COMMON_COMM, mean_ours-std_ours, mean_ours+std_ours, alpha=0.2)
+    ax.plot(COMMON_COMM / max_comm, mean_ours, linewidth=2.5, label="Uncertainty-Aware")
+    ax.fill_between(COMMON_COMM / max_comm, mean_ours-std_ours, mean_ours+std_ours, alpha=0.2)
 
-    ax.plot(COMMON_COMM, mean_aorpo, linewidth=2.5, label="AORPO")
-    ax.fill_between(COMMON_COMM, mean_aorpo-std_aorpo, mean_aorpo+std_aorpo, alpha=0.2)
+    ax.plot(COMMON_COMM / max_comm, mean_aorpo, linewidth=2.5, label="AORPO")
+    ax.fill_between(COMMON_COMM / max_comm, mean_aorpo-std_aorpo, mean_aorpo+std_aorpo, alpha=0.2)
 
     ax.set_title(env)
-    ax.set_xlabel("Communication Count")
+    ax.set_xlabel("Communication Ratio")
 
     if i == 0:
         ax.set_ylabel("Episode Reward")
