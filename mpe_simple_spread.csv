@@ -1,0 +1,1601 @@
+_step,total_comm_count,episode_reward_dyna,run_id,run_name
+51,0,,076aeh46,no routing aorpo rest_seed = 30 k = 6
+169,0,-39.16298484802246,076aeh46,no routing aorpo rest_seed = 30 k = 6
+221,0,-39.16298484802246,076aeh46,no routing aorpo rest_seed = 30 k = 6
+339,0,-39.88733100891113,076aeh46,no routing aorpo rest_seed = 30 k = 6
+391,0,-39.88733100891113,076aeh46,no routing aorpo rest_seed = 30 k = 6
+509,0,-40.94873046875,076aeh46,no routing aorpo rest_seed = 30 k = 6
+561,0,-40.94873046875,076aeh46,no routing aorpo rest_seed = 30 k = 6
+679,0,-38.717772483825684,076aeh46,no routing aorpo rest_seed = 30 k = 6
+731,0,-38.717772483825684,076aeh46,no routing aorpo rest_seed = 30 k = 6
+849,0,-39.316527366638184,076aeh46,no routing aorpo rest_seed = 30 k = 6
+901,0,-39.316527366638184,076aeh46,no routing aorpo rest_seed = 30 k = 6
+1019,0,-37.92437553405762,076aeh46,no routing aorpo rest_seed = 30 k = 6
+1071,0,-37.92437553405762,076aeh46,no routing aorpo rest_seed = 30 k = 6
+1189,0,-36.170555114746094,076aeh46,no routing aorpo rest_seed = 30 k = 6
+1241,0,-36.170555114746094,076aeh46,no routing aorpo rest_seed = 30 k = 6
+1359,0,-35.04135322570801,076aeh46,no routing aorpo rest_seed = 30 k = 6
+1411,0,-35.04135322570801,076aeh46,no routing aorpo rest_seed = 30 k = 6
+1529,0,-33.16827392578125,076aeh46,no routing aorpo rest_seed = 30 k = 6
+1581,0,-33.16827392578125,076aeh46,no routing aorpo rest_seed = 30 k = 6
+1699,0,-32.550909996032715,076aeh46,no routing aorpo rest_seed = 30 k = 6
+1751,0,-32.550909996032715,076aeh46,no routing aorpo rest_seed = 30 k = 6
+1869,0,-31.878331184387207,076aeh46,no routing aorpo rest_seed = 30 k = 6
+1921,0,-31.878331184387207,076aeh46,no routing aorpo rest_seed = 30 k = 6
+2039,0,-31.77349281311035,076aeh46,no routing aorpo rest_seed = 30 k = 6
+2091,0,-31.77349281311035,076aeh46,no routing aorpo rest_seed = 30 k = 6
+2209,0,-31.560762405395508,076aeh46,no routing aorpo rest_seed = 30 k = 6
+2261,0,-31.560762405395508,076aeh46,no routing aorpo rest_seed = 30 k = 6
+2379,0,-31.934738159179688,076aeh46,no routing aorpo rest_seed = 30 k = 6
+2431,0,-31.934738159179688,076aeh46,no routing aorpo rest_seed = 30 k = 6
+2549,0,-30.628457069396973,076aeh46,no routing aorpo rest_seed = 30 k = 6
+2601,0,-30.628457069396973,076aeh46,no routing aorpo rest_seed = 30 k = 6
+2719,0,-31.158373832702637,076aeh46,no routing aorpo rest_seed = 30 k = 6
+2771,0,-31.158373832702637,076aeh46,no routing aorpo rest_seed = 30 k = 6
+2889,0,-31.063233375549316,076aeh46,no routing aorpo rest_seed = 30 k = 6
+2941,0,-31.063233375549316,076aeh46,no routing aorpo rest_seed = 30 k = 6
+3059,0,-30.286579132080078,076aeh46,no routing aorpo rest_seed = 30 k = 6
+3111,0,-30.286579132080078,076aeh46,no routing aorpo rest_seed = 30 k = 6
+3229,0,-30.838647842407227,076aeh46,no routing aorpo rest_seed = 30 k = 6
+3281,0,-30.838647842407227,076aeh46,no routing aorpo rest_seed = 30 k = 6
+3399,0,-29.141552925109863,076aeh46,no routing aorpo rest_seed = 30 k = 6
+3451,0,-29.141552925109863,076aeh46,no routing aorpo rest_seed = 30 k = 6
+3569,0,-29.361010551452637,076aeh46,no routing aorpo rest_seed = 30 k = 6
+3621,0,-29.361010551452637,076aeh46,no routing aorpo rest_seed = 30 k = 6
+3739,0,-30.140239715576172,076aeh46,no routing aorpo rest_seed = 30 k = 6
+3791,0,-30.140239715576172,076aeh46,no routing aorpo rest_seed = 30 k = 6
+3909,0,-30.35427188873291,076aeh46,no routing aorpo rest_seed = 30 k = 6
+3961,1024,-30.35427188873291,076aeh46,no routing aorpo rest_seed = 30 k = 6
+4079,1024,-30.179563522338867,076aeh46,no routing aorpo rest_seed = 30 k = 6
+4131,2048,-30.179563522338867,076aeh46,no routing aorpo rest_seed = 30 k = 6
+4249,2048,-31.175369262695312,076aeh46,no routing aorpo rest_seed = 30 k = 6
+4301,3072,-31.175369262695312,076aeh46,no routing aorpo rest_seed = 30 k = 6
+4419,3072,-30.711100578308105,076aeh46,no routing aorpo rest_seed = 30 k = 6
+4471,4096,-30.711100578308105,076aeh46,no routing aorpo rest_seed = 30 k = 6
+4589,4096,-29.344587326049805,076aeh46,no routing aorpo rest_seed = 30 k = 6
+4641,5120,-29.344587326049805,076aeh46,no routing aorpo rest_seed = 30 k = 6
+4759,5120,-30.034358978271484,076aeh46,no routing aorpo rest_seed = 30 k = 6
+4811,6144,-30.034358978271484,076aeh46,no routing aorpo rest_seed = 30 k = 6
+4929,6144,-29.555840492248535,076aeh46,no routing aorpo rest_seed = 30 k = 6
+4981,7168,-29.555840492248535,076aeh46,no routing aorpo rest_seed = 30 k = 6
+5099,7168,-30.25696086883545,076aeh46,no routing aorpo rest_seed = 30 k = 6
+5151,8192,-30.25696086883545,076aeh46,no routing aorpo rest_seed = 30 k = 6
+5269,8192,-30.47307300567627,076aeh46,no routing aorpo rest_seed = 30 k = 6
+5321,9216,-30.47307300567627,076aeh46,no routing aorpo rest_seed = 30 k = 6
+5439,9216,-30.354926109313965,076aeh46,no routing aorpo rest_seed = 30 k = 6
+5491,10240,-30.354926109313965,076aeh46,no routing aorpo rest_seed = 30 k = 6
+5609,10240,-30.17520046234131,076aeh46,no routing aorpo rest_seed = 30 k = 6
+5661,11264,-30.17520046234131,076aeh46,no routing aorpo rest_seed = 30 k = 6
+5779,11264,-30.786882400512695,076aeh46,no routing aorpo rest_seed = 30 k = 6
+5831,12288,-30.786882400512695,076aeh46,no routing aorpo rest_seed = 30 k = 6
+5949,12288,-32.206377029418945,076aeh46,no routing aorpo rest_seed = 30 k = 6
+6001,13312,-32.206377029418945,076aeh46,no routing aorpo rest_seed = 30 k = 6
+6119,13312,-31.326326370239258,076aeh46,no routing aorpo rest_seed = 30 k = 6
+6171,14336,-31.326326370239258,076aeh46,no routing aorpo rest_seed = 30 k = 6
+6289,14336,-31.86405658721924,076aeh46,no routing aorpo rest_seed = 30 k = 6
+6341,15360,-31.86405658721924,076aeh46,no routing aorpo rest_seed = 30 k = 6
+6459,15360,-30.466733932495117,076aeh46,no routing aorpo rest_seed = 30 k = 6
+6511,16384,-30.466733932495117,076aeh46,no routing aorpo rest_seed = 30 k = 6
+6629,16384,-28.884092330932617,076aeh46,no routing aorpo rest_seed = 30 k = 6
+6681,17408,-28.884092330932617,076aeh46,no routing aorpo rest_seed = 30 k = 6
+6799,17408,-28.632407188415527,076aeh46,no routing aorpo rest_seed = 30 k = 6
+6851,18432,-28.632407188415527,076aeh46,no routing aorpo rest_seed = 30 k = 6
+6969,18432,-30.773707389831543,076aeh46,no routing aorpo rest_seed = 30 k = 6
+7021,19456,-30.773707389831543,076aeh46,no routing aorpo rest_seed = 30 k = 6
+7139,19456,-30.09263515472412,076aeh46,no routing aorpo rest_seed = 30 k = 6
+7191,20480,-30.09263515472412,076aeh46,no routing aorpo rest_seed = 30 k = 6
+7309,20480,-29.656455993652344,076aeh46,no routing aorpo rest_seed = 30 k = 6
+7361,21504,-29.656455993652344,076aeh46,no routing aorpo rest_seed = 30 k = 6
+7479,21504,-29.323923110961914,076aeh46,no routing aorpo rest_seed = 30 k = 6
+7531,22528,-29.323923110961914,076aeh46,no routing aorpo rest_seed = 30 k = 6
+7649,22528,-32.06671333312988,076aeh46,no routing aorpo rest_seed = 30 k = 6
+7701,23552,-32.06671333312988,076aeh46,no routing aorpo rest_seed = 30 k = 6
+7819,23552,-28.95866298675537,076aeh46,no routing aorpo rest_seed = 30 k = 6
+7871,24576,-28.95866298675537,076aeh46,no routing aorpo rest_seed = 30 k = 6
+7989,24576,-29.162278175354004,076aeh46,no routing aorpo rest_seed = 30 k = 6
+8041,25600,-29.162278175354004,076aeh46,no routing aorpo rest_seed = 30 k = 6
+8159,25600,-30.43966293334961,076aeh46,no routing aorpo rest_seed = 30 k = 6
+8211,26624,-30.43966293334961,076aeh46,no routing aorpo rest_seed = 30 k = 6
+8329,26624,-29.70391082763672,076aeh46,no routing aorpo rest_seed = 30 k = 6
+8381,27648,-29.70391082763672,076aeh46,no routing aorpo rest_seed = 30 k = 6
+8499,27648,-27.596908569335938,076aeh46,no routing aorpo rest_seed = 30 k = 6
+8551,28672,-27.596908569335938,076aeh46,no routing aorpo rest_seed = 30 k = 6
+8669,28672,-28.805315017700195,076aeh46,no routing aorpo rest_seed = 30 k = 6
+8721,29696,-28.805315017700195,076aeh46,no routing aorpo rest_seed = 30 k = 6
+8839,29696,-27.425082206726074,076aeh46,no routing aorpo rest_seed = 30 k = 6
+8891,30720,-27.425082206726074,076aeh46,no routing aorpo rest_seed = 30 k = 6
+9009,30720,-28.979763984680176,076aeh46,no routing aorpo rest_seed = 30 k = 6
+9061,31744,-28.979763984680176,076aeh46,no routing aorpo rest_seed = 30 k = 6
+9179,31744,-29.263450622558594,076aeh46,no routing aorpo rest_seed = 30 k = 6
+9231,32768,-29.263450622558594,076aeh46,no routing aorpo rest_seed = 30 k = 6
+9349,32768,-27.92850112915039,076aeh46,no routing aorpo rest_seed = 30 k = 6
+9401,33792,-27.92850112915039,076aeh46,no routing aorpo rest_seed = 30 k = 6
+9519,33792,-28.018787384033203,076aeh46,no routing aorpo rest_seed = 30 k = 6
+9571,34816,-28.018787384033203,076aeh46,no routing aorpo rest_seed = 30 k = 6
+9689,34816,-28.85495948791504,076aeh46,no routing aorpo rest_seed = 30 k = 6
+9741,35840,-28.85495948791504,076aeh46,no routing aorpo rest_seed = 30 k = 6
+9859,35840,-27.478933334350586,076aeh46,no routing aorpo rest_seed = 30 k = 6
+9911,36864,-27.478933334350586,076aeh46,no routing aorpo rest_seed = 30 k = 6
+10029,36864,-28.424187660217285,076aeh46,no routing aorpo rest_seed = 30 k = 6
+10081,37888,-28.424187660217285,076aeh46,no routing aorpo rest_seed = 30 k = 6
+10199,37888,-28.310072898864746,076aeh46,no routing aorpo rest_seed = 30 k = 6
+10251,38912,-28.310072898864746,076aeh46,no routing aorpo rest_seed = 30 k = 6
+10369,38912,-29.05833148956299,076aeh46,no routing aorpo rest_seed = 30 k = 6
+10421,39936,-29.05833148956299,076aeh46,no routing aorpo rest_seed = 30 k = 6
+10539,39936,-28.18146514892578,076aeh46,no routing aorpo rest_seed = 30 k = 6
+10591,40960,-28.18146514892578,076aeh46,no routing aorpo rest_seed = 30 k = 6
+10709,40960,-28.308693885803223,076aeh46,no routing aorpo rest_seed = 30 k = 6
+10761,41984,-28.308693885803223,076aeh46,no routing aorpo rest_seed = 30 k = 6
+10879,41984,-29.131152153015137,076aeh46,no routing aorpo rest_seed = 30 k = 6
+10931,43008,-29.131152153015137,076aeh46,no routing aorpo rest_seed = 30 k = 6
+11049,43008,-28.462267875671387,076aeh46,no routing aorpo rest_seed = 30 k = 6
+11101,44032,-28.462267875671387,076aeh46,no routing aorpo rest_seed = 30 k = 6
+11219,44032,-28.51693820953369,076aeh46,no routing aorpo rest_seed = 30 k = 6
+11271,45056,-28.51693820953369,076aeh46,no routing aorpo rest_seed = 30 k = 6
+11389,45056,-28.368874549865723,076aeh46,no routing aorpo rest_seed = 30 k = 6
+11441,46080,-28.368874549865723,076aeh46,no routing aorpo rest_seed = 30 k = 6
+11559,46080,-28.85022258758545,076aeh46,no routing aorpo rest_seed = 30 k = 6
+11611,47104,-28.85022258758545,076aeh46,no routing aorpo rest_seed = 30 k = 6
+11729,47104,-29.23933982849121,076aeh46,no routing aorpo rest_seed = 30 k = 6
+11781,48128,-29.23933982849121,076aeh46,no routing aorpo rest_seed = 30 k = 6
+11899,48128,-27.976603507995605,076aeh46,no routing aorpo rest_seed = 30 k = 6
+11951,49152,-27.976603507995605,076aeh46,no routing aorpo rest_seed = 30 k = 6
+12069,49152,-28.071420669555664,076aeh46,no routing aorpo rest_seed = 30 k = 6
+12121,50176,-28.071420669555664,076aeh46,no routing aorpo rest_seed = 30 k = 6
+12239,50176,-28.116747856140137,076aeh46,no routing aorpo rest_seed = 30 k = 6
+12291,51200,-28.116747856140137,076aeh46,no routing aorpo rest_seed = 30 k = 6
+12409,51200,-28.311442375183105,076aeh46,no routing aorpo rest_seed = 30 k = 6
+12461,52224,-28.311442375183105,076aeh46,no routing aorpo rest_seed = 30 k = 6
+12579,52224,-28.788535118103027,076aeh46,no routing aorpo rest_seed = 30 k = 6
+12631,53248,-28.788535118103027,076aeh46,no routing aorpo rest_seed = 30 k = 6
+12749,53248,-27.091954231262207,076aeh46,no routing aorpo rest_seed = 30 k = 6
+12801,54272,-27.091954231262207,076aeh46,no routing aorpo rest_seed = 30 k = 6
+12919,54272,-29.227431297302246,076aeh46,no routing aorpo rest_seed = 30 k = 6
+12971,55296,-29.227431297302246,076aeh46,no routing aorpo rest_seed = 30 k = 6
+13089,55296,-27.352075576782227,076aeh46,no routing aorpo rest_seed = 30 k = 6
+13141,57344,-27.352075576782227,076aeh46,no routing aorpo rest_seed = 30 k = 6
+13259,57344,-27.96511173248291,076aeh46,no routing aorpo rest_seed = 30 k = 6
+13311,58368,-27.96511173248291,076aeh46,no routing aorpo rest_seed = 30 k = 6
+13429,58368,-27.413700103759766,076aeh46,no routing aorpo rest_seed = 30 k = 6
+13481,60416,-27.413700103759766,076aeh46,no routing aorpo rest_seed = 30 k = 6
+13599,60416,-27.400846481323242,076aeh46,no routing aorpo rest_seed = 30 k = 6
+13651,61440,-27.400846481323242,076aeh46,no routing aorpo rest_seed = 30 k = 6
+13769,61440,-26.990997314453125,076aeh46,no routing aorpo rest_seed = 30 k = 6
+13821,62464,-26.990997314453125,076aeh46,no routing aorpo rest_seed = 30 k = 6
+13939,62464,-28.08624267578125,076aeh46,no routing aorpo rest_seed = 30 k = 6
+13991,63488,-28.08624267578125,076aeh46,no routing aorpo rest_seed = 30 k = 6
+14109,63488,-26.683510780334473,076aeh46,no routing aorpo rest_seed = 30 k = 6
+14161,64512,-26.683510780334473,076aeh46,no routing aorpo rest_seed = 30 k = 6
+14279,64512,-27.920923233032227,076aeh46,no routing aorpo rest_seed = 30 k = 6
+14331,65536,-27.920923233032227,076aeh46,no routing aorpo rest_seed = 30 k = 6
+14449,65536,-27.176591873168945,076aeh46,no routing aorpo rest_seed = 30 k = 6
+14501,66560,-27.176591873168945,076aeh46,no routing aorpo rest_seed = 30 k = 6
+14619,66560,-27.746965408325195,076aeh46,no routing aorpo rest_seed = 30 k = 6
+14671,67584,-27.746965408325195,076aeh46,no routing aorpo rest_seed = 30 k = 6
+14789,67584,-26.99975299835205,076aeh46,no routing aorpo rest_seed = 30 k = 6
+14841,68608,-26.99975299835205,076aeh46,no routing aorpo rest_seed = 30 k = 6
+14959,68608,-27.929722785949707,076aeh46,no routing aorpo rest_seed = 30 k = 6
+15011,69632,-27.929722785949707,076aeh46,no routing aorpo rest_seed = 30 k = 6
+15129,69632,-27.63189125061035,076aeh46,no routing aorpo rest_seed = 30 k = 6
+15181,70656,-27.63189125061035,076aeh46,no routing aorpo rest_seed = 30 k = 6
+15299,70656,-28.604832649230957,076aeh46,no routing aorpo rest_seed = 30 k = 6
+15351,71680,-28.604832649230957,076aeh46,no routing aorpo rest_seed = 30 k = 6
+15469,71680,-27.689172744750977,076aeh46,no routing aorpo rest_seed = 30 k = 6
+15521,72704,-27.689172744750977,076aeh46,no routing aorpo rest_seed = 30 k = 6
+15639,72704,-27.28309440612793,076aeh46,no routing aorpo rest_seed = 30 k = 6
+15691,73728,-27.28309440612793,076aeh46,no routing aorpo rest_seed = 30 k = 6
+15809,73728,-26.965404510498047,076aeh46,no routing aorpo rest_seed = 30 k = 6
+15861,74752,-26.965404510498047,076aeh46,no routing aorpo rest_seed = 30 k = 6
+15979,74752,-27.037720680236816,076aeh46,no routing aorpo rest_seed = 30 k = 6
+16031,75776,-27.037720680236816,076aeh46,no routing aorpo rest_seed = 30 k = 6
+16149,75776,-27.138705253601074,076aeh46,no routing aorpo rest_seed = 30 k = 6
+16201,76800,-27.138705253601074,076aeh46,no routing aorpo rest_seed = 30 k = 6
+16319,76800,-27.673078536987305,076aeh46,no routing aorpo rest_seed = 30 k = 6
+16371,77824,-27.673078536987305,076aeh46,no routing aorpo rest_seed = 30 k = 6
+16489,77824,-27.693696975708008,076aeh46,no routing aorpo rest_seed = 30 k = 6
+16541,78848,-27.693696975708008,076aeh46,no routing aorpo rest_seed = 30 k = 6
+16659,78848,-27.10764980316162,076aeh46,no routing aorpo rest_seed = 30 k = 6
+16711,79872,-27.10764980316162,076aeh46,no routing aorpo rest_seed = 30 k = 6
+16829,79872,-27.5920352935791,076aeh46,no routing aorpo rest_seed = 30 k = 6
+16881,80896,-27.5920352935791,076aeh46,no routing aorpo rest_seed = 30 k = 6
+16999,80896,-28.184677124023438,076aeh46,no routing aorpo rest_seed = 30 k = 6
+17051,81920,-28.184677124023438,076aeh46,no routing aorpo rest_seed = 30 k = 6
+17169,81920,-26.88755226135254,076aeh46,no routing aorpo rest_seed = 30 k = 6
+17221,82944,-26.88755226135254,076aeh46,no routing aorpo rest_seed = 30 k = 6
+17339,82944,-26.538307189941406,076aeh46,no routing aorpo rest_seed = 30 k = 6
+17391,83968,-26.538307189941406,076aeh46,no routing aorpo rest_seed = 30 k = 6
+17509,83968,-26.720243453979492,076aeh46,no routing aorpo rest_seed = 30 k = 6
+17561,84992,-26.720243453979492,076aeh46,no routing aorpo rest_seed = 30 k = 6
+17679,84992,-27.73591423034668,076aeh46,no routing aorpo rest_seed = 30 k = 6
+17731,86016,-27.73591423034668,076aeh46,no routing aorpo rest_seed = 30 k = 6
+17849,86016,-27.23741912841797,076aeh46,no routing aorpo rest_seed = 30 k = 6
+17901,88064,-27.23741912841797,076aeh46,no routing aorpo rest_seed = 30 k = 6
+18019,88064,-26.71038055419922,076aeh46,no routing aorpo rest_seed = 30 k = 6
+18071,89088,-26.71038055419922,076aeh46,no routing aorpo rest_seed = 30 k = 6
+18189,89088,-27.117350578308105,076aeh46,no routing aorpo rest_seed = 30 k = 6
+18241,91136,-27.117350578308105,076aeh46,no routing aorpo rest_seed = 30 k = 6
+18359,91136,-27.107399940490723,076aeh46,no routing aorpo rest_seed = 30 k = 6
+18411,93184,-27.107399940490723,076aeh46,no routing aorpo rest_seed = 30 k = 6
+18529,93184,-26.573965072631836,076aeh46,no routing aorpo rest_seed = 30 k = 6
+18581,95232,-26.573965072631836,076aeh46,no routing aorpo rest_seed = 30 k = 6
+18699,95232,-27.995471000671387,076aeh46,no routing aorpo rest_seed = 30 k = 6
+18751,96256,-27.995471000671387,076aeh46,no routing aorpo rest_seed = 30 k = 6
+18869,96256,-28.103057861328125,076aeh46,no routing aorpo rest_seed = 30 k = 6
+18921,98304,-28.103057861328125,076aeh46,no routing aorpo rest_seed = 30 k = 6
+19039,98304,-28.1439151763916,076aeh46,no routing aorpo rest_seed = 30 k = 6
+19091,100352,-28.1439151763916,076aeh46,no routing aorpo rest_seed = 30 k = 6
+19209,100352,-27.902639389038086,076aeh46,no routing aorpo rest_seed = 30 k = 6
+19261,102400,-27.902639389038086,076aeh46,no routing aorpo rest_seed = 30 k = 6
+19379,102400,-27.118720054626465,076aeh46,no routing aorpo rest_seed = 30 k = 6
+19431,104448,-27.118720054626465,076aeh46,no routing aorpo rest_seed = 30 k = 6
+19549,104448,-27.57023048400879,076aeh46,no routing aorpo rest_seed = 30 k = 6
+19601,106496,-27.57023048400879,076aeh46,no routing aorpo rest_seed = 30 k = 6
+19719,106496,-26.67784309387207,076aeh46,no routing aorpo rest_seed = 30 k = 6
+19771,108544,-26.67784309387207,076aeh46,no routing aorpo rest_seed = 30 k = 6
+19889,108544,-27.73631191253662,076aeh46,no routing aorpo rest_seed = 30 k = 6
+19941,110592,-27.73631191253662,076aeh46,no routing aorpo rest_seed = 30 k = 6
+20059,110592,-28.20357322692871,076aeh46,no routing aorpo rest_seed = 30 k = 6
+20111,112640,-28.20357322692871,076aeh46,no routing aorpo rest_seed = 30 k = 6
+20229,112640,-27.379809379577637,076aeh46,no routing aorpo rest_seed = 30 k = 6
+20281,114688,-27.379809379577637,076aeh46,no routing aorpo rest_seed = 30 k = 6
+20399,114688,-26.928314208984375,076aeh46,no routing aorpo rest_seed = 30 k = 6
+20451,116736,-26.928314208984375,076aeh46,no routing aorpo rest_seed = 30 k = 6
+20569,116736,-27.84181022644043,076aeh46,no routing aorpo rest_seed = 30 k = 6
+20621,118784,-27.84181022644043,076aeh46,no routing aorpo rest_seed = 30 k = 6
+20739,118784,-26.92305088043213,076aeh46,no routing aorpo rest_seed = 30 k = 6
+20791,120832,-26.92305088043213,076aeh46,no routing aorpo rest_seed = 30 k = 6
+20909,120832,-27.761595726013184,076aeh46,no routing aorpo rest_seed = 30 k = 6
+20961,122880,-27.761595726013184,076aeh46,no routing aorpo rest_seed = 30 k = 6
+21079,122880,-27.439205169677734,076aeh46,no routing aorpo rest_seed = 30 k = 6
+21131,124928,-27.439205169677734,076aeh46,no routing aorpo rest_seed = 30 k = 6
+21249,124928,-26.84622287750244,076aeh46,no routing aorpo rest_seed = 30 k = 6
+21301,126976,-26.84622287750244,076aeh46,no routing aorpo rest_seed = 30 k = 6
+21419,126976,-27.470617294311523,076aeh46,no routing aorpo rest_seed = 30 k = 6
+21471,129024,-27.470617294311523,076aeh46,no routing aorpo rest_seed = 30 k = 6
+21589,129024,-27.058581352233887,076aeh46,no routing aorpo rest_seed = 30 k = 6
+21641,131072,-27.058581352233887,076aeh46,no routing aorpo rest_seed = 30 k = 6
+21759,131072,-26.131741523742676,076aeh46,no routing aorpo rest_seed = 30 k = 6
+21811,133120,-26.131741523742676,076aeh46,no routing aorpo rest_seed = 30 k = 6
+21929,133120,-26.595130920410156,076aeh46,no routing aorpo rest_seed = 30 k = 6
+21981,135168,-26.595130920410156,076aeh46,no routing aorpo rest_seed = 30 k = 6
+22099,135168,-26.428433418273926,076aeh46,no routing aorpo rest_seed = 30 k = 6
+22151,137216,-26.428433418273926,076aeh46,no routing aorpo rest_seed = 30 k = 6
+22269,137216,-25.558730125427246,076aeh46,no routing aorpo rest_seed = 30 k = 6
+22321,139264,-25.558730125427246,076aeh46,no routing aorpo rest_seed = 30 k = 6
+22439,139264,-26.705206871032715,076aeh46,no routing aorpo rest_seed = 30 k = 6
+22491,141312,-26.705206871032715,076aeh46,no routing aorpo rest_seed = 30 k = 6
+22609,141312,-26.41859245300293,076aeh46,no routing aorpo rest_seed = 30 k = 6
+22661,143360,-26.41859245300293,076aeh46,no routing aorpo rest_seed = 30 k = 6
+22779,143360,-27.034825325012207,076aeh46,no routing aorpo rest_seed = 30 k = 6
+22831,145408,-27.034825325012207,076aeh46,no routing aorpo rest_seed = 30 k = 6
+22949,145408,-26.24496078491211,076aeh46,no routing aorpo rest_seed = 30 k = 6
+23001,147456,-26.24496078491211,076aeh46,no routing aorpo rest_seed = 30 k = 6
+23119,147456,-26.659846305847168,076aeh46,no routing aorpo rest_seed = 30 k = 6
+23171,149504,-26.659846305847168,076aeh46,no routing aorpo rest_seed = 30 k = 6
+23289,149504,-26.46388816833496,076aeh46,no routing aorpo rest_seed = 30 k = 6
+23341,151552,-26.46388816833496,076aeh46,no routing aorpo rest_seed = 30 k = 6
+23459,151552,-25.33154296875,076aeh46,no routing aorpo rest_seed = 30 k = 6
+23511,153600,-25.33154296875,076aeh46,no routing aorpo rest_seed = 30 k = 6
+23629,153600,-26.46870708465576,076aeh46,no routing aorpo rest_seed = 30 k = 6
+23681,155648,-26.46870708465576,076aeh46,no routing aorpo rest_seed = 30 k = 6
+23799,155648,-26.21392250061035,076aeh46,no routing aorpo rest_seed = 30 k = 6
+23851,157696,-26.21392250061035,076aeh46,no routing aorpo rest_seed = 30 k = 6
+23969,157696,-26.621914863586426,076aeh46,no routing aorpo rest_seed = 30 k = 6
+24021,159744,-26.621914863586426,076aeh46,no routing aorpo rest_seed = 30 k = 6
+24139,159744,-26.249566078186035,076aeh46,no routing aorpo rest_seed = 30 k = 6
+24191,161792,-26.249566078186035,076aeh46,no routing aorpo rest_seed = 30 k = 6
+24309,161792,-25.541481971740723,076aeh46,no routing aorpo rest_seed = 30 k = 6
+24361,163840,-25.541481971740723,076aeh46,no routing aorpo rest_seed = 30 k = 6
+24479,163840,-26.040854454040527,076aeh46,no routing aorpo rest_seed = 30 k = 6
+24531,165888,-26.040854454040527,076aeh46,no routing aorpo rest_seed = 30 k = 6
+24649,165888,-26.517952919006348,076aeh46,no routing aorpo rest_seed = 30 k = 6
+24701,167936,-26.517952919006348,076aeh46,no routing aorpo rest_seed = 30 k = 6
+24819,167936,-26.4820613861084,076aeh46,no routing aorpo rest_seed = 30 k = 6
+24871,169984,-26.4820613861084,076aeh46,no routing aorpo rest_seed = 30 k = 6
+24989,169984,-26.362499237060547,076aeh46,no routing aorpo rest_seed = 30 k = 6
+25041,172032,-26.362499237060547,076aeh46,no routing aorpo rest_seed = 30 k = 6
+25159,172032,-26.491609573364258,076aeh46,no routing aorpo rest_seed = 30 k = 6
+25211,174080,-26.491609573364258,076aeh46,no routing aorpo rest_seed = 30 k = 6
+25329,174080,-26.8051176071167,076aeh46,no routing aorpo rest_seed = 30 k = 6
+25381,176128,-26.8051176071167,076aeh46,no routing aorpo rest_seed = 30 k = 6
+25499,176128,-25.855236053466797,076aeh46,no routing aorpo rest_seed = 30 k = 6
+25551,178176,-25.855236053466797,076aeh46,no routing aorpo rest_seed = 30 k = 6
+25669,178176,-26.5523681640625,076aeh46,no routing aorpo rest_seed = 30 k = 6
+25721,180224,-26.5523681640625,076aeh46,no routing aorpo rest_seed = 30 k = 6
+25839,180224,-26.147788047790527,076aeh46,no routing aorpo rest_seed = 30 k = 6
+25891,182272,-26.147788047790527,076aeh46,no routing aorpo rest_seed = 30 k = 6
+26009,182272,-26.017593383789062,076aeh46,no routing aorpo rest_seed = 30 k = 6
+26061,184320,-26.017593383789062,076aeh46,no routing aorpo rest_seed = 30 k = 6
+26179,184320,-25.992591857910156,076aeh46,no routing aorpo rest_seed = 30 k = 6
+26231,186368,-25.992591857910156,076aeh46,no routing aorpo rest_seed = 30 k = 6
+26349,186368,-26.556381225585938,076aeh46,no routing aorpo rest_seed = 30 k = 6
+26401,188416,-26.556381225585938,076aeh46,no routing aorpo rest_seed = 30 k = 6
+26519,188416,-26.09475803375244,076aeh46,no routing aorpo rest_seed = 30 k = 6
+26571,190464,-26.09475803375244,076aeh46,no routing aorpo rest_seed = 30 k = 6
+26689,190464,-26.498984336853027,076aeh46,no routing aorpo rest_seed = 30 k = 6
+26741,192512,-26.498984336853027,076aeh46,no routing aorpo rest_seed = 30 k = 6
+26859,192512,-25.3936185836792,076aeh46,no routing aorpo rest_seed = 30 k = 6
+26911,194560,-25.3936185836792,076aeh46,no routing aorpo rest_seed = 30 k = 6
+27029,194560,-26.160242080688477,076aeh46,no routing aorpo rest_seed = 30 k = 6
+27081,196608,-26.160242080688477,076aeh46,no routing aorpo rest_seed = 30 k = 6
+27199,196608,-26.390609741210938,076aeh46,no routing aorpo rest_seed = 30 k = 6
+27251,198656,-26.390609741210938,076aeh46,no routing aorpo rest_seed = 30 k = 6
+27369,198656,-26.203306198120117,076aeh46,no routing aorpo rest_seed = 30 k = 6
+27421,200704,-26.203306198120117,076aeh46,no routing aorpo rest_seed = 30 k = 6
+27539,200704,-26.974377632141113,076aeh46,no routing aorpo rest_seed = 30 k = 6
+27591,202752,-26.974377632141113,076aeh46,no routing aorpo rest_seed = 30 k = 6
+27709,202752,-26.564650535583496,076aeh46,no routing aorpo rest_seed = 30 k = 6
+27761,204800,-26.564650535583496,076aeh46,no routing aorpo rest_seed = 30 k = 6
+27879,204800,-26.117365837097168,076aeh46,no routing aorpo rest_seed = 30 k = 6
+27931,206848,-26.117365837097168,076aeh46,no routing aorpo rest_seed = 30 k = 6
+28049,206848,-26.024648666381836,076aeh46,no routing aorpo rest_seed = 30 k = 6
+28101,208896,-26.024648666381836,076aeh46,no routing aorpo rest_seed = 30 k = 6
+28219,208896,-26.131718635559082,076aeh46,no routing aorpo rest_seed = 30 k = 6
+28271,210944,-26.131718635559082,076aeh46,no routing aorpo rest_seed = 30 k = 6
+28389,210944,-25.8944091796875,076aeh46,no routing aorpo rest_seed = 30 k = 6
+28441,212992,-25.8944091796875,076aeh46,no routing aorpo rest_seed = 30 k = 6
+28559,212992,-25.720651626586914,076aeh46,no routing aorpo rest_seed = 30 k = 6
+28611,215040,-25.720651626586914,076aeh46,no routing aorpo rest_seed = 30 k = 6
+28729,215040,-26.27347469329834,076aeh46,no routing aorpo rest_seed = 30 k = 6
+28781,217088,-26.27347469329834,076aeh46,no routing aorpo rest_seed = 30 k = 6
+28899,217088,-26.01695156097412,076aeh46,no routing aorpo rest_seed = 30 k = 6
+28951,219136,-26.01695156097412,076aeh46,no routing aorpo rest_seed = 30 k = 6
+29069,219136,-26.346869468688965,076aeh46,no routing aorpo rest_seed = 30 k = 6
+29121,221184,-26.346869468688965,076aeh46,no routing aorpo rest_seed = 30 k = 6
+29239,221184,-25.72874641418457,076aeh46,no routing aorpo rest_seed = 30 k = 6
+29291,223232,-25.72874641418457,076aeh46,no routing aorpo rest_seed = 30 k = 6
+29409,223232,-25.87654209136963,076aeh46,no routing aorpo rest_seed = 30 k = 6
+29461,225280,-25.87654209136963,076aeh46,no routing aorpo rest_seed = 30 k = 6
+29579,225280,-26.21865463256836,076aeh46,no routing aorpo rest_seed = 30 k = 6
+29631,227328,-26.21865463256836,076aeh46,no routing aorpo rest_seed = 30 k = 6
+29749,227328,-25.824040412902832,076aeh46,no routing aorpo rest_seed = 30 k = 6
+29801,229376,-25.824040412902832,076aeh46,no routing aorpo rest_seed = 30 k = 6
+29919,229376,-25.455618858337402,076aeh46,no routing aorpo rest_seed = 30 k = 6
+29971,231424,-25.455618858337402,076aeh46,no routing aorpo rest_seed = 30 k = 6
+30089,231424,-25.841166496276855,076aeh46,no routing aorpo rest_seed = 30 k = 6
+30141,233472,-25.841166496276855,076aeh46,no routing aorpo rest_seed = 30 k = 6
+30259,233472,-25.566845893859863,076aeh46,no routing aorpo rest_seed = 30 k = 6
+30311,235520,-25.566845893859863,076aeh46,no routing aorpo rest_seed = 30 k = 6
+30429,235520,-26.08780574798584,076aeh46,no routing aorpo rest_seed = 30 k = 6
+30481,237568,-26.08780574798584,076aeh46,no routing aorpo rest_seed = 30 k = 6
+30599,237568,-26.0707950592041,076aeh46,no routing aorpo rest_seed = 30 k = 6
+30651,239616,-26.0707950592041,076aeh46,no routing aorpo rest_seed = 30 k = 6
+30769,239616,-25.77058219909668,076aeh46,no routing aorpo rest_seed = 30 k = 6
+30821,241664,-25.77058219909668,076aeh46,no routing aorpo rest_seed = 30 k = 6
+30939,241664,-26.02471160888672,076aeh46,no routing aorpo rest_seed = 30 k = 6
+30991,243712,-26.02471160888672,076aeh46,no routing aorpo rest_seed = 30 k = 6
+31109,243712,-24.998337745666504,076aeh46,no routing aorpo rest_seed = 30 k = 6
+31161,245760,-24.998337745666504,076aeh46,no routing aorpo rest_seed = 30 k = 6
+31279,245760,-25.111968994140625,076aeh46,no routing aorpo rest_seed = 30 k = 6
+31331,247808,-25.111968994140625,076aeh46,no routing aorpo rest_seed = 30 k = 6
+31449,247808,-25.270200729370117,076aeh46,no routing aorpo rest_seed = 30 k = 6
+31501,249856,-25.270200729370117,076aeh46,no routing aorpo rest_seed = 30 k = 6
+31619,249856,-26.281787872314453,076aeh46,no routing aorpo rest_seed = 30 k = 6
+31671,251904,-26.281787872314453,076aeh46,no routing aorpo rest_seed = 30 k = 6
+31789,251904,-25.42342758178711,076aeh46,no routing aorpo rest_seed = 30 k = 6
+31841,253952,-25.42342758178711,076aeh46,no routing aorpo rest_seed = 30 k = 6
+31959,253952,-25.707144737243652,076aeh46,no routing aorpo rest_seed = 30 k = 6
+32011,256000,-25.707144737243652,076aeh46,no routing aorpo rest_seed = 30 k = 6
+32129,256000,-25.500418663024902,076aeh46,no routing aorpo rest_seed = 30 k = 6
+32181,258048,-25.500418663024902,076aeh46,no routing aorpo rest_seed = 30 k = 6
+32299,258048,-25.220157623291016,076aeh46,no routing aorpo rest_seed = 30 k = 6
+32351,260096,-25.220157623291016,076aeh46,no routing aorpo rest_seed = 30 k = 6
+32469,260096,-25.534730911254883,076aeh46,no routing aorpo rest_seed = 30 k = 6
+32521,262144,-25.534730911254883,076aeh46,no routing aorpo rest_seed = 30 k = 6
+32639,262144,-25.945518493652344,076aeh46,no routing aorpo rest_seed = 30 k = 6
+32691,264192,-25.945518493652344,076aeh46,no routing aorpo rest_seed = 30 k = 6
+32809,264192,-25.87243366241455,076aeh46,no routing aorpo rest_seed = 30 k = 6
+32861,266240,-25.87243366241455,076aeh46,no routing aorpo rest_seed = 30 k = 6
+32979,266240,-25.21953010559082,076aeh46,no routing aorpo rest_seed = 30 k = 6
+33031,268288,-25.21953010559082,076aeh46,no routing aorpo rest_seed = 30 k = 6
+33149,268288,-25.737418174743652,076aeh46,no routing aorpo rest_seed = 30 k = 6
+33201,270336,-25.737418174743652,076aeh46,no routing aorpo rest_seed = 30 k = 6
+33319,270336,-25.85039234161377,076aeh46,no routing aorpo rest_seed = 30 k = 6
+33371,272384,-25.85039234161377,076aeh46,no routing aorpo rest_seed = 30 k = 6
+33489,272384,-24.725594520568848,076aeh46,no routing aorpo rest_seed = 30 k = 6
+33541,274432,-24.725594520568848,076aeh46,no routing aorpo rest_seed = 30 k = 6
+33659,274432,-25.348946571350098,076aeh46,no routing aorpo rest_seed = 30 k = 6
+33711,276480,-25.348946571350098,076aeh46,no routing aorpo rest_seed = 30 k = 6
+33829,276480,-26.060704231262207,076aeh46,no routing aorpo rest_seed = 30 k = 6
+33881,278528,-26.060704231262207,076aeh46,no routing aorpo rest_seed = 30 k = 6
+33999,278528,-25.034465789794922,076aeh46,no routing aorpo rest_seed = 30 k = 6
+51,0,,yr331itg,no routing aorpo rest_seed = 40
+169,0,-61.551897048950195,yr331itg,no routing aorpo rest_seed = 40
+221,0,-61.551897048950195,yr331itg,no routing aorpo rest_seed = 40
+339,0,-49.63385200500488,yr331itg,no routing aorpo rest_seed = 40
+391,0,-49.63385200500488,yr331itg,no routing aorpo rest_seed = 40
+509,0,-48.92191028594971,yr331itg,no routing aorpo rest_seed = 40
+561,0,-48.92191028594971,yr331itg,no routing aorpo rest_seed = 40
+679,0,-47.85871410369873,yr331itg,no routing aorpo rest_seed = 40
+731,0,-47.85871410369873,yr331itg,no routing aorpo rest_seed = 40
+849,0,-45.85086631774902,yr331itg,no routing aorpo rest_seed = 40
+901,0,-45.85086631774902,yr331itg,no routing aorpo rest_seed = 40
+1019,0,-46.907602310180664,yr331itg,no routing aorpo rest_seed = 40
+1071,0,-46.907602310180664,yr331itg,no routing aorpo rest_seed = 40
+1189,0,-47.41207218170166,yr331itg,no routing aorpo rest_seed = 40
+1241,0,-47.41207218170166,yr331itg,no routing aorpo rest_seed = 40
+1359,0,-46.882452964782715,yr331itg,no routing aorpo rest_seed = 40
+1411,0,-46.882452964782715,yr331itg,no routing aorpo rest_seed = 40
+1529,0,-46.73961162567139,yr331itg,no routing aorpo rest_seed = 40
+1581,0,-46.73961162567139,yr331itg,no routing aorpo rest_seed = 40
+1699,0,-46.908080101013184,yr331itg,no routing aorpo rest_seed = 40
+1751,0,-46.908080101013184,yr331itg,no routing aorpo rest_seed = 40
+1869,0,-47.322861671447754,yr331itg,no routing aorpo rest_seed = 40
+1921,0,-47.322861671447754,yr331itg,no routing aorpo rest_seed = 40
+2039,0,-47.08043670654297,yr331itg,no routing aorpo rest_seed = 40
+2091,0,-47.08043670654297,yr331itg,no routing aorpo rest_seed = 40
+2209,0,-45.78326225280762,yr331itg,no routing aorpo rest_seed = 40
+2261,0,-45.78326225280762,yr331itg,no routing aorpo rest_seed = 40
+2379,0,-43.7745246887207,yr331itg,no routing aorpo rest_seed = 40
+2431,0,-43.7745246887207,yr331itg,no routing aorpo rest_seed = 40
+2549,0,-45.091546058654785,yr331itg,no routing aorpo rest_seed = 40
+2601,0,-45.091546058654785,yr331itg,no routing aorpo rest_seed = 40
+2719,0,-46.67554569244385,yr331itg,no routing aorpo rest_seed = 40
+2771,0,-46.67554569244385,yr331itg,no routing aorpo rest_seed = 40
+2889,0,-46.012168884277344,yr331itg,no routing aorpo rest_seed = 40
+2941,0,-46.012168884277344,yr331itg,no routing aorpo rest_seed = 40
+3059,0,-45.82560729980469,yr331itg,no routing aorpo rest_seed = 40
+3111,0,-45.82560729980469,yr331itg,no routing aorpo rest_seed = 40
+3229,0,-45.24870300292969,yr331itg,no routing aorpo rest_seed = 40
+3281,0,-45.24870300292969,yr331itg,no routing aorpo rest_seed = 40
+3399,0,-45.70664310455322,yr331itg,no routing aorpo rest_seed = 40
+3451,0,-45.70664310455322,yr331itg,no routing aorpo rest_seed = 40
+3569,0,-45.86112117767334,yr331itg,no routing aorpo rest_seed = 40
+3621,0,-45.86112117767334,yr331itg,no routing aorpo rest_seed = 40
+3739,0,-43.842684745788574,yr331itg,no routing aorpo rest_seed = 40
+3791,0,-43.842684745788574,yr331itg,no routing aorpo rest_seed = 40
+3909,0,-45.000765800476074,yr331itg,no routing aorpo rest_seed = 40
+3961,1024,-45.000765800476074,yr331itg,no routing aorpo rest_seed = 40
+4079,1024,-42.97589111328125,yr331itg,no routing aorpo rest_seed = 40
+4131,2048,-42.97589111328125,yr331itg,no routing aorpo rest_seed = 40
+4249,2048,-45.45202922821045,yr331itg,no routing aorpo rest_seed = 40
+4301,3072,-45.45202922821045,yr331itg,no routing aorpo rest_seed = 40
+4419,3072,-42.40382957458496,yr331itg,no routing aorpo rest_seed = 40
+4471,4096,-42.40382957458496,yr331itg,no routing aorpo rest_seed = 40
+4589,4096,-43.71457481384277,yr331itg,no routing aorpo rest_seed = 40
+4641,5120,-43.71457481384277,yr331itg,no routing aorpo rest_seed = 40
+4759,5120,-42.16762351989746,yr331itg,no routing aorpo rest_seed = 40
+4811,6144,-42.16762351989746,yr331itg,no routing aorpo rest_seed = 40
+4929,6144,-40.81892967224121,yr331itg,no routing aorpo rest_seed = 40
+4981,7168,-40.81892967224121,yr331itg,no routing aorpo rest_seed = 40
+5099,7168,-40.46806335449219,yr331itg,no routing aorpo rest_seed = 40
+5151,8192,-40.46806335449219,yr331itg,no routing aorpo rest_seed = 40
+5269,8192,-40.2330207824707,yr331itg,no routing aorpo rest_seed = 40
+5321,9216,-40.2330207824707,yr331itg,no routing aorpo rest_seed = 40
+5439,9216,-40.06608963012695,yr331itg,no routing aorpo rest_seed = 40
+5491,10240,-40.06608963012695,yr331itg,no routing aorpo rest_seed = 40
+5609,10240,-39.839059829711914,yr331itg,no routing aorpo rest_seed = 40
+5661,11264,-39.839059829711914,yr331itg,no routing aorpo rest_seed = 40
+5779,11264,-39.41889953613281,yr331itg,no routing aorpo rest_seed = 40
+5831,12288,-39.41889953613281,yr331itg,no routing aorpo rest_seed = 40
+5949,12288,-39.809067726135254,yr331itg,no routing aorpo rest_seed = 40
+6001,13312,-39.809067726135254,yr331itg,no routing aorpo rest_seed = 40
+6119,13312,-40.22228527069092,yr331itg,no routing aorpo rest_seed = 40
+6171,14336,-40.22228527069092,yr331itg,no routing aorpo rest_seed = 40
+6289,14336,-39.6464262008667,yr331itg,no routing aorpo rest_seed = 40
+6341,15360,-39.6464262008667,yr331itg,no routing aorpo rest_seed = 40
+6459,15360,-39.69989776611328,yr331itg,no routing aorpo rest_seed = 40
+6511,16384,-39.69989776611328,yr331itg,no routing aorpo rest_seed = 40
+6629,16384,-39.77785778045654,yr331itg,no routing aorpo rest_seed = 40
+6681,17408,-39.77785778045654,yr331itg,no routing aorpo rest_seed = 40
+6799,17408,-40.10990810394287,yr331itg,no routing aorpo rest_seed = 40
+6851,18432,-40.10990810394287,yr331itg,no routing aorpo rest_seed = 40
+6969,18432,-39.76985168457031,yr331itg,no routing aorpo rest_seed = 40
+7021,19456,-39.76985168457031,yr331itg,no routing aorpo rest_seed = 40
+7139,19456,-39.739501953125,yr331itg,no routing aorpo rest_seed = 40
+7191,20480,-39.739501953125,yr331itg,no routing aorpo rest_seed = 40
+7309,20480,-39.85798740386963,yr331itg,no routing aorpo rest_seed = 40
+7361,21504,-39.85798740386963,yr331itg,no routing aorpo rest_seed = 40
+7479,21504,-39.84211730957031,yr331itg,no routing aorpo rest_seed = 40
+7531,22528,-39.84211730957031,yr331itg,no routing aorpo rest_seed = 40
+7649,22528,-39.36202526092529,yr331itg,no routing aorpo rest_seed = 40
+7701,23552,-39.36202526092529,yr331itg,no routing aorpo rest_seed = 40
+7819,23552,-39.4035120010376,yr331itg,no routing aorpo rest_seed = 40
+7871,24576,-39.4035120010376,yr331itg,no routing aorpo rest_seed = 40
+7989,24576,-39.789916038513184,yr331itg,no routing aorpo rest_seed = 40
+8041,25600,-39.789916038513184,yr331itg,no routing aorpo rest_seed = 40
+8159,25600,-40.08152675628662,yr331itg,no routing aorpo rest_seed = 40
+8211,26624,-40.08152675628662,yr331itg,no routing aorpo rest_seed = 40
+8329,26624,-40.075910568237305,yr331itg,no routing aorpo rest_seed = 40
+8381,27648,-40.075910568237305,yr331itg,no routing aorpo rest_seed = 40
+8499,27648,-39.65248107910156,yr331itg,no routing aorpo rest_seed = 40
+8551,28672,-39.65248107910156,yr331itg,no routing aorpo rest_seed = 40
+8669,28672,-39.13268852233887,yr331itg,no routing aorpo rest_seed = 40
+8721,29696,-39.13268852233887,yr331itg,no routing aorpo rest_seed = 40
+8839,29696,-39.075754165649414,yr331itg,no routing aorpo rest_seed = 40
+8891,30720,-39.075754165649414,yr331itg,no routing aorpo rest_seed = 40
+9009,30720,-40.284714698791504,yr331itg,no routing aorpo rest_seed = 40
+9061,31744,-40.284714698791504,yr331itg,no routing aorpo rest_seed = 40
+9179,31744,-39.294663429260254,yr331itg,no routing aorpo rest_seed = 40
+9231,32768,-39.294663429260254,yr331itg,no routing aorpo rest_seed = 40
+9349,32768,-39.440908432006836,yr331itg,no routing aorpo rest_seed = 40
+9401,33792,-39.440908432006836,yr331itg,no routing aorpo rest_seed = 40
+9519,33792,-39.587602615356445,yr331itg,no routing aorpo rest_seed = 40
+9571,34816,-39.587602615356445,yr331itg,no routing aorpo rest_seed = 40
+9689,34816,-39.26448917388916,yr331itg,no routing aorpo rest_seed = 40
+9741,35840,-39.26448917388916,yr331itg,no routing aorpo rest_seed = 40
+9859,35840,-39.005531311035156,yr331itg,no routing aorpo rest_seed = 40
+9911,36864,-39.005531311035156,yr331itg,no routing aorpo rest_seed = 40
+10029,36864,-39.159335136413574,yr331itg,no routing aorpo rest_seed = 40
+10081,37888,-39.159335136413574,yr331itg,no routing aorpo rest_seed = 40
+10199,37888,-39.3003044128418,yr331itg,no routing aorpo rest_seed = 40
+10251,38912,-39.3003044128418,yr331itg,no routing aorpo rest_seed = 40
+10369,38912,-39.85929584503174,yr331itg,no routing aorpo rest_seed = 40
+10421,39936,-39.85929584503174,yr331itg,no routing aorpo rest_seed = 40
+10539,39936,-38.960737228393555,yr331itg,no routing aorpo rest_seed = 40
+10591,40960,-38.960737228393555,yr331itg,no routing aorpo rest_seed = 40
+10709,40960,-39.269408226013184,yr331itg,no routing aorpo rest_seed = 40
+10761,41984,-39.269408226013184,yr331itg,no routing aorpo rest_seed = 40
+10879,41984,-39.449570655822754,yr331itg,no routing aorpo rest_seed = 40
+10931,43008,-39.449570655822754,yr331itg,no routing aorpo rest_seed = 40
+11049,43008,-39.18278789520264,yr331itg,no routing aorpo rest_seed = 40
+11101,44032,-39.18278789520264,yr331itg,no routing aorpo rest_seed = 40
+11219,44032,-39.207451820373535,yr331itg,no routing aorpo rest_seed = 40
+11271,45056,-39.207451820373535,yr331itg,no routing aorpo rest_seed = 40
+11389,45056,-39.32326126098633,yr331itg,no routing aorpo rest_seed = 40
+11441,46080,-39.32326126098633,yr331itg,no routing aorpo rest_seed = 40
+11559,46080,-39.09043312072754,yr331itg,no routing aorpo rest_seed = 40
+11611,47104,-39.09043312072754,yr331itg,no routing aorpo rest_seed = 40
+11729,47104,-39.7045259475708,yr331itg,no routing aorpo rest_seed = 40
+11781,48128,-39.7045259475708,yr331itg,no routing aorpo rest_seed = 40
+11899,48128,-38.99329090118408,yr331itg,no routing aorpo rest_seed = 40
+11951,49152,-38.99329090118408,yr331itg,no routing aorpo rest_seed = 40
+12069,49152,-39.36129856109619,yr331itg,no routing aorpo rest_seed = 40
+12121,50176,-39.36129856109619,yr331itg,no routing aorpo rest_seed = 40
+12239,50176,-39.01639747619629,yr331itg,no routing aorpo rest_seed = 40
+12291,51200,-39.01639747619629,yr331itg,no routing aorpo rest_seed = 40
+12409,51200,-39.138723373413086,yr331itg,no routing aorpo rest_seed = 40
+12461,52224,-39.138723373413086,yr331itg,no routing aorpo rest_seed = 40
+12579,52224,-39.268999099731445,yr331itg,no routing aorpo rest_seed = 40
+12631,53248,-39.268999099731445,yr331itg,no routing aorpo rest_seed = 40
+12749,53248,-39.33506488800049,yr331itg,no routing aorpo rest_seed = 40
+12801,54272,-39.33506488800049,yr331itg,no routing aorpo rest_seed = 40
+12919,54272,-38.98423767089844,yr331itg,no routing aorpo rest_seed = 40
+12971,56320,-38.98423767089844,yr331itg,no routing aorpo rest_seed = 40
+13089,56320,-38.84507942199707,yr331itg,no routing aorpo rest_seed = 40
+13141,58368,-38.84507942199707,yr331itg,no routing aorpo rest_seed = 40
+13259,58368,-39.09433937072754,yr331itg,no routing aorpo rest_seed = 40
+13311,59392,-39.09433937072754,yr331itg,no routing aorpo rest_seed = 40
+13429,59392,-38.921828269958496,yr331itg,no routing aorpo rest_seed = 40
+13481,60416,-38.921828269958496,yr331itg,no routing aorpo rest_seed = 40
+13599,60416,-39.15444278717041,yr331itg,no routing aorpo rest_seed = 40
+13651,61440,-39.15444278717041,yr331itg,no routing aorpo rest_seed = 40
+13769,61440,-38.7759952545166,yr331itg,no routing aorpo rest_seed = 40
+13821,63488,-38.7759952545166,yr331itg,no routing aorpo rest_seed = 40
+13939,63488,-39.05515670776367,yr331itg,no routing aorpo rest_seed = 40
+13991,64512,-39.05515670776367,yr331itg,no routing aorpo rest_seed = 40
+14109,64512,-39.30374336242676,yr331itg,no routing aorpo rest_seed = 40
+14161,65536,-39.30374336242676,yr331itg,no routing aorpo rest_seed = 40
+14279,65536,-38.833683013916016,yr331itg,no routing aorpo rest_seed = 40
+14331,66560,-38.833683013916016,yr331itg,no routing aorpo rest_seed = 40
+14449,66560,-38.59377384185791,yr331itg,no routing aorpo rest_seed = 40
+14501,67584,-38.59377384185791,yr331itg,no routing aorpo rest_seed = 40
+14619,67584,-38.88908386230469,yr331itg,no routing aorpo rest_seed = 40
+14671,68608,-38.88908386230469,yr331itg,no routing aorpo rest_seed = 40
+14789,68608,-38.51444339752197,yr331itg,no routing aorpo rest_seed = 40
+14841,69632,-38.51444339752197,yr331itg,no routing aorpo rest_seed = 40
+14959,69632,-38.6746301651001,yr331itg,no routing aorpo rest_seed = 40
+15011,71680,-38.6746301651001,yr331itg,no routing aorpo rest_seed = 40
+15129,71680,-39.05260181427002,yr331itg,no routing aorpo rest_seed = 40
+15181,73728,-39.05260181427002,yr331itg,no routing aorpo rest_seed = 40
+15299,73728,-38.90155029296875,yr331itg,no routing aorpo rest_seed = 40
+15351,75776,-38.90155029296875,yr331itg,no routing aorpo rest_seed = 40
+15469,75776,-38.27565956115723,yr331itg,no routing aorpo rest_seed = 40
+15521,77824,-38.27565956115723,yr331itg,no routing aorpo rest_seed = 40
+15639,77824,-38.05974769592285,yr331itg,no routing aorpo rest_seed = 40
+15691,79872,-38.05974769592285,yr331itg,no routing aorpo rest_seed = 40
+15809,79872,-38.70859241485596,yr331itg,no routing aorpo rest_seed = 40
+15861,81920,-38.70859241485596,yr331itg,no routing aorpo rest_seed = 40
+15979,81920,-38.99755573272705,yr331itg,no routing aorpo rest_seed = 40
+16031,83968,-38.99755573272705,yr331itg,no routing aorpo rest_seed = 40
+16149,83968,-38.38642120361328,yr331itg,no routing aorpo rest_seed = 40
+16201,86016,-38.38642120361328,yr331itg,no routing aorpo rest_seed = 40
+16319,86016,-38.68687152862549,yr331itg,no routing aorpo rest_seed = 40
+16371,88064,-38.68687152862549,yr331itg,no routing aorpo rest_seed = 40
+16489,88064,-38.86544990539551,yr331itg,no routing aorpo rest_seed = 40
+16541,90112,-38.86544990539551,yr331itg,no routing aorpo rest_seed = 40
+16659,90112,-38.862284660339355,yr331itg,no routing aorpo rest_seed = 40
+16711,92160,-38.862284660339355,yr331itg,no routing aorpo rest_seed = 40
+16829,92160,-38.52816677093506,yr331itg,no routing aorpo rest_seed = 40
+16881,94208,-38.52816677093506,yr331itg,no routing aorpo rest_seed = 40
+16999,94208,-38.78233051300049,yr331itg,no routing aorpo rest_seed = 40
+17051,96256,-38.78233051300049,yr331itg,no routing aorpo rest_seed = 40
+17169,96256,-38.55661106109619,yr331itg,no routing aorpo rest_seed = 40
+17221,98304,-38.55661106109619,yr331itg,no routing aorpo rest_seed = 40
+17339,98304,-38.62675380706787,yr331itg,no routing aorpo rest_seed = 40
+17391,100352,-38.62675380706787,yr331itg,no routing aorpo rest_seed = 40
+17509,100352,-38.84604549407959,yr331itg,no routing aorpo rest_seed = 40
+17561,102400,-38.84604549407959,yr331itg,no routing aorpo rest_seed = 40
+17679,102400,-38.5892276763916,yr331itg,no routing aorpo rest_seed = 40
+17731,104448,-38.5892276763916,yr331itg,no routing aorpo rest_seed = 40
+17849,104448,-38.79588794708252,yr331itg,no routing aorpo rest_seed = 40
+17901,106496,-38.79588794708252,yr331itg,no routing aorpo rest_seed = 40
+18019,106496,-38.69136619567871,yr331itg,no routing aorpo rest_seed = 40
+18071,108544,-38.69136619567871,yr331itg,no routing aorpo rest_seed = 40
+18189,108544,-38.37249755859375,yr331itg,no routing aorpo rest_seed = 40
+18241,110592,-38.37249755859375,yr331itg,no routing aorpo rest_seed = 40
+18359,110592,-37.927504539489746,yr331itg,no routing aorpo rest_seed = 40
+18411,112640,-37.927504539489746,yr331itg,no routing aorpo rest_seed = 40
+18529,112640,-38.299734115600586,yr331itg,no routing aorpo rest_seed = 40
+18581,114688,-38.299734115600586,yr331itg,no routing aorpo rest_seed = 40
+18699,114688,-37.95414924621582,yr331itg,no routing aorpo rest_seed = 40
+18751,116736,-37.95414924621582,yr331itg,no routing aorpo rest_seed = 40
+18869,116736,-38.48837661743164,yr331itg,no routing aorpo rest_seed = 40
+18921,118784,-38.48837661743164,yr331itg,no routing aorpo rest_seed = 40
+19039,118784,-38.50144004821777,yr331itg,no routing aorpo rest_seed = 40
+19091,120832,-38.50144004821777,yr331itg,no routing aorpo rest_seed = 40
+19209,120832,-38.2743501663208,yr331itg,no routing aorpo rest_seed = 40
+19261,122880,-38.2743501663208,yr331itg,no routing aorpo rest_seed = 40
+19379,122880,-38.60442543029785,yr331itg,no routing aorpo rest_seed = 40
+19431,124928,-38.60442543029785,yr331itg,no routing aorpo rest_seed = 40
+19549,124928,-39.04183292388916,yr331itg,no routing aorpo rest_seed = 40
+19601,125952,-39.04183292388916,yr331itg,no routing aorpo rest_seed = 40
+19719,125952,-38.72080898284912,yr331itg,no routing aorpo rest_seed = 40
+19771,128000,-38.72080898284912,yr331itg,no routing aorpo rest_seed = 40
+19889,128000,-38.50924301147461,yr331itg,no routing aorpo rest_seed = 40
+19941,130048,-38.50924301147461,yr331itg,no routing aorpo rest_seed = 40
+20059,130048,-38.77138423919678,yr331itg,no routing aorpo rest_seed = 40
+20111,132096,-38.77138423919678,yr331itg,no routing aorpo rest_seed = 40
+20229,132096,-38.46967029571533,yr331itg,no routing aorpo rest_seed = 40
+20281,134144,-38.46967029571533,yr331itg,no routing aorpo rest_seed = 40
+20399,134144,-37.696990966796875,yr331itg,no routing aorpo rest_seed = 40
+20451,136192,-37.696990966796875,yr331itg,no routing aorpo rest_seed = 40
+20569,136192,-39.284483909606934,yr331itg,no routing aorpo rest_seed = 40
+20621,138240,-39.284483909606934,yr331itg,no routing aorpo rest_seed = 40
+20739,138240,-38.46595287322998,yr331itg,no routing aorpo rest_seed = 40
+20791,140288,-38.46595287322998,yr331itg,no routing aorpo rest_seed = 40
+20909,140288,-38.77223300933838,yr331itg,no routing aorpo rest_seed = 40
+20961,142336,-38.77223300933838,yr331itg,no routing aorpo rest_seed = 40
+21079,142336,-38.61536407470703,yr331itg,no routing aorpo rest_seed = 40
+21131,144384,-38.61536407470703,yr331itg,no routing aorpo rest_seed = 40
+21249,144384,-39.300292015075684,yr331itg,no routing aorpo rest_seed = 40
+21301,146432,-39.300292015075684,yr331itg,no routing aorpo rest_seed = 40
+21419,146432,-38.55342388153076,yr331itg,no routing aorpo rest_seed = 40
+21471,148480,-38.55342388153076,yr331itg,no routing aorpo rest_seed = 40
+21589,148480,-38.234816551208496,yr331itg,no routing aorpo rest_seed = 40
+21641,150528,-38.234816551208496,yr331itg,no routing aorpo rest_seed = 40
+21759,150528,-38.47824573516846,yr331itg,no routing aorpo rest_seed = 40
+21811,152576,-38.47824573516846,yr331itg,no routing aorpo rest_seed = 40
+21929,152576,-38.342400550842285,yr331itg,no routing aorpo rest_seed = 40
+21981,154624,-38.342400550842285,yr331itg,no routing aorpo rest_seed = 40
+22099,154624,-38.760268211364746,yr331itg,no routing aorpo rest_seed = 40
+22151,156672,-38.760268211364746,yr331itg,no routing aorpo rest_seed = 40
+22269,156672,-38.85994815826416,yr331itg,no routing aorpo rest_seed = 40
+22321,158720,-38.85994815826416,yr331itg,no routing aorpo rest_seed = 40
+22439,158720,-38.43500232696533,yr331itg,no routing aorpo rest_seed = 40
+22491,160768,-38.43500232696533,yr331itg,no routing aorpo rest_seed = 40
+22609,160768,-38.40288162231445,yr331itg,no routing aorpo rest_seed = 40
+22661,162816,-38.40288162231445,yr331itg,no routing aorpo rest_seed = 40
+22779,162816,-38.53406238555908,yr331itg,no routing aorpo rest_seed = 40
+22831,164864,-38.53406238555908,yr331itg,no routing aorpo rest_seed = 40
+22949,164864,-38.505324363708496,yr331itg,no routing aorpo rest_seed = 40
+23001,166912,-38.505324363708496,yr331itg,no routing aorpo rest_seed = 40
+23119,166912,-38.3482551574707,yr331itg,no routing aorpo rest_seed = 40
+23171,168960,-38.3482551574707,yr331itg,no routing aorpo rest_seed = 40
+23289,168960,-38.76026153564453,yr331itg,no routing aorpo rest_seed = 40
+23341,171008,-38.76026153564453,yr331itg,no routing aorpo rest_seed = 40
+23459,171008,-38.45366382598877,yr331itg,no routing aorpo rest_seed = 40
+23511,173056,-38.45366382598877,yr331itg,no routing aorpo rest_seed = 40
+23629,173056,-37.922194480895996,yr331itg,no routing aorpo rest_seed = 40
+23681,175104,-37.922194480895996,yr331itg,no routing aorpo rest_seed = 40
+23799,175104,-37.947571754455566,yr331itg,no routing aorpo rest_seed = 40
+23851,177152,-37.947571754455566,yr331itg,no routing aorpo rest_seed = 40
+23969,177152,-38.24171161651611,yr331itg,no routing aorpo rest_seed = 40
+24021,179200,-38.24171161651611,yr331itg,no routing aorpo rest_seed = 40
+24139,179200,-38.33297252655029,yr331itg,no routing aorpo rest_seed = 40
+24191,181248,-38.33297252655029,yr331itg,no routing aorpo rest_seed = 40
+24309,181248,-38.36501502990723,yr331itg,no routing aorpo rest_seed = 40
+24361,183296,-38.36501502990723,yr331itg,no routing aorpo rest_seed = 40
+24479,183296,-37.85803031921387,yr331itg,no routing aorpo rest_seed = 40
+24531,185344,-37.85803031921387,yr331itg,no routing aorpo rest_seed = 40
+24649,185344,-38.52566146850586,yr331itg,no routing aorpo rest_seed = 40
+24701,187392,-38.52566146850586,yr331itg,no routing aorpo rest_seed = 40
+24819,187392,-38.378844261169434,yr331itg,no routing aorpo rest_seed = 40
+24871,189440,-38.378844261169434,yr331itg,no routing aorpo rest_seed = 40
+24989,189440,-38.688782691955566,yr331itg,no routing aorpo rest_seed = 40
+25041,191488,-38.688782691955566,yr331itg,no routing aorpo rest_seed = 40
+25159,191488,-38.04402446746826,yr331itg,no routing aorpo rest_seed = 40
+25211,193536,-38.04402446746826,yr331itg,no routing aorpo rest_seed = 40
+25329,193536,-38.25902271270752,yr331itg,no routing aorpo rest_seed = 40
+25381,195584,-38.25902271270752,yr331itg,no routing aorpo rest_seed = 40
+25499,195584,-38.706247329711914,yr331itg,no routing aorpo rest_seed = 40
+25551,197632,-38.706247329711914,yr331itg,no routing aorpo rest_seed = 40
+25669,197632,-39.08491134643555,yr331itg,no routing aorpo rest_seed = 40
+25721,199680,-39.08491134643555,yr331itg,no routing aorpo rest_seed = 40
+25839,199680,-38.95888710021973,yr331itg,no routing aorpo rest_seed = 40
+25891,201728,-38.95888710021973,yr331itg,no routing aorpo rest_seed = 40
+26009,201728,-37.87917232513428,yr331itg,no routing aorpo rest_seed = 40
+26061,202752,-37.87917232513428,yr331itg,no routing aorpo rest_seed = 40
+26179,202752,-38.641385078430176,yr331itg,no routing aorpo rest_seed = 40
+26231,204800,-38.641385078430176,yr331itg,no routing aorpo rest_seed = 40
+26349,204800,-39.02669429779053,yr331itg,no routing aorpo rest_seed = 40
+26401,206848,-39.02669429779053,yr331itg,no routing aorpo rest_seed = 40
+26519,206848,-38.76512145996094,yr331itg,no routing aorpo rest_seed = 40
+26571,208896,-38.76512145996094,yr331itg,no routing aorpo rest_seed = 40
+26689,208896,-38.768717765808105,yr331itg,no routing aorpo rest_seed = 40
+26741,210944,-38.768717765808105,yr331itg,no routing aorpo rest_seed = 40
+26859,210944,-38.99722099304199,yr331itg,no routing aorpo rest_seed = 40
+26911,212992,-38.99722099304199,yr331itg,no routing aorpo rest_seed = 40
+27029,212992,-38.105515480041504,yr331itg,no routing aorpo rest_seed = 40
+27081,215040,-38.105515480041504,yr331itg,no routing aorpo rest_seed = 40
+27199,215040,-38.93541431427002,yr331itg,no routing aorpo rest_seed = 40
+27251,217088,-38.93541431427002,yr331itg,no routing aorpo rest_seed = 40
+27369,217088,-38.684213638305664,yr331itg,no routing aorpo rest_seed = 40
+27421,219136,-38.684213638305664,yr331itg,no routing aorpo rest_seed = 40
+27539,219136,-38.7780704498291,yr331itg,no routing aorpo rest_seed = 40
+27591,221184,-38.7780704498291,yr331itg,no routing aorpo rest_seed = 40
+27709,221184,-38.390451431274414,yr331itg,no routing aorpo rest_seed = 40
+27761,223232,-38.390451431274414,yr331itg,no routing aorpo rest_seed = 40
+27879,223232,-38.098981857299805,yr331itg,no routing aorpo rest_seed = 40
+27931,225280,-38.098981857299805,yr331itg,no routing aorpo rest_seed = 40
+28049,225280,-38.252052307128906,yr331itg,no routing aorpo rest_seed = 40
+28101,227328,-38.252052307128906,yr331itg,no routing aorpo rest_seed = 40
+28219,227328,-38.482394218444824,yr331itg,no routing aorpo rest_seed = 40
+28271,229376,-38.482394218444824,yr331itg,no routing aorpo rest_seed = 40
+28389,229376,-38.666582107543945,yr331itg,no routing aorpo rest_seed = 40
+28441,231424,-38.666582107543945,yr331itg,no routing aorpo rest_seed = 40
+28559,231424,-38.681806564331055,yr331itg,no routing aorpo rest_seed = 40
+28611,233472,-38.681806564331055,yr331itg,no routing aorpo rest_seed = 40
+28729,233472,-38.574191093444824,yr331itg,no routing aorpo rest_seed = 40
+28781,235520,-38.574191093444824,yr331itg,no routing aorpo rest_seed = 40
+28899,235520,-38.59402084350586,yr331itg,no routing aorpo rest_seed = 40
+28951,237568,-38.59402084350586,yr331itg,no routing aorpo rest_seed = 40
+29069,237568,-38.906039237976074,yr331itg,no routing aorpo rest_seed = 40
+29121,239616,-38.906039237976074,yr331itg,no routing aorpo rest_seed = 40
+29239,239616,-38.35784149169922,yr331itg,no routing aorpo rest_seed = 40
+29291,241664,-38.35784149169922,yr331itg,no routing aorpo rest_seed = 40
+29409,241664,-38.53985404968262,yr331itg,no routing aorpo rest_seed = 40
+29461,243712,-38.53985404968262,yr331itg,no routing aorpo rest_seed = 40
+29579,243712,-38.913777351379395,yr331itg,no routing aorpo rest_seed = 40
+29631,245760,-38.913777351379395,yr331itg,no routing aorpo rest_seed = 40
+29749,245760,-38.5362491607666,yr331itg,no routing aorpo rest_seed = 40
+29801,247808,-38.5362491607666,yr331itg,no routing aorpo rest_seed = 40
+29919,247808,-38.43473148345947,yr331itg,no routing aorpo rest_seed = 40
+29971,249856,-38.43473148345947,yr331itg,no routing aorpo rest_seed = 40
+30089,249856,-38.43367958068848,yr331itg,no routing aorpo rest_seed = 40
+30141,251904,-38.43367958068848,yr331itg,no routing aorpo rest_seed = 40
+30259,251904,-38.280513763427734,yr331itg,no routing aorpo rest_seed = 40
+30311,253952,-38.280513763427734,yr331itg,no routing aorpo rest_seed = 40
+30429,253952,-38.436866760253906,yr331itg,no routing aorpo rest_seed = 40
+30481,256000,-38.436866760253906,yr331itg,no routing aorpo rest_seed = 40
+30599,256000,-38.484947204589844,yr331itg,no routing aorpo rest_seed = 40
+30651,258048,-38.484947204589844,yr331itg,no routing aorpo rest_seed = 40
+30769,258048,-38.75745868682861,yr331itg,no routing aorpo rest_seed = 40
+30821,260096,-38.75745868682861,yr331itg,no routing aorpo rest_seed = 40
+30939,260096,-38.81850242614746,yr331itg,no routing aorpo rest_seed = 40
+30991,262144,-38.81850242614746,yr331itg,no routing aorpo rest_seed = 40
+31109,262144,-38.47995853424072,yr331itg,no routing aorpo rest_seed = 40
+31161,264192,-38.47995853424072,yr331itg,no routing aorpo rest_seed = 40
+31279,264192,-38.48752307891846,yr331itg,no routing aorpo rest_seed = 40
+31331,266240,-38.48752307891846,yr331itg,no routing aorpo rest_seed = 40
+31449,266240,-38.667357444763184,yr331itg,no routing aorpo rest_seed = 40
+31501,268288,-38.667357444763184,yr331itg,no routing aorpo rest_seed = 40
+31619,268288,-38.93608474731445,yr331itg,no routing aorpo rest_seed = 40
+31671,270336,-38.93608474731445,yr331itg,no routing aorpo rest_seed = 40
+31789,270336,-38.507774353027344,yr331itg,no routing aorpo rest_seed = 40
+31841,272384,-38.507774353027344,yr331itg,no routing aorpo rest_seed = 40
+31959,272384,-38.76641082763672,yr331itg,no routing aorpo rest_seed = 40
+32011,274432,-38.76641082763672,yr331itg,no routing aorpo rest_seed = 40
+32129,274432,-39.228434562683105,yr331itg,no routing aorpo rest_seed = 40
+32181,276480,-39.228434562683105,yr331itg,no routing aorpo rest_seed = 40
+32299,276480,-38.43591117858887,yr331itg,no routing aorpo rest_seed = 40
+32351,278528,-38.43591117858887,yr331itg,no routing aorpo rest_seed = 40
+32469,278528,-39.15116310119629,yr331itg,no routing aorpo rest_seed = 40
+32521,280576,-39.15116310119629,yr331itg,no routing aorpo rest_seed = 40
+32639,280576,-38.650550842285156,yr331itg,no routing aorpo rest_seed = 40
+32691,282624,-38.650550842285156,yr331itg,no routing aorpo rest_seed = 40
+32809,282624,-38.78872203826904,yr331itg,no routing aorpo rest_seed = 40
+32861,284672,-38.78872203826904,yr331itg,no routing aorpo rest_seed = 40
+32979,284672,-38.5947790145874,yr331itg,no routing aorpo rest_seed = 40
+33031,286720,-38.5947790145874,yr331itg,no routing aorpo rest_seed = 40
+33149,286720,-39.117892265319824,yr331itg,no routing aorpo rest_seed = 40
+33201,288768,-39.117892265319824,yr331itg,no routing aorpo rest_seed = 40
+33319,288768,-39.14213562011719,yr331itg,no routing aorpo rest_seed = 40
+33371,290816,-39.14213562011719,yr331itg,no routing aorpo rest_seed = 40
+33489,290816,-38.90878200531006,yr331itg,no routing aorpo rest_seed = 40
+33541,292864,-38.90878200531006,yr331itg,no routing aorpo rest_seed = 40
+33659,292864,-38.67061424255371,yr331itg,no routing aorpo rest_seed = 40
+33711,294912,-38.67061424255371,yr331itg,no routing aorpo rest_seed = 40
+33829,294912,-39.09389400482178,yr331itg,no routing aorpo rest_seed = 40
+33881,296960,-39.09389400482178,yr331itg,no routing aorpo rest_seed = 40
+33999,296960,-38.82221698760986,yr331itg,no routing aorpo rest_seed = 40
+51,249,,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+169,249,-39.04259490966797,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+221,557,-39.04259490966797,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+339,557,-37.430480003356934,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+391,783,-37.430480003356934,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+509,783,-38.06428909301758,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+561,979,-38.06428909301758,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+679,979,-36.86280822753906,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+731,1233,-36.86280822753906,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+849,1233,-38.1414098739624,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+901,1459,-38.1414098739624,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+1019,1459,-36.07390308380127,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+1071,1712,-36.07390308380127,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+1189,1712,-33.50374221801758,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+1241,1905,-33.50374221801758,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+1359,1905,-34.29236602783203,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+1411,3223,-34.29236602783203,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+1529,3223,-30.88620662689209,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+1581,4408,-30.88620662689209,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+1699,4408,-29.553887367248535,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+1751,6486,-29.553887367248535,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+1869,6486,-30.514497756958008,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+1921,7796,-30.514497756958008,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+2039,7796,-29.950003623962402,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+2091,9664,-29.950003623962402,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+2209,9664,-30.42781162261963,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+2261,11059,-30.42781162261963,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+2379,11059,-29.020604133605957,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+2431,12511,-29.020604133605957,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+2549,12511,-29.4335880279541,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+2601,13731,-29.4335880279541,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+2719,13731,-29.115731239318848,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+2771,15347,-29.115731239318848,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+2889,15347,-29.832548141479492,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+2941,16555,-29.832548141479492,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+3059,16555,-29.888300895690918,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+3111,17820,-29.888300895690918,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+3229,17820,-30.136345863342285,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+3281,19254,-30.136345863342285,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+3399,19254,-30.32773494720459,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+3451,20708,-30.32773494720459,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+3569,20708,-32.762210845947266,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+3621,22397,-32.762210845947266,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+3739,22397,-29.1658935546875,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+3791,24037,-29.1658935546875,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+3909,24037,-31.15380573272705,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+3961,25670,-31.15380573272705,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+4079,25670,-31.06628704071045,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+4131,27388,-31.06628704071045,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+4249,27388,-30.079739570617676,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+4301,28798,-30.079739570617676,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+4419,28798,-32.09364032745361,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+4471,30375,-32.09364032745361,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+4589,30375,-30.8609037399292,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+4641,31910,-30.8609037399292,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+4759,31910,-31.463406562805176,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+4811,33398,-31.463406562805176,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+4929,33398,-33.235063552856445,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+4981,35074,-33.235063552856445,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+5099,35074,-31.95706081390381,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+5151,36811,-31.95706081390381,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+5269,36811,-32.55647563934326,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+5321,38495,-32.55647563934326,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+5439,38495,-29.76879119873047,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+5491,39743,-29.76879119873047,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+5609,39743,-30.680221557617188,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+5661,41120,-30.680221557617188,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+5779,41120,-30.127861976623535,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+5831,42185,-30.127861976623535,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+5949,42185,-29.693561553955078,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+6001,43322,-29.693561553955078,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+6119,43322,-29.892752647399902,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+6171,44768,-29.892752647399902,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+6289,44768,-27.266451835632324,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+6341,45804,-27.266451835632324,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+6459,45804,-26.997995376586914,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+6511,46774,-26.997995376586914,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+6629,46774,-25.199844360351562,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+6681,47794,-25.199844360351562,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+6799,47794,-22.57966184616089,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+6851,48518,-22.57966184616089,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+6969,48518,-23.06756067276001,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+7021,49379,-23.06756067276001,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+7139,49379,-21.567514419555664,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+7191,50456,-21.567514419555664,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+7309,50456,-22.07457399368286,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+7361,51564,-22.07457399368286,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+7479,51564,-21.851296424865723,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+7531,52319,-21.851296424865723,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+7649,52319,-22.60359811782837,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+7701,53211,-22.60359811782837,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+7819,53211,-21.39876365661621,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+7871,54221,-21.39876365661621,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+7989,54221,-21.56088352203369,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+8041,55172,-21.56088352203369,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+8159,55172,-21.920196056365967,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+8211,56010,-21.920196056365967,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+8329,56010,-20.369484424591064,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+8381,56930,-20.369484424591064,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+8499,56930,-21.78733205795288,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+8551,57832,-21.78733205795288,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+8669,57832,-21.322347164154053,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+8721,58330,-21.322347164154053,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+8839,58330,-20.633951663970947,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+8891,58838,-20.633951663970947,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+9009,58838,-21.396601676940918,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+9061,59467,-21.396601676940918,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+9179,59467,-20.944442749023438,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+9231,60109,-20.944442749023438,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+9349,60109,-20.368340015411377,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+9401,60652,-20.368340015411377,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+9519,60652,-21.044437885284424,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+9571,61357,-21.044437885284424,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+9689,61357,-20.670872688293457,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+9741,61921,-20.670872688293457,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+9859,61921,-21.110440254211426,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+9911,62561,-21.110440254211426,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+10029,62561,-20.784642219543457,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+10081,63468,-20.784642219543457,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+10199,63468,-21.504780292510986,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+10251,64171,-21.504780292510986,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+10369,64171,-21.684558868408203,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+10421,64899,-21.684558868408203,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+10539,64899,-20.901116847991943,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+10591,65385,-20.901116847991943,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+10709,65385,-21.01590919494629,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+10761,65813,-21.01590919494629,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+10879,65813,-20.535783290863037,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+10931,66342,-20.535783290863037,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+11049,66342,-20.899468898773193,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+11101,67049,-20.899468898773193,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+11219,67049,-20.73920488357544,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+11271,67531,-20.73920488357544,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+11389,67531,-20.309420585632324,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+11441,68208,-20.309420585632324,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+11559,68208,-19.80567169189453,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+11611,68871,-19.80567169189453,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+11729,68871,-19.916381359100342,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+11781,69294,-19.916381359100342,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+11899,69294,-19.136088848114014,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+11951,69751,-19.136088848114014,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+12069,69751,-20.58135414123535,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+12121,70085,-20.58135414123535,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+12239,70085,-20.150110721588135,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+12291,70596,-20.150110721588135,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+12409,70596,-21.102733612060547,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+12461,71326,-21.102733612060547,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+12579,71326,-19.752604484558105,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+12631,72167,-19.752604484558105,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+12749,72167,-19.736225128173828,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+12801,72644,-19.736225128173828,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+12919,72644,-19.440285205841064,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+12971,73194,-19.440285205841064,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+13089,73194,-18.73974847793579,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+13141,73740,-18.73974847793579,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+13259,73740,-19.37744140625,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+13311,74373,-19.37744140625,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+13429,74373,-18.7730975151062,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+13481,74925,-18.7730975151062,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+13599,74925,-18.28189992904663,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+13651,75275,-18.28189992904663,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+13769,75275,-19.135611057281494,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+13821,75723,-19.135611057281494,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+13939,75723,-19.441414833068848,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+13991,76312,-19.441414833068848,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+14109,76312,-19.329060554504395,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+14161,76838,-19.329060554504395,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+14279,76838,-19.108829498291016,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+14331,77485,-19.108829498291016,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+14449,77485,-19.534924507141113,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+14501,77888,-19.534924507141113,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+14619,77888,-19.167521476745605,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+14671,78324,-19.167521476745605,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+14789,78324,-18.67709970474243,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+14841,78781,-18.67709970474243,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+14959,78781,-19.045774459838867,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+15011,79530,-19.045774459838867,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+15129,79530,-18.563942432403564,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+15181,79896,-18.563942432403564,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+15299,79896,-18.02058219909668,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+15351,80312,-18.02058219909668,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+15469,80312,-18.723217964172363,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+15521,80763,-18.723217964172363,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+15639,80763,-19.244405269622803,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+15691,81044,-19.244405269622803,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+15809,81044,-17.805834770202637,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+15861,81600,-17.805834770202637,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+15979,81600,-18.541759490966797,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+16031,82072,-18.541759490966797,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+16149,82072,-18.259646892547607,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+16201,82522,-18.259646892547607,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+16319,82522,-17.834794998168945,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+16371,83119,-17.834794998168945,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+16489,83119,-18.519569873809814,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+16541,83816,-18.519569873809814,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+16659,83816,-17.63615369796753,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+16711,84180,-17.63615369796753,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+16829,84180,-17.359705448150635,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+16881,84756,-17.359705448150635,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+16999,84756,-18.244379997253418,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+17051,85295,-18.244379997253418,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+17169,85295,-17.674283981323242,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+17221,85803,-17.674283981323242,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+17339,85803,-17.12074613571167,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+17391,86149,-17.12074613571167,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+17509,86149,-17.713998794555664,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+17561,86705,-17.713998794555664,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+17679,86705,-17.237940788269043,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+17731,87359,-17.237940788269043,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+17849,87359,-16.808515548706055,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+17901,87945,-16.808515548706055,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+18019,87945,-17.724112510681152,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+18071,88279,-17.724112510681152,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+18189,88279,-16.98155641555786,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+18241,88712,-16.98155641555786,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+18359,88712,-16.86722230911255,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+18411,89144,-16.86722230911255,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+18529,89144,-17.216729164123535,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+18581,89593,-17.216729164123535,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+18699,89593,-17.30530595779419,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+18751,90100,-17.30530595779419,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+18869,90100,-17.318798065185547,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+18921,90411,-17.318798065185547,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+19039,90411,-17.3360276222229,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+19091,90906,-17.3360276222229,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+19209,90906,-17.02591323852539,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+19261,91352,-17.02591323852539,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+19379,91352,-16.600584030151367,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+19431,91801,-16.600584030151367,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+19549,91801,-16.424696445465088,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+19601,92272,-16.424696445465088,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+19719,92272,-16.486703395843506,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+19771,92666,-16.486703395843506,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+19889,92666,-17.21028995513916,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+19941,93313,-17.21028995513916,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+20059,93313,-16.366493701934814,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+20111,93802,-16.366493701934814,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+20229,93802,-16.19638729095459,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+20281,94405,-16.19638729095459,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+20399,94405,-16.53404140472412,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+20451,94847,-16.53404140472412,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+20569,94847,-16.87059211730957,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+20621,95322,-16.87059211730957,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+20739,95322,-16.40449333190918,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+20791,95639,-16.40449333190918,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+20909,95639,-16.967417240142822,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+20961,95961,-16.967417240142822,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+21079,95961,-16.688519954681396,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+21131,96460,-16.688519954681396,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+21249,96460,-16.81161880493164,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+21301,97105,-16.81161880493164,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+21419,97105,-17.166682720184326,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+21471,97533,-17.166682720184326,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+21589,97533,-16.721993923187256,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+21641,98107,-16.721993923187256,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+21759,98107,-16.18268871307373,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+21811,98781,-16.18268871307373,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+21929,98781,-16.700331211090088,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+21981,99086,-16.700331211090088,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+22099,99086,-16.258098125457764,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+22151,99464,-16.258098125457764,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+22269,99464,-16.003568172454834,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+22321,100022,-16.003568172454834,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+22439,100022,-16.833914756774902,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+22491,100549,-16.833914756774902,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+22609,100549,-16.50985288619995,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+22661,100934,-16.50985288619995,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+22779,100934,-16.072938442230225,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+22831,101231,-16.072938442230225,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+22949,101231,-16.321863174438477,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+23001,101646,-16.321863174438477,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+23119,101646,-16.488532066345215,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+23171,102014,-16.488532066345215,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+23289,102014,-16.55614709854126,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+23341,102492,-16.55614709854126,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+23459,102492,-15.911643981933594,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+23511,103263,-15.911643981933594,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+23629,103263,-15.972232818603516,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+23681,103806,-15.972232818603516,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+23799,103806,-16.456202507019043,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+23851,104330,-16.456202507019043,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+23969,104330,-15.547946453094482,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+24021,104783,-15.547946453094482,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+24139,104783,-15.85265827178955,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+24191,105354,-15.85265827178955,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+24309,105354,-15.665272235870361,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+24361,105907,-15.665272235870361,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+24479,105907,-16.17751169204712,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+24531,106306,-16.17751169204712,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+24649,106306,-16.092575073242188,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+24701,106649,-16.092575073242188,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+24819,106649,-16.044978141784668,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+24871,107233,-16.044978141784668,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+24989,107233,-15.903464317321777,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+25041,107752,-15.903464317321777,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+25159,107752,-15.835543632507324,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+25211,108262,-15.835543632507324,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+25329,108262,-15.438409805297852,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+25381,108931,-15.438409805297852,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+25499,108931,-15.651602268218994,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+25551,109325,-15.651602268218994,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+25669,109325,-15.984524726867676,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+25721,110119,-15.984524726867676,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+25839,110119,-15.592945098876953,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+25891,110590,-15.592945098876953,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+26009,110590,-16.07128143310547,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+26061,111099,-16.07128143310547,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+26179,111099,-15.59044599533081,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+26231,111610,-15.59044599533081,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+26349,111610,-16.03400754928589,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+26401,112173,-16.03400754928589,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+26519,112173,-15.5651216506958,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+26571,112577,-15.5651216506958,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+26689,112577,-16.141599655151367,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+26741,113111,-16.141599655151367,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+26859,113111,-15.877432823181152,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+26911,113642,-15.877432823181152,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+27029,113642,-15.697688579559326,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+27081,114231,-15.697688579559326,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+27199,114231,-15.522834300994873,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+27251,114809,-15.522834300994873,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+27369,114809,-15.80489444732666,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+27421,115373,-15.80489444732666,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+27539,115373,-15.867169857025146,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+27591,115868,-15.867169857025146,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+27709,115868,-15.048705101013184,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+27761,116341,-15.048705101013184,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+27879,116341,-15.310808658599854,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+27931,116736,-15.310808658599854,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+28049,116736,-15.369885444641113,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+28101,117308,-15.369885444641113,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+28219,117308,-15.470897197723389,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+28271,117702,-15.470897197723389,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+28389,117702,-15.005871772766113,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+28441,118018,-15.005871772766113,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+28559,118018,-15.833049297332764,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+28611,118298,-15.833049297332764,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+28729,118298,-15.515267848968506,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+28781,118652,-15.515267848968506,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+28899,118652,-15.454960346221924,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+28951,118999,-15.454960346221924,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+29069,118999,-15.554401874542236,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+29121,119235,-15.554401874542236,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+29239,119235,-15.312118530273438,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+29291,119600,-15.312118530273438,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+29409,119600,-15.68566370010376,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+29461,120079,-15.68566370010376,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+29579,120079,-15.211810111999512,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+29631,120723,-15.211810111999512,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+29749,120723,-15.920422077178955,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+29801,121362,-15.920422077178955,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+29919,121362,-15.475704669952393,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+29971,121942,-15.475704669952393,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+30089,121942,-15.404346942901611,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+30141,122449,-15.404346942901611,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+30259,122449,-15.329666137695312,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+30311,122956,-15.329666137695312,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+30429,122956,-15.532777786254883,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+30481,123532,-15.532777786254883,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+30599,123532,-15.28603458404541,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+30651,124217,-15.28603458404541,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+30769,124217,-15.50130033493042,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+30821,124910,-15.50130033493042,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+30939,124910,-15.267058849334717,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+30991,125468,-15.267058849334717,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+31109,125468,-15.354791164398193,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+31161,125965,-15.354791164398193,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+31279,125965,-15.422051906585693,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+31331,126533,-15.422051906585693,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+31449,126533,-15.44069528579712,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+31501,127060,-15.44069528579712,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+31619,127060,-15.54532527923584,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+31671,127802,-15.54532527923584,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+31789,127802,-14.782537460327148,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+31841,128446,-14.782537460327148,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+31959,128446,-15.334364891052246,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+32011,129094,-15.334364891052246,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+32129,129094,-15.739695072174072,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+32181,129978,-15.739695072174072,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+32299,129978,-15.020938873291016,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+32351,130752,-15.020938873291016,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+32469,130752,-14.806718349456787,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+32521,131615,-14.806718349456787,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+32639,131615,-15.03817892074585,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+32691,132460,-15.03817892074585,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+32809,132460,-15.043965816497803,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+32861,133532,-15.043965816497803,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+32979,133532,-15.473331928253174,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+33031,134514,-15.473331928253174,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+33149,134514,-15.508684158325195,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+33201,135330,-15.508684158325195,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+33319,135330,-15.488417625427246,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+33371,136269,-15.488417625427246,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+33489,136269,-15.286530017852783,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+33541,137310,-15.286530017852783,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+33659,137310,-15.307671070098877,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+33711,138208,-15.307671070098877,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+33829,138208,-15.672369003295898,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+33881,139239,-15.672369003295898,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+33999,139239,-15.107923984527588,k217xrqp,routing reset_seed = 30 k = 6 policy lr = 0.01
+51,196,,axoh0q85,routing reset_seed = 40 k = 6
+169,196,-61.33333206176758,axoh0q85,routing reset_seed = 40 k = 6
+221,471,-61.33333206176758,axoh0q85,routing reset_seed = 40 k = 6
+339,471,-49.821006774902344,axoh0q85,routing reset_seed = 40 k = 6
+391,732,-49.821006774902344,axoh0q85,routing reset_seed = 40 k = 6
+509,732,-49.656578063964844,axoh0q85,routing reset_seed = 40 k = 6
+561,887,-49.656578063964844,axoh0q85,routing reset_seed = 40 k = 6
+679,887,-47.28129005432129,axoh0q85,routing reset_seed = 40 k = 6
+731,1138,-47.28129005432129,axoh0q85,routing reset_seed = 40 k = 6
+849,1138,-42.33502006530762,axoh0q85,routing reset_seed = 40 k = 6
+901,1668,-42.33502006530762,axoh0q85,routing reset_seed = 40 k = 6
+1019,1668,-44.93522357940674,axoh0q85,routing reset_seed = 40 k = 6
+1071,2229,-44.93522357940674,axoh0q85,routing reset_seed = 40 k = 6
+1189,2229,-43.509602546691895,axoh0q85,routing reset_seed = 40 k = 6
+1241,3557,-43.509602546691895,axoh0q85,routing reset_seed = 40 k = 6
+1359,3557,-44.450432777404785,axoh0q85,routing reset_seed = 40 k = 6
+1411,4520,-44.450432777404785,axoh0q85,routing reset_seed = 40 k = 6
+1529,4520,-46.065778732299805,axoh0q85,routing reset_seed = 40 k = 6
+1581,5628,-46.065778732299805,axoh0q85,routing reset_seed = 40 k = 6
+1699,5628,-47.26565361022949,axoh0q85,routing reset_seed = 40 k = 6
+1751,7150,-47.26565361022949,axoh0q85,routing reset_seed = 40 k = 6
+1869,7150,-46.31526184082031,axoh0q85,routing reset_seed = 40 k = 6
+1921,8209,-46.31526184082031,axoh0q85,routing reset_seed = 40 k = 6
+2039,8209,-51.05931282043457,axoh0q85,routing reset_seed = 40 k = 6
+2091,9599,-51.05931282043457,axoh0q85,routing reset_seed = 40 k = 6
+2209,9599,-50.816457748413086,axoh0q85,routing reset_seed = 40 k = 6
+2261,10717,-50.816457748413086,axoh0q85,routing reset_seed = 40 k = 6
+2379,10717,-53.25763511657715,axoh0q85,routing reset_seed = 40 k = 6
+2431,11713,-53.25763511657715,axoh0q85,routing reset_seed = 40 k = 6
+2549,11713,-61.01949691772461,axoh0q85,routing reset_seed = 40 k = 6
+2601,13066,-61.01949691772461,axoh0q85,routing reset_seed = 40 k = 6
+2719,13066,-55.34035873413086,axoh0q85,routing reset_seed = 40 k = 6
+2771,14500,-55.34035873413086,axoh0q85,routing reset_seed = 40 k = 6
+2889,14500,-56.9033260345459,axoh0q85,routing reset_seed = 40 k = 6
+2941,15492,-56.9033260345459,axoh0q85,routing reset_seed = 40 k = 6
+3059,15492,-57.1634464263916,axoh0q85,routing reset_seed = 40 k = 6
+3111,16585,-57.1634464263916,axoh0q85,routing reset_seed = 40 k = 6
+3229,16585,-57.688568115234375,axoh0q85,routing reset_seed = 40 k = 6
+3281,17590,-57.688568115234375,axoh0q85,routing reset_seed = 40 k = 6
+3399,17590,-56.50275993347168,axoh0q85,routing reset_seed = 40 k = 6
+3451,18838,-56.50275993347168,axoh0q85,routing reset_seed = 40 k = 6
+3569,18838,-56.725364685058594,axoh0q85,routing reset_seed = 40 k = 6
+3621,19903,-56.725364685058594,axoh0q85,routing reset_seed = 40 k = 6
+3739,19903,-55.69426345825195,axoh0q85,routing reset_seed = 40 k = 6
+3791,21308,-55.69426345825195,axoh0q85,routing reset_seed = 40 k = 6
+3909,21308,-52.419921875,axoh0q85,routing reset_seed = 40 k = 6
+3961,22588,-52.419921875,axoh0q85,routing reset_seed = 40 k = 6
+4079,22588,-50.88555335998535,axoh0q85,routing reset_seed = 40 k = 6
+4131,24317,-50.88555335998535,axoh0q85,routing reset_seed = 40 k = 6
+4249,24317,-48.51993942260742,axoh0q85,routing reset_seed = 40 k = 6
+4301,25591,-48.51993942260742,axoh0q85,routing reset_seed = 40 k = 6
+4419,25591,-47.786871910095215,axoh0q85,routing reset_seed = 40 k = 6
+4471,26543,-47.786871910095215,axoh0q85,routing reset_seed = 40 k = 6
+4589,26543,-43.11158561706543,axoh0q85,routing reset_seed = 40 k = 6
+4641,28011,-43.11158561706543,axoh0q85,routing reset_seed = 40 k = 6
+4759,28011,-42.704233169555664,axoh0q85,routing reset_seed = 40 k = 6
+4811,28920,-42.704233169555664,axoh0q85,routing reset_seed = 40 k = 6
+4929,28920,-41.381516456604004,axoh0q85,routing reset_seed = 40 k = 6
+4981,30092,-41.381516456604004,axoh0q85,routing reset_seed = 40 k = 6
+5099,30092,-41.17555809020996,axoh0q85,routing reset_seed = 40 k = 6
+5151,31191,-41.17555809020996,axoh0q85,routing reset_seed = 40 k = 6
+5269,31191,-39.76308727264404,axoh0q85,routing reset_seed = 40 k = 6
+5321,32134,-39.76308727264404,axoh0q85,routing reset_seed = 40 k = 6
+5439,32134,-39.436476707458496,axoh0q85,routing reset_seed = 40 k = 6
+5491,33296,-39.436476707458496,axoh0q85,routing reset_seed = 40 k = 6
+5609,33296,-38.19459342956543,axoh0q85,routing reset_seed = 40 k = 6
+5661,34556,-38.19459342956543,axoh0q85,routing reset_seed = 40 k = 6
+5779,34556,-38.61836051940918,axoh0q85,routing reset_seed = 40 k = 6
+5831,35427,-38.61836051940918,axoh0q85,routing reset_seed = 40 k = 6
+5949,35427,-38.45824432373047,axoh0q85,routing reset_seed = 40 k = 6
+6001,36504,-38.45824432373047,axoh0q85,routing reset_seed = 40 k = 6
+6119,36504,-36.67487049102783,axoh0q85,routing reset_seed = 40 k = 6
+6171,37719,-36.67487049102783,axoh0q85,routing reset_seed = 40 k = 6
+6289,37719,-37.08615303039551,axoh0q85,routing reset_seed = 40 k = 6
+6341,39015,-37.08615303039551,axoh0q85,routing reset_seed = 40 k = 6
+6459,39015,-36.885884284973145,axoh0q85,routing reset_seed = 40 k = 6
+6511,40209,-36.885884284973145,axoh0q85,routing reset_seed = 40 k = 6
+6629,40209,-35.99820041656494,axoh0q85,routing reset_seed = 40 k = 6
+6681,41445,-35.99820041656494,axoh0q85,routing reset_seed = 40 k = 6
+6799,41445,-37.24660110473633,axoh0q85,routing reset_seed = 40 k = 6
+6851,42504,-37.24660110473633,axoh0q85,routing reset_seed = 40 k = 6
+6969,42504,-35.95130920410156,axoh0q85,routing reset_seed = 40 k = 6
+7021,43435,-35.95130920410156,axoh0q85,routing reset_seed = 40 k = 6
+7139,43435,-36.52919101715088,axoh0q85,routing reset_seed = 40 k = 6
+7191,44540,-36.52919101715088,axoh0q85,routing reset_seed = 40 k = 6
+7309,44540,-35.83430862426758,axoh0q85,routing reset_seed = 40 k = 6
+7361,45653,-35.83430862426758,axoh0q85,routing reset_seed = 40 k = 6
+7479,45653,-36.24642086029053,axoh0q85,routing reset_seed = 40 k = 6
+7531,46848,-36.24642086029053,axoh0q85,routing reset_seed = 40 k = 6
+7649,46848,-35.569854736328125,axoh0q85,routing reset_seed = 40 k = 6
+7701,47932,-35.569854736328125,axoh0q85,routing reset_seed = 40 k = 6
+7819,47932,-35.08246421813965,axoh0q85,routing reset_seed = 40 k = 6
+7871,49044,-35.08246421813965,axoh0q85,routing reset_seed = 40 k = 6
+7989,49044,-35.085984230041504,axoh0q85,routing reset_seed = 40 k = 6
+8041,50028,-35.085984230041504,axoh0q85,routing reset_seed = 40 k = 6
+8159,50028,-34.693020820617676,axoh0q85,routing reset_seed = 40 k = 6
+8211,50948,-34.693020820617676,axoh0q85,routing reset_seed = 40 k = 6
+8329,50948,-34.473731994628906,axoh0q85,routing reset_seed = 40 k = 6
+8381,52172,-34.473731994628906,axoh0q85,routing reset_seed = 40 k = 6
+8499,52172,-34.322630882263184,axoh0q85,routing reset_seed = 40 k = 6
+8551,53493,-34.322630882263184,axoh0q85,routing reset_seed = 40 k = 6
+8669,53493,-34.16379261016846,axoh0q85,routing reset_seed = 40 k = 6
+8721,54745,-34.16379261016846,axoh0q85,routing reset_seed = 40 k = 6
+8839,54745,-33.712748527526855,axoh0q85,routing reset_seed = 40 k = 6
+8891,55951,-33.712748527526855,axoh0q85,routing reset_seed = 40 k = 6
+9009,55951,-33.97695446014404,axoh0q85,routing reset_seed = 40 k = 6
+9061,56595,-33.97695446014404,axoh0q85,routing reset_seed = 40 k = 6
+9179,56595,-32.285268783569336,axoh0q85,routing reset_seed = 40 k = 6
+9231,57701,-32.285268783569336,axoh0q85,routing reset_seed = 40 k = 6
+9349,57701,-32.66284465789795,axoh0q85,routing reset_seed = 40 k = 6
+9401,58466,-32.66284465789795,axoh0q85,routing reset_seed = 40 k = 6
+9519,58466,-32.6010217666626,axoh0q85,routing reset_seed = 40 k = 6
+9571,59337,-32.6010217666626,axoh0q85,routing reset_seed = 40 k = 6
+9689,59337,-32.693281173706055,axoh0q85,routing reset_seed = 40 k = 6
+9741,60260,-32.693281173706055,axoh0q85,routing reset_seed = 40 k = 6
+9859,60260,-33.015740394592285,axoh0q85,routing reset_seed = 40 k = 6
+9911,60961,-33.015740394592285,axoh0q85,routing reset_seed = 40 k = 6
+10029,60961,-32.33561897277832,axoh0q85,routing reset_seed = 40 k = 6
+10081,61908,-32.33561897277832,axoh0q85,routing reset_seed = 40 k = 6
+10199,61908,-32.69332695007324,axoh0q85,routing reset_seed = 40 k = 6
+10251,63046,-32.69332695007324,axoh0q85,routing reset_seed = 40 k = 6
+10369,63046,-31.692362785339355,axoh0q85,routing reset_seed = 40 k = 6
+10421,63810,-31.692362785339355,axoh0q85,routing reset_seed = 40 k = 6
+10539,63810,-31.8331241607666,axoh0q85,routing reset_seed = 40 k = 6
+10591,64736,-31.8331241607666,axoh0q85,routing reset_seed = 40 k = 6
+10709,64736,-32.424720764160156,axoh0q85,routing reset_seed = 40 k = 6
+10761,65590,-32.424720764160156,axoh0q85,routing reset_seed = 40 k = 6
+10879,65590,-32.451897621154785,axoh0q85,routing reset_seed = 40 k = 6
+10931,66327,-32.451897621154785,axoh0q85,routing reset_seed = 40 k = 6
+11049,66327,-31.631386756896973,axoh0q85,routing reset_seed = 40 k = 6
+11101,67038,-31.631386756896973,axoh0q85,routing reset_seed = 40 k = 6
+11219,67038,-31.091936111450195,axoh0q85,routing reset_seed = 40 k = 6
+11271,68145,-31.091936111450195,axoh0q85,routing reset_seed = 40 k = 6
+11389,68145,-31.276039123535156,axoh0q85,routing reset_seed = 40 k = 6
+11441,69400,-31.276039123535156,axoh0q85,routing reset_seed = 40 k = 6
+11559,69400,-30.90578556060791,axoh0q85,routing reset_seed = 40 k = 6
+11611,69978,-30.90578556060791,axoh0q85,routing reset_seed = 40 k = 6
+11729,69978,-30.470311164855957,axoh0q85,routing reset_seed = 40 k = 6
+11781,70748,-30.470311164855957,axoh0q85,routing reset_seed = 40 k = 6
+11899,70748,-30.308698654174805,axoh0q85,routing reset_seed = 40 k = 6
+11951,71572,-30.308698654174805,axoh0q85,routing reset_seed = 40 k = 6
+12069,71572,-30.449313163757324,axoh0q85,routing reset_seed = 40 k = 6
+12121,72347,-30.449313163757324,axoh0q85,routing reset_seed = 40 k = 6
+12239,72347,-31.175704956054688,axoh0q85,routing reset_seed = 40 k = 6
+12291,73218,-31.175704956054688,axoh0q85,routing reset_seed = 40 k = 6
+12409,73218,-31.023377418518066,axoh0q85,routing reset_seed = 40 k = 6
+12461,73941,-31.023377418518066,axoh0q85,routing reset_seed = 40 k = 6
+12579,73941,-29.4832124710083,axoh0q85,routing reset_seed = 40 k = 6
+12631,74911,-29.4832124710083,axoh0q85,routing reset_seed = 40 k = 6
+12749,74911,-30.6151123046875,axoh0q85,routing reset_seed = 40 k = 6
+12801,75830,-30.6151123046875,axoh0q85,routing reset_seed = 40 k = 6
+12919,75830,-29.913628578186035,axoh0q85,routing reset_seed = 40 k = 6
+12971,76685,-29.913628578186035,axoh0q85,routing reset_seed = 40 k = 6
+13089,76685,-29.492660522460938,axoh0q85,routing reset_seed = 40 k = 6
+13141,77657,-29.492660522460938,axoh0q85,routing reset_seed = 40 k = 6
+13259,77657,-29.395472526550293,axoh0q85,routing reset_seed = 40 k = 6
+13311,78588,-29.395472526550293,axoh0q85,routing reset_seed = 40 k = 6
+13429,78588,-29.959704399108887,axoh0q85,routing reset_seed = 40 k = 6
+13481,79659,-29.959704399108887,axoh0q85,routing reset_seed = 40 k = 6
+13599,79659,-29.58132266998291,axoh0q85,routing reset_seed = 40 k = 6
+13651,80323,-29.58132266998291,axoh0q85,routing reset_seed = 40 k = 6
+13769,80323,-29.422263145446777,axoh0q85,routing reset_seed = 40 k = 6
+13821,81291,-29.422263145446777,axoh0q85,routing reset_seed = 40 k = 6
+13939,81291,-29.51656150817871,axoh0q85,routing reset_seed = 40 k = 6
+13991,82395,-29.51656150817871,axoh0q85,routing reset_seed = 40 k = 6
+14109,82395,-29.457091331481934,axoh0q85,routing reset_seed = 40 k = 6
+14161,83145,-29.457091331481934,axoh0q85,routing reset_seed = 40 k = 6
+14279,83145,-29.55568027496338,axoh0q85,routing reset_seed = 40 k = 6
+14331,83886,-29.55568027496338,axoh0q85,routing reset_seed = 40 k = 6
+14449,83886,-28.714576721191406,axoh0q85,routing reset_seed = 40 k = 6
+14501,84897,-28.714576721191406,axoh0q85,routing reset_seed = 40 k = 6
+14619,84897,-29.363335609436035,axoh0q85,routing reset_seed = 40 k = 6
+14671,85470,-29.363335609436035,axoh0q85,routing reset_seed = 40 k = 6
+14789,85470,-28.541050910949707,axoh0q85,routing reset_seed = 40 k = 6
+14841,86223,-28.541050910949707,axoh0q85,routing reset_seed = 40 k = 6
+14959,86223,-29.108922958374023,axoh0q85,routing reset_seed = 40 k = 6
+15011,87231,-29.108922958374023,axoh0q85,routing reset_seed = 40 k = 6
+15129,87231,-28.906455039978027,axoh0q85,routing reset_seed = 40 k = 6
+15181,87901,-28.906455039978027,axoh0q85,routing reset_seed = 40 k = 6
+15299,87901,-28.769824981689453,axoh0q85,routing reset_seed = 40 k = 6
+15351,88520,-28.769824981689453,axoh0q85,routing reset_seed = 40 k = 6
+15469,88520,-28.324337005615234,axoh0q85,routing reset_seed = 40 k = 6
+15521,89230,-28.324337005615234,axoh0q85,routing reset_seed = 40 k = 6
+15639,89230,-29.729938507080078,axoh0q85,routing reset_seed = 40 k = 6
+15691,89866,-29.729938507080078,axoh0q85,routing reset_seed = 40 k = 6
+15809,89866,-28.962685585021973,axoh0q85,routing reset_seed = 40 k = 6
+15861,90571,-28.962685585021973,axoh0q85,routing reset_seed = 40 k = 6
+15979,90571,-29.25104808807373,axoh0q85,routing reset_seed = 40 k = 6
+16031,91285,-29.25104808807373,axoh0q85,routing reset_seed = 40 k = 6
+16149,91285,-28.619945526123047,axoh0q85,routing reset_seed = 40 k = 6
+16201,91737,-28.619945526123047,axoh0q85,routing reset_seed = 40 k = 6
+16319,91737,-29.574376106262207,axoh0q85,routing reset_seed = 40 k = 6
+16371,92496,-29.574376106262207,axoh0q85,routing reset_seed = 40 k = 6
+16489,92496,-28.43838405609131,axoh0q85,routing reset_seed = 40 k = 6
+16541,93259,-28.43838405609131,axoh0q85,routing reset_seed = 40 k = 6
+16659,93259,-27.779685974121094,axoh0q85,routing reset_seed = 40 k = 6
+16711,93858,-27.779685974121094,axoh0q85,routing reset_seed = 40 k = 6
+16829,93858,-29.391470909118652,axoh0q85,routing reset_seed = 40 k = 6
+16881,94386,-29.391470909118652,axoh0q85,routing reset_seed = 40 k = 6
+16999,94386,-28.2529878616333,axoh0q85,routing reset_seed = 40 k = 6
+17051,94841,-28.2529878616333,axoh0q85,routing reset_seed = 40 k = 6
+17169,94841,-27.27950096130371,axoh0q85,routing reset_seed = 40 k = 6
+17221,95436,-27.27950096130371,axoh0q85,routing reset_seed = 40 k = 6
+17339,95436,-28.630603790283203,axoh0q85,routing reset_seed = 40 k = 6
+17391,96148,-28.630603790283203,axoh0q85,routing reset_seed = 40 k = 6
+17509,96148,-27.437539100646973,axoh0q85,routing reset_seed = 40 k = 6
+17561,96727,-27.437539100646973,axoh0q85,routing reset_seed = 40 k = 6
+17679,96727,-27.964435577392578,axoh0q85,routing reset_seed = 40 k = 6
+17731,97258,-27.964435577392578,axoh0q85,routing reset_seed = 40 k = 6
+17849,97258,-28.195137977600098,axoh0q85,routing reset_seed = 40 k = 6
+17901,98028,-28.195137977600098,axoh0q85,routing reset_seed = 40 k = 6
+18019,98028,-26.929414749145508,axoh0q85,routing reset_seed = 40 k = 6
+18071,98764,-26.929414749145508,axoh0q85,routing reset_seed = 40 k = 6
+18189,98764,-28.48013210296631,axoh0q85,routing reset_seed = 40 k = 6
+18241,99342,-28.48013210296631,axoh0q85,routing reset_seed = 40 k = 6
+18359,99342,-27.06270122528076,axoh0q85,routing reset_seed = 40 k = 6
+18411,100165,-27.06270122528076,axoh0q85,routing reset_seed = 40 k = 6
+18529,100165,-27.146937370300293,axoh0q85,routing reset_seed = 40 k = 6
+18581,100860,-27.146937370300293,axoh0q85,routing reset_seed = 40 k = 6
+18699,100860,-27.38279438018799,axoh0q85,routing reset_seed = 40 k = 6
+18751,101436,-27.38279438018799,axoh0q85,routing reset_seed = 40 k = 6
+18869,101436,-27.9312744140625,axoh0q85,routing reset_seed = 40 k = 6
+18921,102493,-27.9312744140625,axoh0q85,routing reset_seed = 40 k = 6
+19039,102493,-27.5347261428833,axoh0q85,routing reset_seed = 40 k = 6
+19091,103244,-27.5347261428833,axoh0q85,routing reset_seed = 40 k = 6
+19209,103244,-27.41188907623291,axoh0q85,routing reset_seed = 40 k = 6
+19261,103856,-27.41188907623291,axoh0q85,routing reset_seed = 40 k = 6
+19379,103856,-26.903857231140137,axoh0q85,routing reset_seed = 40 k = 6
+19431,104555,-26.903857231140137,axoh0q85,routing reset_seed = 40 k = 6
+19549,104555,-27.014023780822754,axoh0q85,routing reset_seed = 40 k = 6
+19601,105160,-27.014023780822754,axoh0q85,routing reset_seed = 40 k = 6
+19719,105160,-27.23142147064209,axoh0q85,routing reset_seed = 40 k = 6
+19771,105628,-27.23142147064209,axoh0q85,routing reset_seed = 40 k = 6
+19889,105628,-27.09130096435547,axoh0q85,routing reset_seed = 40 k = 6
+19941,106228,-27.09130096435547,axoh0q85,routing reset_seed = 40 k = 6
+20059,106228,-26.258639335632324,axoh0q85,routing reset_seed = 40 k = 6
+20111,106724,-26.258639335632324,axoh0q85,routing reset_seed = 40 k = 6
+20229,106724,-25.77039909362793,axoh0q85,routing reset_seed = 40 k = 6
+20281,107409,-25.77039909362793,axoh0q85,routing reset_seed = 40 k = 6
+20399,107409,-26.87729835510254,axoh0q85,routing reset_seed = 40 k = 6
+20451,108032,-26.87729835510254,axoh0q85,routing reset_seed = 40 k = 6
+20569,108032,-27.30772590637207,axoh0q85,routing reset_seed = 40 k = 6
+20621,108797,-27.30772590637207,axoh0q85,routing reset_seed = 40 k = 6
+20739,108797,-26.361332893371582,axoh0q85,routing reset_seed = 40 k = 6
+20791,109543,-26.361332893371582,axoh0q85,routing reset_seed = 40 k = 6
+20909,109543,-26.486003875732422,axoh0q85,routing reset_seed = 40 k = 6
+20961,110037,-26.486003875732422,axoh0q85,routing reset_seed = 40 k = 6
+21079,110037,-26.00432586669922,axoh0q85,routing reset_seed = 40 k = 6
+21131,110532,-26.00432586669922,axoh0q85,routing reset_seed = 40 k = 6
+21249,110532,-26.86927318572998,axoh0q85,routing reset_seed = 40 k = 6
+21301,111123,-26.86927318572998,axoh0q85,routing reset_seed = 40 k = 6
+21419,111123,-25.862773895263672,axoh0q85,routing reset_seed = 40 k = 6
+21471,111532,-25.862773895263672,axoh0q85,routing reset_seed = 40 k = 6
+21589,111532,-25.82058334350586,axoh0q85,routing reset_seed = 40 k = 6
+21641,112041,-25.82058334350586,axoh0q85,routing reset_seed = 40 k = 6
+21759,112041,-25.93917465209961,axoh0q85,routing reset_seed = 40 k = 6
+21811,112430,-25.93917465209961,axoh0q85,routing reset_seed = 40 k = 6
+21929,112430,-26.42773723602295,axoh0q85,routing reset_seed = 40 k = 6
+21981,112861,-26.42773723602295,axoh0q85,routing reset_seed = 40 k = 6
+22099,112861,-24.778773307800293,axoh0q85,routing reset_seed = 40 k = 6
+22151,113318,-24.778773307800293,axoh0q85,routing reset_seed = 40 k = 6
+22269,113318,-26.175944328308105,axoh0q85,routing reset_seed = 40 k = 6
+22321,114024,-26.175944328308105,axoh0q85,routing reset_seed = 40 k = 6
+22439,114024,-26.181394577026367,axoh0q85,routing reset_seed = 40 k = 6
+22491,114621,-26.181394577026367,axoh0q85,routing reset_seed = 40 k = 6
+22609,114621,-25.50649642944336,axoh0q85,routing reset_seed = 40 k = 6
+22661,115279,-25.50649642944336,axoh0q85,routing reset_seed = 40 k = 6
+22779,115279,-25.774968147277832,axoh0q85,routing reset_seed = 40 k = 6
+22831,115605,-25.774968147277832,axoh0q85,routing reset_seed = 40 k = 6
+22949,115605,-25.770180702209473,axoh0q85,routing reset_seed = 40 k = 6
+23001,116223,-25.770180702209473,axoh0q85,routing reset_seed = 40 k = 6
+23119,116223,-25.635974884033203,axoh0q85,routing reset_seed = 40 k = 6
+23171,116671,-25.635974884033203,axoh0q85,routing reset_seed = 40 k = 6
+23289,116671,-25.745615005493164,axoh0q85,routing reset_seed = 40 k = 6
+23341,117015,-25.745615005493164,axoh0q85,routing reset_seed = 40 k = 6
+23459,117015,-25.432215690612793,axoh0q85,routing reset_seed = 40 k = 6
+23511,117583,-25.432215690612793,axoh0q85,routing reset_seed = 40 k = 6
+23629,117583,-24.807251930236816,axoh0q85,routing reset_seed = 40 k = 6
+23681,118095,-24.807251930236816,axoh0q85,routing reset_seed = 40 k = 6
+23799,118095,-25.27152729034424,axoh0q85,routing reset_seed = 40 k = 6
+23851,118699,-25.27152729034424,axoh0q85,routing reset_seed = 40 k = 6
+23969,118699,-25.411559104919434,axoh0q85,routing reset_seed = 40 k = 6
+24021,119393,-25.411559104919434,axoh0q85,routing reset_seed = 40 k = 6
+24139,119393,-24.95791244506836,axoh0q85,routing reset_seed = 40 k = 6
+24191,120066,-24.95791244506836,axoh0q85,routing reset_seed = 40 k = 6
+24309,120066,-25.142196655273438,axoh0q85,routing reset_seed = 40 k = 6
+24361,120555,-25.142196655273438,axoh0q85,routing reset_seed = 40 k = 6
+24479,120555,-25.35250949859619,axoh0q85,routing reset_seed = 40 k = 6
+24531,121375,-25.35250949859619,axoh0q85,routing reset_seed = 40 k = 6
+24649,121375,-25.149770736694336,axoh0q85,routing reset_seed = 40 k = 6
+24701,121702,-25.149770736694336,axoh0q85,routing reset_seed = 40 k = 6
+24819,121702,-24.587093353271484,axoh0q85,routing reset_seed = 40 k = 6
+24871,122068,-24.587093353271484,axoh0q85,routing reset_seed = 40 k = 6
+24989,122068,-24.947587966918945,axoh0q85,routing reset_seed = 40 k = 6
+25041,122809,-24.947587966918945,axoh0q85,routing reset_seed = 40 k = 6
+25159,122809,-24.958603858947754,axoh0q85,routing reset_seed = 40 k = 6
+25211,123375,-24.958603858947754,axoh0q85,routing reset_seed = 40 k = 6
+25329,123375,-25.265974044799805,axoh0q85,routing reset_seed = 40 k = 6
+25381,123944,-25.265974044799805,axoh0q85,routing reset_seed = 40 k = 6
+25499,123944,-24.73641872406006,axoh0q85,routing reset_seed = 40 k = 6
+25551,124444,-24.73641872406006,axoh0q85,routing reset_seed = 40 k = 6
+25669,124444,-24.82709312438965,axoh0q85,routing reset_seed = 40 k = 6
+25721,125202,-24.82709312438965,axoh0q85,routing reset_seed = 40 k = 6
+25839,125202,-24.896130561828613,axoh0q85,routing reset_seed = 40 k = 6
+25891,125708,-24.896130561828613,axoh0q85,routing reset_seed = 40 k = 6
+26009,125708,-24.5215482711792,axoh0q85,routing reset_seed = 40 k = 6
+26061,126174,-24.5215482711792,axoh0q85,routing reset_seed = 40 k = 6
+26179,126174,-24.76884174346924,axoh0q85,routing reset_seed = 40 k = 6
+26231,126656,-24.76884174346924,axoh0q85,routing reset_seed = 40 k = 6
+26349,126656,-24.382205963134766,axoh0q85,routing reset_seed = 40 k = 6
+26401,127234,-24.382205963134766,axoh0q85,routing reset_seed = 40 k = 6
+26519,127234,-24.311772346496582,axoh0q85,routing reset_seed = 40 k = 6
+26571,127545,-24.311772346496582,axoh0q85,routing reset_seed = 40 k = 6
+26689,127545,-24.71620750427246,axoh0q85,routing reset_seed = 40 k = 6
+26741,128148,-24.71620750427246,axoh0q85,routing reset_seed = 40 k = 6
+26859,128148,-24.989437103271484,axoh0q85,routing reset_seed = 40 k = 6
+26911,128617,-24.989437103271484,axoh0q85,routing reset_seed = 40 k = 6
+27029,128617,-24.72646427154541,axoh0q85,routing reset_seed = 40 k = 6
+27081,129272,-24.72646427154541,axoh0q85,routing reset_seed = 40 k = 6
+27199,129272,-25.10540771484375,axoh0q85,routing reset_seed = 40 k = 6
+27251,130008,-25.10540771484375,axoh0q85,routing reset_seed = 40 k = 6
+27369,130008,-24.63303852081299,axoh0q85,routing reset_seed = 40 k = 6
+27421,130517,-24.63303852081299,axoh0q85,routing reset_seed = 40 k = 6
+27539,130517,-24.824148178100586,axoh0q85,routing reset_seed = 40 k = 6
+27591,131067,-24.824148178100586,axoh0q85,routing reset_seed = 40 k = 6
+27709,131067,-24.740196228027344,axoh0q85,routing reset_seed = 40 k = 6
+27761,131884,-24.740196228027344,axoh0q85,routing reset_seed = 40 k = 6
+27879,131884,-24.604912757873535,axoh0q85,routing reset_seed = 40 k = 6
+27931,132264,-24.604912757873535,axoh0q85,routing reset_seed = 40 k = 6
+28049,132264,-24.65071678161621,axoh0q85,routing reset_seed = 40 k = 6
+28101,132842,-24.65071678161621,axoh0q85,routing reset_seed = 40 k = 6
+28219,132842,-24.80660057067871,axoh0q85,routing reset_seed = 40 k = 6
+28271,133235,-24.80660057067871,axoh0q85,routing reset_seed = 40 k = 6
+28389,133235,-24.518990516662598,axoh0q85,routing reset_seed = 40 k = 6
+28441,133752,-24.518990516662598,axoh0q85,routing reset_seed = 40 k = 6
+28559,133752,-24.30235481262207,axoh0q85,routing reset_seed = 40 k = 6
+28611,134190,-24.30235481262207,axoh0q85,routing reset_seed = 40 k = 6
+28729,134190,-24.426976203918457,axoh0q85,routing reset_seed = 40 k = 6
+28781,134636,-24.426976203918457,axoh0q85,routing reset_seed = 40 k = 6
+28899,134636,-23.894988536834717,axoh0q85,routing reset_seed = 40 k = 6
+28951,135199,-23.894988536834717,axoh0q85,routing reset_seed = 40 k = 6
+29069,135199,-24.461889266967773,axoh0q85,routing reset_seed = 40 k = 6
+29121,135568,-24.461889266967773,axoh0q85,routing reset_seed = 40 k = 6
+29239,135568,-24.52086067199707,axoh0q85,routing reset_seed = 40 k = 6
+29291,135968,-24.52086067199707,axoh0q85,routing reset_seed = 40 k = 6
+29409,135968,-24.52312469482422,axoh0q85,routing reset_seed = 40 k = 6
+29461,136435,-24.52312469482422,axoh0q85,routing reset_seed = 40 k = 6
+29579,136435,-24.04268455505371,axoh0q85,routing reset_seed = 40 k = 6
+29631,136986,-24.04268455505371,axoh0q85,routing reset_seed = 40 k = 6
+29749,136986,-24.716437339782715,axoh0q85,routing reset_seed = 40 k = 6
+29801,137647,-24.716437339782715,axoh0q85,routing reset_seed = 40 k = 6
+29919,137647,-24.51997184753418,axoh0q85,routing reset_seed = 40 k = 6
+29971,138103,-24.51997184753418,axoh0q85,routing reset_seed = 40 k = 6
+30089,138103,-24.7175350189209,axoh0q85,routing reset_seed = 40 k = 6
+30141,138708,-24.7175350189209,axoh0q85,routing reset_seed = 40 k = 6
+30259,138708,-24.71109676361084,axoh0q85,routing reset_seed = 40 k = 6
+30311,139246,-24.71109676361084,axoh0q85,routing reset_seed = 40 k = 6
+30429,139246,-24.316265106201172,axoh0q85,routing reset_seed = 40 k = 6
+30481,139794,-24.316265106201172,axoh0q85,routing reset_seed = 40 k = 6
+30599,139794,-23.893842697143555,axoh0q85,routing reset_seed = 40 k = 6
+30651,140655,-23.893842697143555,axoh0q85,routing reset_seed = 40 k = 6
+30769,140655,-24.386345863342285,axoh0q85,routing reset_seed = 40 k = 6
+30821,141431,-24.386345863342285,axoh0q85,routing reset_seed = 40 k = 6
+30939,141431,-24.541282653808594,axoh0q85,routing reset_seed = 40 k = 6
+30991,142131,-24.541282653808594,axoh0q85,routing reset_seed = 40 k = 6
+31109,142131,-24.460537910461426,axoh0q85,routing reset_seed = 40 k = 6
+31161,142627,-24.460537910461426,axoh0q85,routing reset_seed = 40 k = 6
+31279,142627,-24.348334312438965,axoh0q85,routing reset_seed = 40 k = 6
+31331,143310,-24.348334312438965,axoh0q85,routing reset_seed = 40 k = 6
+31449,143310,-24.054247856140137,axoh0q85,routing reset_seed = 40 k = 6
+31501,143917,-24.054247856140137,axoh0q85,routing reset_seed = 40 k = 6
+31619,143917,-24.513090133666992,axoh0q85,routing reset_seed = 40 k = 6
+31671,144735,-24.513090133666992,axoh0q85,routing reset_seed = 40 k = 6
+31789,144735,-24.229178428649902,axoh0q85,routing reset_seed = 40 k = 6
+31841,145632,-24.229178428649902,axoh0q85,routing reset_seed = 40 k = 6
+31959,145632,-23.988747596740723,axoh0q85,routing reset_seed = 40 k = 6
+32011,146525,-23.988747596740723,axoh0q85,routing reset_seed = 40 k = 6
+32129,146525,-24.287797927856445,axoh0q85,routing reset_seed = 40 k = 6
+32181,147218,-24.287797927856445,axoh0q85,routing reset_seed = 40 k = 6
+32299,147218,-24.034321784973145,axoh0q85,routing reset_seed = 40 k = 6
+32351,147979,-24.034321784973145,axoh0q85,routing reset_seed = 40 k = 6
+32469,147979,-24.49264430999756,axoh0q85,routing reset_seed = 40 k = 6
+32521,148864,-24.49264430999756,axoh0q85,routing reset_seed = 40 k = 6
+32639,148864,-24.02743434906006,axoh0q85,routing reset_seed = 40 k = 6
+32691,149663,-24.02743434906006,axoh0q85,routing reset_seed = 40 k = 6
+32809,149663,-24.36467742919922,axoh0q85,routing reset_seed = 40 k = 6
+32861,150574,-24.36467742919922,axoh0q85,routing reset_seed = 40 k = 6
+32979,150574,-23.560219287872314,axoh0q85,routing reset_seed = 40 k = 6
+33031,151462,-23.560219287872314,axoh0q85,routing reset_seed = 40 k = 6
+33149,151462,-24.01462745666504,axoh0q85,routing reset_seed = 40 k = 6
+33201,152217,-24.01462745666504,axoh0q85,routing reset_seed = 40 k = 6
+33319,152217,-23.840550899505615,axoh0q85,routing reset_seed = 40 k = 6
+33371,152809,-23.840550899505615,axoh0q85,routing reset_seed = 40 k = 6
+33489,152809,-24.048885345458984,axoh0q85,routing reset_seed = 40 k = 6
+33541,153445,-24.048885345458984,axoh0q85,routing reset_seed = 40 k = 6
+33659,153445,-24.368855476379395,axoh0q85,routing reset_seed = 40 k = 6
+33711,154154,-24.368855476379395,axoh0q85,routing reset_seed = 40 k = 6
+33829,154154,-24.06218719482422,axoh0q85,routing reset_seed = 40 k = 6
+33881,154938,-24.06218719482422,axoh0q85,routing reset_seed = 40 k = 6
+33999,154938,-23.648578643798828,axoh0q85,routing reset_seed = 40 k = 6

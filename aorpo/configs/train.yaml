@@ -1,7 +1,7 @@
 seed: 0
 
 env:
-  seed_reset: 40
+  seed_reset: 45
   state_dim: 34
   obs_dim: 18
   act_dim: 5

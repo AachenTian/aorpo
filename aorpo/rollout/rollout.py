@@ -240,11 +240,13 @@ def rollout_model(
         ood_step = jnp.any(total_var > total_var_threshold, axis=-1)  # λ1
         ood_long = jnp.any(entropy_cum > lambda2_dyn, axis=-1)  # λ2
         ood_any = jnp.logical_or(ood_step, ood_long)
-        if step > 0:
-            if jnp.all(ood_any):
-                break
-        # if step >= cfg.rollout.k:
-        #     break
+        # if step > 0:
+        #     if jnp.all(ood_any):
+        #         break
+            # if step > cfg.rollout.k:
+            #     break
+        if step >= max_n:
+            break
         # state = jax.tree_util.tree_map(lambda x: x[None], state)
         # next_state = jax.tree_util.tree_map(lambda x: x[None], next_state)
 
