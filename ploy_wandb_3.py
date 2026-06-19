@@ -48,11 +48,13 @@ RUN_GROUPS = {
     "MPE Simple Facmac":{
         "Uncertainty-Aware": [
             "env_reset=40 uncertainty alpha50 q1e-3 quantile_opp: 0.95",
-            "env_reset=30 uncertainty alpha50 q1e-3 quantile_opp: 0.95"
+            "env_reset=30 uncertainty alpha50 q1e-3 quantile_opp: 0.95",
+            "env_reset=45 uncertainty alpha50 q1e-3 quantile_opp: 0.95"
         ],
         "AORPO": [
             "env_reset=40 aorpo alpha50",
             "env_reset=30 aorpo alpha50",
+            "env_reset=45 aorpo alpha50"
         ]
     }
 }

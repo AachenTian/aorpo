@@ -26,6 +26,14 @@ def interpolate_run(df, common_comm, reward_key):
     y_interp = np.interp(common_comm, x, y, left=y[0], right=y[-1])
     return y_interp
 
+def compress_comm(df, comm_key, reward_key):
+    # 按 step 排序
+    df = df.sort_values("_step")
+
+    # 对每个 comm，只保留最后一个（即最大 step）
+    df = df.groupby(comm_key, as_index=False).first()
+
+    return df
 
 def aggregate(df, run_ids, common_comm, reward_key):
 
@@ -33,6 +41,7 @@ def aggregate(df, run_ids, common_comm, reward_key):
 
     for rid in run_ids:
         run_df = df[df["run_id"] == rid]
+        run_df = compress_comm(run_df, COMM_KEY, reward_key)
         curves.append(interpolate_run(run_df, common_comm, reward_key))
 
     curves = np.stack(curves)
@@ -55,9 +64,11 @@ for i,(env, path) in enumerate(FILES.items()):
 
     # 前半 AORPO
     aorpo_runs = runs[:len(runs)//2]
+    # aorpo_runs = runs[:2]
 
     # 后半 ours
     ours_runs = runs[len(runs)//2:]
+    # ours_runs = runs[-3:]
 
     max_comm = df[COMM_KEY].max()
 
