@@ -25,7 +25,7 @@ train:
   core_state_dim: 18
   max_steps: 25
   eval_interval: 1
-  reinit_opp_model: Ture
+  reinit_opp_model: True
 
 rollout:
   batch_size: 1024

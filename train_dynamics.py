@@ -1,9 +1,11 @@
 # aorpo/train.py
 from __future__ import annotations
 import os
+import pickle
 import jax
 import jax.numpy as jnp
 import hydra
+from hydra.utils import get_original_cwd
 from omegaconf import DictConfig, OmegaConf
 from tqdm import tqdm
 import wandb, random
@@ -11,6 +13,7 @@ import copy
 
 # ===== 你项目里的模块 =====
 from aorpo.utils.replay import ReplayBuffer, manual_flatten_dict
+from aorpo.utils.export_checkpoint import save_execution_checkpoint
 from aorpo.rollout.collect import collect_real_data, episode_reward, rollout_compare
 from aorpo.rollout.rollout import rollout_model, compute_rollout_lengths
 
@@ -517,6 +520,22 @@ def main(cfg: DictConfig):
             # episode_reward_history.append(epi_reward)
             animate_episode(traj, episode_reward_history, save_path=f"episode_epoch_{epoch}.mp4")
 
+    save_execution_checkpoint(
+        transition_state=transition_state,
+        reward_state=reward_state,
+        policy_state=policy_state,
+        real_opponent_states=real_opponent_states,
+        std=std,
+        cfg=cfg,
+        num_agents=num_agents,
+        num_opponents=num_opponents,
+        obs_dim=obs_dim,
+        state_dim=state_dim,
+        act_dim=act_dim,
+        opp_dim=opp_dim,
+        final_epoch=cfg.train.epochs,
+        save_name="final_execution_ckpt.pkl",
+    )
 
     wandb.finish()
     print("\n🎉 Training finished.")

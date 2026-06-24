@@ -7,11 +7,11 @@ from omegaconf import DictConfig
 from aorpo.visualiztion.make_animation import animate_episode
 
 def make_mpe_env(cfg: DictConfig):
-    env = make(cfg.env.ENV_NAME, action_type="Continuous")    #"MPE_simple_v3"
+    env = make(cfg.env.ENV_NAME, action_type="Continuous", u_noise=jnp.array([5.00, 5.00, 5.00]),)    #"MPE_simple_v3"
     return env
 
 def env_reset(env, key):
-    key_reset = jax.random.PRNGKey(45)
+    key_reset = jax.random.PRNGKey(40)
     obs, state = env.reset(key_reset)
     return state, obs, key
 
@@ -34,6 +34,7 @@ def main(cfg: DictConfig):
     eval_rng = jax.random.PRNGKey(0)
     state, obs, key = env_reset(env, eval_rng)
     print("obs keys:", obs.keys())
+    print("obs:", obs)
     print("state:", state)
 
     total_reward = 0.
