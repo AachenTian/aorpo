@@ -185,6 +185,47 @@ def to_model_action(action):
 
 
 # ============================================================
+# entropy of aleatoric and epistemic uncertainty
+# ============================================================
+def dynamics_total_uncertainty(mu, logvar):
+    eps = 1e-6
+
+    # 每个 ensemble member 的 aleatoric variance
+    var_e = jnp.exp(logvar)
+
+    # covariance-intersection 风格融合
+    prec_e = 1.0 / (var_e + eps)
+    aleatoric_var = 1.0 / jnp.mean(prec_e, axis=0)
+
+    # precision-weighted mean
+    mu_bar = aleatoric_var * jnp.mean(prec_e * mu, axis=0)
+
+    # ensemble disagreement
+    epistemic_var = jnp.mean(
+        (mu - mu_bar[None, ...]) ** 2,
+        axis=0,
+    )
+
+    # 你需要的总不确定性
+    total_var = aleatoric_var + epistemic_var
+
+    # 可选：由总方差得到 predictive entropy
+    total_entropy_dim = 0.5 * jnp.log(
+        2.0 * jnp.pi * jnp.e * (total_var + eps)
+    )
+
+    total_entropy = jnp.sum(total_entropy_dim, axis=-1)
+
+    return (
+        total_var,
+        aleatoric_var,
+        epistemic_var,
+        total_entropy_dim,
+        total_entropy,
+    )
+
+
+# ============================================================
 # Trajectory utilities
 # ============================================================
 
@@ -430,7 +471,7 @@ def rollout_dynamics_model(
         model_rng, prediction_key = jax.random.split(model_rng)
 
         # next_state / next_obs / reward 完全由 model 产生
-        next_flat_state, next_obs, reward_dict, dones_dict, _, _ = predict_next(
+        next_flat_state, next_obs, reward_dict, dones_dict, mu, logvar = predict_next(
             transition_state=models["transition_state"],
             reward_state=models["reward_state"],
             std=models["std"],
@@ -442,6 +483,8 @@ def rollout_dynamics_model(
             deterministic=True,
             member_idx=0,
         )
+
+        total_var, aleatoric_var, epistemic_var, total_entropy_dim, total_entropy = dynamics_total_uncertainty(mu, logvar)
 
         reward_vec = jnp.concatenate(
             [
