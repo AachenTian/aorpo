@@ -1,11 +1,37 @@
+# Core JAX stack
+jax==0.6.2
+jaxlib==0.6.2
 flax==0.10.4
 optax==0.2.5
+
+# Configuration
 hydra-core==1.3.2
 omegaconf==2.3.0
-tqdm==4.67.1
-wandb==0.23.0
+
+# Scientific computing
+numpy==1.26.4
+pandas==2.3.3
+scipy==1.12.0
+
+# JaxMARL runtime dependencies
+brax==0.10.3
+chex==0.1.90
+gymnax==0.0.9
+distrax==0.1.5
+mujoco==3.1.3
+safetensors==0.6.2
+
+# Environments
 pettingzoo==1.24.3
 gymnasium==0.29.1
+
+# Experiment tracking
+wandb==0.23.0
+
+# Utilities
+tqdm==4.67.1
+
+# Visualization
 matplotlib==3.10.7
 imageio==2.37.2
 imageio-ffmpeg==0.6.0
