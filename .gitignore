@@ -221,3 +221,17 @@ __pycache__/
 
 # ===== misc =====
 .DS_Store
+
+# ===== local / IDE =====
+.idea/
+.vscode/
+
+# ===== experiment outputs =====
+outputs/
+wandb/
+wandb_hpc/
+output_animation/
+episode animation/
+
+# ===== videos =====
+*.mp4
