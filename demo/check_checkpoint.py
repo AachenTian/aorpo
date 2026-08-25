@@ -1,4 +1,4 @@
-# prototypes/load_and_test.py
+# demo/check_checkpoint.py
 
 import pickle
 from pathlib import Path

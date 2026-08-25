@@ -235,3 +235,6 @@ episode animation/
 
 # ===== videos =====
 *.mp4
+
+# Local HPC helper
+setup_hpc_env.sh
