@@ -12,7 +12,7 @@ from aorpo.agents.policy import init_policy_model, PolicyNet
 
 
 ROOT = Path(__file__).resolve().parents[1]
-CKPT_PATH = ROOT / "exported_ckpts" / "final_execution_ckpt.pkl"
+CKPT_PATH = ROOT / "checkpoints" / "final_execution_ckpt.pkl"
 
 
 def main():

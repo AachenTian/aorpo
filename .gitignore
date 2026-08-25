@@ -238,3 +238,6 @@ episode animation/
 
 # Local HPC helper
 setup_hpc_env.sh
+
+# Demo outputs
+demo_outputs/

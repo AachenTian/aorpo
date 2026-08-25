@@ -26,7 +26,7 @@ from aorpo.utils.replay import manual_flatten_state
 # ============================================================
 
 ROOT = Path(__file__).resolve().parents[1]
-CKPT_PATH = ROOT / "exported_ckpts" / "final_execution_ckpt.pkl"
+CKPT_PATH = ROOT / "checkpoints" / "final_execution_ckpt.pkl"
 OUTPUT_DIR = ROOT / "demo_outputs"
 
 
