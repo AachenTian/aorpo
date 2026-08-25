@@ -1,4 +1,3 @@
-# aorpo/train.py
 from __future__ import annotations
 import os
 import pickle
@@ -34,23 +33,6 @@ from aorpo.agents.model_dynamics import (
     Standardizer
 )
 
-
-wandb.login()
-# Start a new wandb run to track this script.
-run = wandb.init(
-    # Set the wandb entity where your project will be logged (generally your team name).
-    entity="yachen-tian-rwth-aachen-university",
-    # Set the wandb project where this run will be logged.
-    project="AORPO-dynamics model",
-    # mode="offline",
-    # Track hyperparameters and run metadata.
-    config={
-        "learning_rate": 3e-4,
-        "architecture": "AORPO",
-        "Environment": "mpe_spread_v3",
-        "epochs": 10,
-    },
-)
 
 # -------------------------------------------------
 # 辅助：软更新 target Q
@@ -107,6 +89,13 @@ def make_opp_fn(opponent_states):
 # -------------------------------------------------
 @hydra.main(config_path="aorpo/configs", config_name="train", version_base=None)
 def main(cfg: DictConfig):
+
+    run = wandb.init(
+        project=os.environ.get("WANDB_PROJECT", "AORPO-dynamics-model"),
+        entity=os.environ.get("WANDB_ENTITY"),
+        config=OmegaConf.to_container(cfg, resolve=True),
+    )
+
 
     print("\n===== Config =====")
     print(OmegaConf.to_yaml(cfg))

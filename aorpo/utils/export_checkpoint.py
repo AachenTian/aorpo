@@ -52,7 +52,7 @@ def save_execution_checkpoint(
     - optimizer states
     """
 
-    save_dir = os.path.join(get_original_cwd(), "exported_ckpts")
+    save_dir = os.path.join(get_original_cwd(), "checkpoints")
     os.makedirs(save_dir, exist_ok=True)
 
     save_path = os.path.join(save_dir, save_name)
