@@ -4,103 +4,122 @@
 
 A JAX implementation of an uncertainty-aware extension of **Adaptive Opponent-wise Rollout Policy Optimization (AORPO)** for model-based multi-agent reinforcement learning.
 
-The method explicitly models two sources of uncertainty during model-based rollouts:
+The main idea is to quantify uncertainty in both learned opponent models and environment dynamics, and use that uncertainty to decide:
 
-* **Opponent-model uncertainty** determines when communication with other agents is required.
-* **Dynamics-model uncertainty** controls adaptive model rollout lengths and prevents unreliable synthetic transitions from being used for policy learning.
+* **when communication with other agents is needed**, and
+* **how long model-based rollouts should continue**.
 
-The implementation is built with **JAX**, **Flax**, **Optax**, and **JaxMARL**.
+The primary implementation in `main` is evaluated on **JaxMARL Simple Spread**.
 
 ---
 
-## Overview
+## Highlights
 
-Model-based multi-agent reinforcement learning can improve sample efficiency by generating additional experience with learned environment models. However, model errors can accumulate quickly during long rollouts, while inaccurate opponent models may lead to incorrect assumptions about other agents' actions.
+* **Opponent uncertainty for communication**
+  Probabilistic opponent-model ensembles estimate uncertainty about other agents' actions. Communication is triggered when opponent predictions are unreliable.
 
-This project extends AORPO with uncertainty-aware mechanisms for both problems.
+* **Dynamics uncertainty for adaptive rollouts**
+  Probabilistic dynamics ensembles estimate predictive uncertainty and terminate synthetic rollouts when model predictions become unreliable.
 
-### Opponent uncertainty
+* **Model-based policy optimization**
+  Real and model-generated transitions are used for SAC-style actor-critic updates.
 
-Each opponent policy is represented by an ensemble of probabilistic neural networks.
+* **JAX implementation**
+  Built with JAX, Flax, Optax, Hydra, and JaxMARL.
 
-The predictive uncertainty of the opponent model is used to determine whether the agent should rely on its learned opponent model or request communication.
+* **Pretrained checkpoint and demo included**
+  The repository contains a pretrained checkpoint together with utilities for validating the checkpoint and comparing real and model-generated trajectories.
 
-High uncertainty therefore triggers communication only when it is expected to be useful.
+---
 
-### Dynamics uncertainty
+## Method Overview
 
-The environment dynamics are represented using an ensemble of probabilistic neural networks.
+The training pipeline combines real environment interaction, learned opponent models, learned dynamics, and uncertainty-aware synthetic rollouts.
 
-Predictive uncertainty is accumulated during model rollouts and used to determine an adaptive rollout horizon.
+```text
+                 Real Environment
+                        │
+                        ▼
+                  Replay Buffer
+                   /          \
+                  /            \
+                 ▼              ▼
+       Opponent Model      Dynamics Model
+          Ensemble            Ensemble
+              │                  │
+              ▼                  ▼
+      Opponent Uncertainty  Dynamics Uncertainty
+              │                  │
+              ▼                  ▼
+       Communication       Adaptive Rollout
+              \                  /
+               \                /
+                ▼              ▼
+                 Model Replay
+                      │
+                      ▼
+              Actor-Critic Updates
+```
 
-This allows model-generated trajectories to continue while predictions remain reliable and terminate when uncertainty becomes too large.
+### Opponent-model uncertainty
+
+Each opponent is modeled using an ensemble of probabilistic neural networks.
+
+The models predict Gaussian action distributions, and ensemble disagreement is used to estimate predictive uncertainty.
+
+When opponent uncertainty becomes high, the agent can rely on communication instead of uncertain opponent predictions.
+
+### Dynamics-model uncertainty
+
+The learned environment model is also represented by an ensemble of probabilistic neural networks.
+
+During synthetic rollouts, predictive uncertainty is monitored at each step. Rollouts are allowed to continue while the dynamics model remains sufficiently confident and are terminated when uncertainty becomes too large.
+
+This reduces the accumulation of model error during long model-generated trajectories.
 
 ### Policy optimization
 
-Policy learning follows a Soft Actor-Critic-style actor-critic framework using both real environment transitions and model-generated transitions.
+The policy and Q-functions are optimized using a Soft Actor-Critic-style learning procedure with both:
 
-A simplified training flow is:
-
-```text
-Real environment interaction
-          │
-          ▼
-     Replay buffer
-          │
-          ├──────────────► Opponent-model ensemble
-          │                       │
-          │                       ▼
-          │              Opponent uncertainty
-          │                       │
-          │                 Communication
-          │
-          └──────────────► Dynamics ensemble
-                                  │
-                                  ▼
-                         Dynamics uncertainty
-                                  │
-                                  ▼
-                       Adaptive model rollout
-                                  │
-                                  ▼
-                       Model replay buffer
-                                  │
-                                  ▼
-                           SAC-style updates
-```
+* real transitions collected from the environment, and
+* synthetic transitions generated by the learned model.
 
 ---
 
 ## Environments
 
-The project was evaluated on two JaxMARL environments:
+The method was evaluated on two JaxMARL environments.
 
-| Environment               | Branch            | Description                                          |
-| ------------------------- | ----------------- | ---------------------------------------------------- |
-| `MPE_simple_spread_v3`    | `aorpo_uq_spread` | Cooperative navigation with 3 agents and 3 landmarks |
-| `MPE_simple_facmac_3a_v1` | `aorpo_uq_facmac` | Cooperative multi-agent pursuit environment          |
-| AORPO baseline            | `aorpo_jax`       | JAX reimplementation of the original AORPO baseline  |
+| Environment               | Description                                          |
+| ------------------------- | ---------------------------------------------------- |
+| `MPE_simple_spread_v3`    | Cooperative navigation with 3 agents and 3 landmarks |
+| `MPE_simple_facmac_3a_v1` | Cooperative multi-agent pursuit task                 |
 
-This README describes the **`aorpo_uq_spread`** branch.
+The primary implementation and results in `main` correspond to **Simple Spread**.
+
+The FACMAC experiment is preserved as a secondary evaluation in a separate branch.
 
 ---
 
-## Branches
+## Repository Branches
 
-The repository preserves the main stages of the project in separate branches:
+The public repository is organized around three main branches:
 
-| Branch            | Purpose                                   |
-| ----------------- | ----------------------------------------- |
-| `aorpo_jax`       | JAX implementation of the AORPO baseline  |
-| `aorpo_uq_spread` | Uncertainty-aware AORPO for Simple Spread |
-| `aorpo_uq_facmac` | Uncertainty-aware AORPO for FACMAC        |
+| Branch            | Purpose                                                        |
+| ----------------- | -------------------------------------------------------------- |
+| `main`            | Final uncertainty-aware AORPO implementation for Simple Spread |
+| `aorpo_jax`       | JAX reimplementation of the AORPO baseline                     |
+| `aorpo_uq_facmac` | Secondary uncertainty-aware AORPO experiment on FACMAC         |
 
-To switch experiments:
+The default `main` branch contains the primary implementation.
+
+To inspect the AORPO baseline:
 
 ```bash
+git switch aorpo_jax
 ```
 
-or
+To inspect the FACMAC experiment:
 
 ```bash
 git switch aorpo_uq_facmac
@@ -119,21 +138,23 @@ cd uncertainty-aware-aorpo
 
 ### 2. Create a Python environment
 
-For example, using Conda:
+Python 3.10 is recommended.
+
+For example, with Conda:
 
 ```bash
 conda create -n aorpo_jax python=3.10
 conda activate aorpo_jax
 ```
 
-### 3. Install project dependencies
+### 3. Install dependencies
 
 ```bash
 python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-The experiments were developed with:
+The main tested software stack includes:
 
 ```text
 Python 3.10
@@ -145,23 +166,21 @@ JaxMARL 0.1.0
 
 ### 4. Install JaxMARL
 
-The project uses JAX 0.6.2, while the dependency metadata of JaxMARL 0.1.0 may enforce an older JAX version.
-
-To preserve the tested JAX installation:
+To preserve the tested JAX version, install JaxMARL without allowing it to replace the existing dependencies:
 
 ```bash
 pip install --no-deps "jaxmarl==0.1.0"
 ```
 
-> **GPU users:** install the appropriate GPU-enabled JAX build for your CUDA environment. The exact JAX installation command depends on the CUDA and driver versions of the machine.
+> **GPU users:** install the JAX build appropriate for your CUDA environment. The required installation command depends on the CUDA and driver versions of the machine.
 
-A complete snapshot of the development environment is also provided in:
+For exact reproducibility, a snapshot of the development environment is also provided in:
 
 ```text
 requirements-local-lock.txt
 ```
 
-This file is mainly intended for reproducibility rather than as the default installation method.
+The lock file is mainly intended as a reference for the environment used during development rather than as the default installation method.
 
 ---
 
@@ -179,66 +198,32 @@ Start training with:
 python train.py
 ```
 
-The experiment configuration is stored in:
+The default experiment configuration is located at:
 
 ```text
 aorpo/configs/train.yaml
 ```
 
-### Weights & Biases
+The default Simple Spread setup uses:
 
-Training uses Weights & Biases for experiment tracking.
+| Parameter                     |                  Value |
+| ----------------------------- | ---------------------: |
+| Environment                   | `MPE_simple_spread_v3` |
+| Number of agents              |                      3 |
+| Number of landmarks           |                      3 |
+| Episode horizon               |                     25 |
+| Training epochs               |                    200 |
+| Environment steps per epoch   |                    300 |
+| Batch size                    |                   1024 |
+| Maximum model rollout horizon |                      6 |
+| Dynamics ensemble size        |                     10 |
+| Opponent ensemble size        |                      5 |
+| Dynamics learning rate        |                 `3e-4` |
+| Policy learning rate          |                 `1e-2` |
+| Discount factor               |                 `0.95` |
+| SAC temperature               |                  `0.2` |
 
-Log in before running:
-
-```bash
-wandb login
-```
-
-The W&B project and entity can optionally be specified through environment variables:
-
-```bash
-WANDB_PROJECT=my-aorpo-project \
-WANDB_ENTITY=my-account \
-python train.py
-```
-
-If no project name is provided, the default project is:
-
-```text
-AORPO-dynamics-model
-```
-
-For offline logging:
-
-```bash
-WANDB_MODE=offline python train.py
-```
-
----
-
-## Main Simple Spread Configuration
-
-The default configuration in `aorpo/configs/train.yaml` uses:
-
-| Parameter                      |                  Value |
-| ------------------------------ | ---------------------: |
-| Environment                    | `MPE_simple_spread_v3` |
-| Agents                         |                      3 |
-| Landmarks                      |                      3 |
-| Episode horizon                |                     25 |
-| Training epochs                |                    200 |
-| Real environment steps / epoch |                    300 |
-| Training batch size            |                   1024 |
-| Maximum model rollout horizon  |                      6 |
-| Dynamics ensemble size         |                     10 |
-| Opponent ensemble size         |                      5 |
-| Dynamics learning rate         |                 `3e-4` |
-| Policy learning rate           |                 `1e-2` |
-| Discount factor                |                 `0.95` |
-| SAC temperature                |                  `0.2` |
-
-Uncertainty-related rollout parameters can also be modified in:
+Important uncertainty-related rollout parameters include:
 
 ```yaml
 rollout:
@@ -250,7 +235,7 @@ rollout:
   xi: 30.0
 ```
 
-Hydra parameters can be overridden directly from the command line. For example:
+Hydra configuration values can be overridden directly from the command line. For example:
 
 ```bash
 python train.py seed=1 train.epochs=100 rollout.k=4
@@ -258,45 +243,74 @@ python train.py seed=1 train.epochs=100 rollout.k=4
 
 ---
 
+## Experiment Tracking
+
+Training uses **Weights & Biases** for experiment logging.
+
+For normal online logging:
+
+```bash
+wandb login
+python train.py
+```
+
+The W&B project and entity can optionally be specified through environment variables:
+
+```bash
+WANDB_PROJECT=my-project \
+WANDB_ENTITY=my-account \
+python train.py
+```
+
+Training can also be run with offline W&B logging:
+
+```bash
+WANDB_MODE=offline python train.py
+```
+
+---
+
 ## Pretrained Checkpoint
 
-A pretrained execution checkpoint is included:
+A pretrained execution checkpoint is included at:
 
 ```text
 checkpoints/final_execution_ckpt.pkl
 ```
 
-The checkpoint contains the parameters required for execution and model evaluation, including:
+The checkpoint contains the components required for execution and model evaluation, including:
 
-* dynamics-model parameters;
-* reward-model parameters;
-* ego-policy parameters;
-* real opponent-policy parameters;
-* normalization statistics;
-* training configuration and model dimensions.
+* ego-policy parameters,
+* opponent-policy parameters,
+* dynamics-model parameters,
+* reward-model parameters,
+* normalization statistics, and
+* relevant model configuration.
 
-Optimizer states and Q-function training states are intentionally not included.
+Training-only optimizer states are not required for the execution demo.
 
 ---
 
 ## Demo
 
-Two utilities are provided under `demo/`.
+The repository provides two demo utilities.
 
-### Check the pretrained checkpoint
+### Check the checkpoint
+
+Run:
 
 ```bash
 python -m demo.check_checkpoint
 ```
 
-This reconstructs the networks from the checkpoint and verifies:
+This loads the pretrained checkpoint, reconstructs the required networks, and tests:
 
-* ego-policy inference;
-* opponent-policy inference;
-* dynamics-model inference;
+* ego-policy inference,
+* opponent-policy inference,
+* dynamics-model inference, and
 * reward-model inference.
 
-A successful run should begin with:
+A successful run reports:
 
 ```text
 Checkpoint loaded successfully.
@@ -310,9 +324,9 @@ Run:
 python -m demo.run_demo
 ```
 
-The script executes both a real environment trajectory and a learned dynamics-model trajectory.
+The demo executes a trajectory in the real environment and a corresponding trajectory using the learned dynamics model.
 
-Generated outputs are written to:
+Generated files are written to:
 
 ```text
 demo_outputs/
@@ -326,9 +340,9 @@ dynamics_model_traj.npz
 real_vs_dynamics.mp4
 ```
 
-`demo_outputs/` is generated locally and is not tracked by Git.
+`demo_outputs/` is generated locally and is ignored by Git.
 
-> Run the demo using `python -m demo.run_demo` rather than `python demo/run_demo.py` so that the repository root is correctly included in Python's module search path.
+> Run the demo with `python -m demo.run_demo` from the repository root so that the project modules are correctly resolved.
 
 ---
 
@@ -336,26 +350,23 @@ real_vs_dynamics.mp4
 
 ### Reward vs. Training Steps
 
-![Reward vs. training steps](figures/reward_vs_steps.png)
+![Reward vs. Training Steps](figures/reward_vs_steps.png)
 
 ### Reward vs. Communication
 
-![Reward vs. communication](figures/reward_vs_comm.png)
+![Reward vs. Communication](figures/reward_vs_comm.png)
 
-Additional result figures are available under:
+The publication-quality PDF versions of the figures are also available under `figures/`.
 
-```text
-figures/
-```
+Additional figures include:
 
-including:
+* `figures/reward_vs_steps.pdf`
+* `figures/reward_vs_comm.pdf`
+* `figures/ablation_spread.pdf`
+* `figures/selected_runs_plot.pdf`
+* `figures/selected_runs_plot.png`
 
-* `selected_runs_plot.png`
-* `reward_vs_steps.pdf`
-* `reward_vs_comm.pdf`
-* `ablation_spread.pdf`
-
-The corresponding processed experiment data are stored under:
+Processed experimental data are stored in:
 
 ```text
 results/
@@ -365,7 +376,7 @@ results/
 
 ## Reproducing Figures
 
-Plotting and W&B data-export utilities are organized under `scripts/`.
+Experiment-analysis utilities are organized under `scripts/`:
 
 ```text
 scripts/
@@ -388,7 +399,7 @@ or:
 python scripts/plot_reward_vs_communication.py
 ```
 
-Processed experiment data used by the plotting utilities are available in:
+Processed result data currently include:
 
 ```text
 results/
@@ -440,13 +451,8 @@ results/
 │   └── run_demo.py
 │
 ├── figures/
-│   └── ...
-│
 ├── results/
-│   └── ...
-│
 ├── scripts/
-│   └── ...
 │
 ├── train.py
 ├── requirements.txt
@@ -457,35 +463,35 @@ results/
 
 ---
 
-## Method Components
+## Code Organization
 
-The main implementation is organized around the following components.
+### Dynamics model
 
-### Probabilistic dynamics ensemble
+```text
+aorpo/agents/model_dynamics.py
+```
 
-`aorpo/agents/model_dynamics.py`
+Implements the probabilistic dynamics ensemble used to predict future transitions and quantify model uncertainty.
 
-Learns probabilistic environment dynamics using an ensemble of neural networks and provides predictive uncertainty estimates for model rollouts.
+### Opponent models
 
-### Opponent-policy ensemble
+```text
+aorpo/agents/opponent_policy.py
+aorpo/agents/update_opponents_model.py
+```
 
-`aorpo/agents/opponent_policy.py`
+Implement probabilistic opponent-policy ensembles and their training procedure.
 
-Models other agents' policies probabilistically. Ensemble uncertainty is used by the communication mechanism.
+### Uncertainty-aware rollouts
 
-### Uncertainty-aware rollout
+```text
+aorpo/rollout/rollout.py
+aorpo/rollout/uncertainty_threshold.py
+```
 
-`aorpo/rollout/rollout.py`
+Implement model-generated rollouts together with uncertainty-based communication and rollout control.
 
-Generates synthetic experience using the learned models while adapting rollout lengths according to dynamics uncertainty.
-
-### Uncertainty thresholds
-
-`aorpo/rollout/uncertainty_threshold.py`
-
-Implements uncertainty-based decision rules used by communication and model rollout control.
-
-### Policy and value learning
+### Actor-critic learning
 
 ```text
 aorpo/agents/policy.py
@@ -494,7 +500,7 @@ aorpo/agents/update_policy.py
 aorpo/agents/update_q_function.py
 ```
 
-Implements the actor-critic components used to optimize the agents from real and model-generated experience.
+Implement the policy and Q-function components used for agent optimization.
 
 ---
 
@@ -503,17 +509,18 @@ Implements the actor-critic components used to optimize the agents from real and
 This repository accompanies the thesis:
 
 > **Model-based Multi-agent Reinforcement Learning via Uncertainty Quantification**
-> Yachen Tian, RWTH Aachen University, 2026.
+> Yachen Tian
+> RWTH Aachen University, 2026
 
-The thesis investigates uncertainty quantification as a mechanism for improving the reliability of learned opponent and environment models in model-based multi-agent reinforcement learning.
+The work studies how uncertainty quantification can improve the use of learned opponent models and learned environment dynamics in model-based multi-agent reinforcement learning.
 
-The proposed method was evaluated on **Simple Spread** and **FACMAC**, showing improved performance on Simple Spread and comparable performance to AORPO on FACMAC.
+The main experimental evaluation is conducted on **Simple Spread**, with **FACMAC** included as an additional evaluation environment.
 
 ---
 
 ## Citation
 
-If you use this implementation in academic work, please cite the accompanying thesis and the original AORPO work on which this implementation is based.
+If you use this implementation in academic work, please cite the accompanying thesis and the original AORPO work on which this project builds.
 
 ```bibtex
 @mastersthesis{tian2026uncertainty,
@@ -529,3 +536,4 @@ If you use this implementation in academic work, please cite the accompanying th
 ## License
 
 This project is distributed under the terms of the license provided in [`LICENSE`](LICENSE).
+
