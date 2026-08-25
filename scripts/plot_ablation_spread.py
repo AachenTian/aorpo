@@ -146,5 +146,5 @@ fig.legend(
 
 plt.tight_layout(rect=(0,0.12,1,1))
 
-plt.savefig("ablation_spread.pdf", dpi=300)
+plt.savefig("figures/ablation_spread.pdf", dpi=300)
 plt.show()

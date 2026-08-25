@@ -12,7 +12,7 @@ RUN_IDS = [
 
 METRIC_KEYS = ["total_comm_count", "episode_reward_dyna"]
 
-OUTPUT_FILE = "mpe_simple_spread.csv"
+OUTPUT_FILE = "results/mpe_simple_spread.csv"
 
 # ====== 初始化 ======
 api = wandb.Api()

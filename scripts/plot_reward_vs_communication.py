@@ -9,8 +9,8 @@ REWARD_KEYS = {
 }
 
 FILES = {
-    "MPE Simple Spread": "mpe_simple_spread.csv",
-    "MPE Simple FACMAC": "mpe_simple_tag.csv"
+    "MPE Simple Spread": "results/mpe_simple_spread.csv",
+    "MPE Simple FACMAC": "results/mpe_simple_tag.csv",
 }
 
 def interpolate_run(df, common_comm, reward_key):
@@ -105,5 +105,5 @@ fig.legend(
 
 plt.tight_layout(rect=(0,0.08,1,1))
 
-plt.savefig("reward_vs_comm.pdf", dpi=300)
+plt.savefig("figures/reward_vs_comm.pdf", dpi=300)
 plt.show()
