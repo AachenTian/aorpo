@@ -114,7 +114,7 @@ git switch aorpo_uq_facmac
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/AachenTian/aorpo.git
+git clone https://github.com/AachenTian/uncertainty-aware-aorpo.git
 cd aorpo
 git switch aorpo_uq_spread
 ```
