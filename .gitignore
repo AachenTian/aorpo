@@ -221,3 +221,7 @@ __pycache__/
 
 # ===== misc =====
 .DS_Store
+
+# Local generated files
+demo_outputs/
+setup_hpc_env.sh
