@@ -24,7 +24,7 @@ from aorpo.agents.q_function import init_q_function
 from aorpo.agents.update_q_function import update_q_function, evaluate_fixed_q_loss
 from aorpo.agents.update_policy import update_policy, update_opponent_policy
 from aorpo.agents.update_opponents_model import update_opponent_model
-from aorpo.visualiztion.make_animation import animate_episode
+from aorpo.visualization.make_animation import animate_episode
 
 from aorpo.agents.model_dynamics import (
     init_model,
