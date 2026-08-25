@@ -98,7 +98,6 @@ The repository preserves the main stages of the project in separate branches:
 To switch experiments:
 
 ```bash
-git switch aorpo_uq_spread
 ```
 
 or
@@ -116,7 +115,6 @@ git switch aorpo_uq_facmac
 ```bash
 git clone https://github.com/AachenTian/uncertainty-aware-aorpo.git
 cd uncertainty-aware-aorpo
-git switch aorpo_uq_spread
 ```
 
 ### 2. Create a Python environment
