@@ -225,3 +225,8 @@ __pycache__/
 # Local generated files
 demo_outputs/
 setup_hpc_env.sh
+
+# Local IDE and experiment logs
+.idea/
+wandb/
+wandb_hpc/
