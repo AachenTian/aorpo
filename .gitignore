@@ -220,3 +220,26 @@ __pycache__/
 
 # ===== misc =====
 .DS_Store
+
+# IDE
+.idea/
+.vscode/
+
+# Experiment logs and generated outputs
+wandb/
+wandb_hpc/
+output_animation/
+episode animation/
+demo_outputs/
+*.mp4
+
+# Local machine setup
+setup_hpc_env.sh
+
+# Hydra outputs
+aorpo/envs/outputs/
+outputs/
+
+# Hydra outputs
+aorpo/envs/outputs/
+outputs/
