@@ -34,32 +34,11 @@ The primary implementation in `main` is evaluated on **JaxMARL Simple Spread**.
 
 ## Method Overview
 
-The training pipeline combines real environment interaction, learned opponent models, learned dynamics, and uncertainty-aware synthetic rollouts.
+<p align="center">
+  <img src="figures/method_framework.png" width="95%">
+</p>
 
-```text
-                 Real Environment
-                        │
-                        ▼
-                  Replay Buffer
-                   /          \
-                  /            \
-                 ▼              ▼
-       Opponent Model      Dynamics Model
-          Ensemble            Ensemble
-              │                  │
-              ▼                  ▼
-      Opponent Uncertainty  Dynamics Uncertainty
-              │                  │
-              ▼                  ▼
-       Communication       Adaptive Rollout
-              \                  /
-               \                /
-                ▼              ▼
-                 Model Replay
-                      │
-                      ▼
-              Actor-Critic Updates
-```
+The proposed framework uses uncertainty from probabilistic model ensembles at two stages. Opponent-model uncertainty determines when communication is required, while dynamics-model uncertainty adaptively terminates model rollouts when predictions become unreliable. The resulting synthetic experience is used for policy optimization.
 
 ### Opponent-model uncertainty
 
