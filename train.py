@@ -88,17 +88,11 @@ def make_opp_fn(opponent_states):
 # -------------------------------------------------
 @hydra.main(config_path="aorpo/configs", config_name="train", version_base=None)
 def main(cfg: DictConfig):
-    wandb.login()
-    # Start a new wandb run to track this script.
-    wandb.init(
-        # Set the wandb entity where your project will be logged (generally your team name).
-        entity="yachen-tian-rwth-aachen-university",
-        # Set the wandb project where this run will be logged.
-        project="AORPO-simple_tag",
-        # mode="offline",
-        # Track hyperparameters and run metadata.
-        dir=hydra.utils.get_original_cwd(),
-        config=OmegaConf.to_container(cfg, resolve=True)
+
+    run = wandb.init(
+        project=os.environ.get("WANDB_PROJECT", "AORPO-UQ-FACMAC"),
+        entity=os.environ.get("WANDB_ENTITY"),
+        config=OmegaConf.to_container(cfg, resolve=True),
     )
 
     print("\n===== Config =====")
