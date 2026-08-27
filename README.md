@@ -192,6 +192,8 @@ This repository accompanies the thesis:
 > Yachen Tian  
 > RWTH Aachen University, 2026
 
+[Read the thesis](paper/thesis.pdf)
+
 The thesis investigates uncertainty quantification for learned opponent and environment models in model-based multi-agent reinforcement learning.
 
 ---
@@ -201,7 +203,7 @@ The thesis investigates uncertainty quantification for learned opponent and envi
 If you use this implementation in academic work, please cite the accompanying thesis and the original AORPO work on which this project builds.
 
 ```bibtex
-@mastersthesis{tian2026uncertainty,
+@misc{tian2026uncertainty,
   author = {Yachen Tian},
   title  = {Model-based Multi-agent Reinforcement Learning via Uncertainty Quantification},
   school = {RWTH Aachen University},
